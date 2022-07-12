@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./public",
+    "sourceMap": true,
     "target": "es5",
     "lib": [
       "dom",
@@ -9,6 +12,7 @@
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
+    "noImplicitAny": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,

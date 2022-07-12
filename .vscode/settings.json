@@ -1,0 +1,10 @@
+{
+  "stylelint.validate": ["css", "scss"],
+  "editor.formatOnSave": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  }
+}
