@@ -22,3 +22,19 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# nginx
+/logs
+/CachedData
+/User
+Cookies
+Cookies-journal
+QuotaManager
+QuotaManager-journal
+TransportSecurity
+Network Persistent State
+/CachedConfigurations
+/CachedExtensions
+/Backups
+machineid
+languagepacks.json
