@@ -6,7 +6,7 @@ export const apiSlice = createApi({
   reducerPath: `api`,
   baseQuery: fetchBaseQuery({
     // baseUrl: `https://jsonplaceholder.typicode.com/`,
-    baseUrl: `http://localhost`,
+    baseUrl: `http://localhost:8080`,
   }),
   tagTypes: [`Post`],
   endpoints: (builder) => ({
@@ -14,6 +14,10 @@ export const apiSlice = createApi({
       query: () => `/posts`,
       providesTags: [`Post`],
     }),
+    // getImage: builder.query<_, string>({
+    //   query: (imgUrl) => ({url: `images/${imgUrl}`}),
+    //   // providesTags: () => [{}],
+    // }),
   }),
 });
 

@@ -12,7 +12,13 @@ FROM test AS build
 RUN npm run build
 
 FROM nginx:1.16.0-alpine AS server
+# COPY nginx ./nginx
 COPY --from=build /app/build /usr/share/nginx/html
-ENV PORT 80
+COPY /data /build/data
+COPY /assets /build/assets
+# RUN rm /etc/nginx/conf.d/default.conf
+COPY /nginx/nginx.conf /etc/nginx/conf.d/
+
+ENV PORT 8080
 EXPOSE $PORT
 CMD ["nginx", "-g", "daemon off;"]
