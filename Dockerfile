@@ -13,7 +13,7 @@ RUN npm run build
 
 FROM nginx:1.16.0-alpine AS server
 COPY --from=build /app/build /usr/share/nginx/html
-COPY /data /usr/share/nginx/html/data
+# COPY /data /usr/share/nginx/html/data
 COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
 
 ENV PORT 8080
