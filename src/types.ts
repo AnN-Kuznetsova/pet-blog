@@ -5,7 +5,14 @@ interface PostType {
   body: string;
 }
 
+interface UserType {
+  id: number;
+  avatar: string | null;
+  name: string;
+}
+
 
 export type {
   PostType,
+  UserType,
 };

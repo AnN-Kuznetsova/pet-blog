@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { PostType } from "../types";
+import type { PostType, UserType } from "../types";
 
 
 export const apiSlice = createApi({
@@ -10,20 +10,24 @@ export const apiSlice = createApi({
     // 3000 - для работы из Докера
     baseUrl: `http://localhost:3000`, // 8080`,
   }),
-  tagTypes: [`Post`],
+  tagTypes: [`Post`, `User`],
   endpoints: (builder) => ({
-    getPosts: builder.query<PostType, void>({
+    // Posts
+    getPosts: builder.query<PostType[], void>({
       query: () => `/posts`,
       providesTags: [`Post`],
     }),
-    // getImage: builder.query<_, string>({
-    //   query: (imgUrl) => ({url: `images/${imgUrl}`}),
-    //   // providesTags: () => [{}],
-    // }),
+
+    // Users
+    getUsers: builder.query<UserType[], void>({
+      query: () => `/users`,
+      providesTags: [`User`],
+    }),
   }),
 });
 
 
 export const {
   useGetPostsQuery,
+  useGetUsersQuery,
 } = apiSlice;

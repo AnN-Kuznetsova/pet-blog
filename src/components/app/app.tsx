@@ -1,8 +1,10 @@
-import { Button, List, ListItem } from "@mui/material";
 import React from "react";
+import { Button } from "@mui/material";
 import { useGetPostsQuery } from "../../api/apiSlice";
+import { PostsList } from "../posts-list/posts-list";
 
-function App() {
+
+export const App: React.FC = (): JSX.Element => {
   const {
     data: posts = [],
     isLoading,
@@ -10,12 +12,6 @@ function App() {
     isError,
     error,
   } = useGetPostsQuery();
-
-  const images = [
-    "img1.jpg",
-    "img2.jpg",
-    "img3.jpg",
-  ];
 
   const handleButtonClick = () => {/**/};
 
@@ -28,15 +24,7 @@ function App() {
         Button
       </Button>
 
-      <List>
-        {images.map((img) => (
-          <ListItem key={img}>
-            <img src={`${img}`} width="50" height="50" />
-          </ListItem>
-        ))}
-      </List>
+      {isSuccess && <PostsList /> }
     </div>
   );
-}
-
-export default App;
+};
