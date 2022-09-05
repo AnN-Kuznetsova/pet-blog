@@ -3,11 +3,13 @@ import {
   Box,
   CircularProgress,
   CssBaseline,
+  GlobalStyles,
 } from "@mui/material";
+
 import { PostsList } from "../posts-list/posts-list";
-import { useGetPostsQuery } from "../../api/apiSlice";
-import { appStyles } from "./styles";
 import { TopMenu } from "../top-menu/top-menu";
+import { styles } from "./styles";
+import { useGetPostsQuery } from "../../api/apiSlice";
 
 
 export const App: React.FC = (): JSX.Element => {
@@ -22,10 +24,11 @@ export const App: React.FC = (): JSX.Element => {
   return (
     <>
       <CssBaseline />
+      <GlobalStyles styles={styles.globalStyles} />
 
       <Box
         className="app"
-        sx={appStyles}
+        sx={styles.appStyles}
       >
         {isPostsLoading && <CircularProgress color="secondary" />}
 

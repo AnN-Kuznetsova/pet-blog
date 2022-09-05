@@ -1,17 +1,19 @@
 import React from "react";
 import { Box, Button } from "@mui/material";
 
+import { styles } from "./styles";
+
 
 export const TopMenu: React.FC = (): JSX.Element => {
-  const handleButtonClick = () => {/**/};
+  const handleAddNewButtonClick = () => {/**/};
 
   return (
-    <Box>
+    <Box sx={styles.container}>
       <Button
         variant="contained"
-        onClick={handleButtonClick}
+        onClick={handleAddNewButtonClick}
       >
-        Button
+        Add new post
       </Button>
     </Box>
   );

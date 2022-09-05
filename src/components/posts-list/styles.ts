@@ -1,4 +1,6 @@
-import { Color } from "../../constants";
+import { darken, Theme } from "@mui/material";
+import { BORDER_RADIUS, Color } from "../../constants";
+
 
 const containerStyles = () => ({
   height: "calc(100% - 50px)",
@@ -10,15 +12,17 @@ const postsListStyles = () => ({
   overflowY: `auto`,
 });
 
-const itemButton = () => ({
-  display: `flex`,
-  justifyContent: `flex-start`,
-  width: `100%`,
-  color: `${Color.WHITE}`,
-  textTransform: `none`,
-  border: `1px solid ${Color.WHITE}`,
-  borderRadius: `4px`,
-});
+const itemButton = (theme: Theme) => {
+  return {
+    display: `flex`,
+    justifyContent: `flex-start`,
+    width: `100%`,
+    color: `${Color.WHITE}`,
+    textTransform: `none`,
+    border: `1px solid ${darken(theme.palette.primary.light, 0.5)}`,
+    borderRadius: BORDER_RADIUS,
+  };
+};
 
 const avatarStyles = (): {
   [key: string]: number | string;
