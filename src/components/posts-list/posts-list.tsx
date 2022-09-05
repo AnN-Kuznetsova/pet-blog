@@ -2,12 +2,16 @@ import React from "react";
 import {
   Avatar,
   Box,
+  Button,
   List,
   ListItem,
+  Typography,
 } from "@mui/material";
 
 import { createStringAvatar } from "../../helpers/create-string-avatar";
+import { styles } from "./styles";
 import { useGetPostsQuery, useGetUsersQuery } from "../../api/apiSlice";
+import { PostType } from "../../types";
 
 
 export const PostsList: React.FC = (): JSX.Element => {
@@ -27,29 +31,57 @@ export const PostsList: React.FC = (): JSX.Element => {
     // error,
   } = useGetUsersQuery();
 
+  const handleItemButtonClick = (post: PostType) => {
+    console.log(post);
+  };
+
   return (
-    <List>
-      {posts.map((post) => {
-        const user = users.find((user) => user.id === post.userId);
+    <Box sx={styles.containerStyles}>
+      <List sx={styles.postsListStyles}>
+        {posts.map((post) => {
+          const user = users.find((user) => user.id === post.userId);
 
-        return user ? (
-          <ListItem key={post.id}>
-            {user.avatar &&
-              <Avatar
-                src={`${user.avatar}`}
-                alt=""
-                sx={{ width: 56, height: 56 }}
-              /> ||
-              <Avatar {...createStringAvatar(user.name)} />
-            }
+          const stringAvatar:
+            ReturnType<typeof createStringAvatar> |
+            ReturnType<typeof createStringAvatar> & {sx: ReturnType<typeof styles.avatarStyles>} |
+            null = user && !user.avatar ? createStringAvatar(user.name) : null;
 
-            <Box>
+          if (stringAvatar && stringAvatar.sx) {
+            Object.entries(styles.avatarStyles()).forEach(([key, value]) => {
+              stringAvatar.sx[key] = value;
+            });
+          }
 
-            </Box>
-          </ListItem>
-        ) : null;
-      }
-      )}
-    </List>
+          return user ? (
+            <ListItem
+              key={post.id}
+
+            >
+              <Button
+                sx={styles.itemButton}
+                onClick={handleItemButtonClick.bind(null, post)}
+              >
+                {user.avatar &&
+                  <Avatar
+                    src={`${user.avatar}`}
+                    alt=""
+                    sx={styles.avatarStyles}
+                  /> ||
+                  <Avatar
+                    {...stringAvatar}
+                  />
+                }
+
+                <Box sx={styles.info}>
+                  <Typography>{post.title}</Typography>
+                  <Typography fontSize="0.8rem">{post.date}</Typography>
+                </Box>
+              </Button>
+            </ListItem>
+          ) : null;
+        }
+        )}
+      </List>
+    </Box>
   );
 };

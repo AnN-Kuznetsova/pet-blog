@@ -1,30 +1,41 @@
 import React from "react";
-import { Button } from "@mui/material";
-import { useGetPostsQuery } from "../../api/apiSlice";
+import {
+  Box,
+  CircularProgress,
+  CssBaseline,
+} from "@mui/material";
 import { PostsList } from "../posts-list/posts-list";
+import { useGetPostsQuery } from "../../api/apiSlice";
+import { appStyles } from "./styles";
+import { TopMenu } from "../top-menu/top-menu";
 
 
 export const App: React.FC = (): JSX.Element => {
   const {
     data: posts = [],
-    isLoading,
-    isSuccess,
+    isLoading: isPostsLoading,
+    isSuccess: isPostsSuccess,
     isError,
     error,
   } = useGetPostsQuery();
 
-  const handleButtonClick = () => {/**/};
-
   return (
-    <div className="App">
-      <Button
-        variant="contained"
-        onClick={handleButtonClick}
-      >
-        Button
-      </Button>
+    <>
+      <CssBaseline />
 
-      {isSuccess && <PostsList /> }
-    </div>
+      <Box
+        className="app"
+        sx={appStyles}
+      >
+        {isPostsLoading && <CircularProgress color="secondary" />}
+
+        {isPostsSuccess &&
+          <>
+            <TopMenu />
+            <PostsList />
+          </>
+        }
+      </Box>
+    </>
   );
 };

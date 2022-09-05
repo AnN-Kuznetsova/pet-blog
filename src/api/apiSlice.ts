@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { addPosts, postsAdapter } from "../store/posts/posts";
 import type { PostType, UserType } from "../types";
 
 
@@ -16,6 +17,9 @@ export const apiSlice = createApi({
     getPosts: builder.query<PostType[], void>({
       query: () => `/posts`,
       providesTags: [`Post`],
+      // transformResponse: (baseQueryReturnValue: PostType[], meta, arg) => {
+      //   return postsAdapter.setAll(initialState, baseQueryReturnValue);
+      // },
     }),
 
     // Users

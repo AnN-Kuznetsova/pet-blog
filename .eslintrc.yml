@@ -39,6 +39,7 @@ rules:
       ["warn", { "additionalHooks": "(useMyCustomHook|useMyOtherCustomHook)" }],
     "no-loss-of-precision": "off",
     "@typescript-eslint/no-loss-of-precision": ["error"],
+    "@typescript-eslint/ban-ts-comment": "warn",
     "brace-style": ["error", "1tbs", { "allowSingleLine": true }],
     "indent": ["error", 2],
     "one-var-declaration-per-line": ["error", "always"],

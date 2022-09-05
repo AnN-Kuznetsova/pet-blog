@@ -21,7 +21,7 @@ const stringToColor = (string: string): string => {
 
 export const createStringAvatar = (name: string): {
   sx: {
-    bgcolor: string;
+    [key: string]: number | string;
   };
   children: string;
 } => {
