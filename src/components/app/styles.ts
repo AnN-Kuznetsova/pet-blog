@@ -5,17 +5,17 @@ import { BORDER_RADIUS, Color } from "../../constants";
 const globalStyles = (theme: Theme) => ({
   "::-webkit-scrollbar": {
     width: `10px`,
-    backgroundColor: `${darken(theme.palette.primary.dark, 0.3)}`,
+    backgroundColor: `${darken(theme.palette.primary.light, 0.5)}`,
     borderRadius: BORDER_RADIUS,
   },
 
   "::-webkit-scrollbar-track": {
-    backgroundColor: `${darken(theme.palette.primary.dark, 0.3)}`,
+    backgroundColor: `${darken(theme.palette.primary.light, 0.5)}`,
     borderRadius: BORDER_RADIUS,
   },
 
   "::-webkit-scrollbar-thumb": {
-    backgroundColor: `${darken(theme.palette.primary.dark, 0.5)}`,
+    backgroundColor: `${darken(theme.palette.primary.light, 0.65)}`,
     borderRadius: BORDER_RADIUS,
   },
 });
