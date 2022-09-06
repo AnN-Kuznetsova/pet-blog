@@ -12,6 +12,7 @@ import { createStringAvatar } from "../../helpers/create-string-avatar";
 import { styles } from "./styles";
 import { useGetPostsQuery, useGetUsersQuery } from "../../api/apiSlice";
 import { PostType } from "../../types";
+import { formatDate } from "../../helpers/utils";
 
 
 export const PostsList: React.FC = (): JSX.Element => {
@@ -40,6 +41,7 @@ export const PostsList: React.FC = (): JSX.Element => {
       <List sx={styles.postsListStyles}>
         {posts.map((post) => {
           const user = users.find((user) => user.id === post.userId);
+          const date = formatDate(post.date);
 
           const stringAvatar:
             ReturnType<typeof createStringAvatar> |
@@ -74,7 +76,7 @@ export const PostsList: React.FC = (): JSX.Element => {
 
                 <Box sx={styles.info}>
                   <Typography>{post.title}</Typography>
-                  <Typography fontSize="0.8rem">{post.date}</Typography>
+                  <Typography fontSize="0.8rem">{date}</Typography>
                 </Box>
               </Button>
             </ListItem>
