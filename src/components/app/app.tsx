@@ -11,6 +11,11 @@ import { TopMenu } from "../top-menu/top-menu";
 import { styles } from "./styles";
 import { useGetPostsQuery } from "../../api/apiSlice";
 import { CircularPogress } from "../circular-pogress/circular-pogress";
+import { Route, Routes } from "react-router-dom";
+import { Post } from "../post/post";
+import { AppRoute } from "../../constants";
+import { NotFoundPage } from "../not-found-page/not-found-page";
+import { Layout } from "../layout/layout";
 
 
 export const App: React.FC = (): JSX.Element => {
@@ -34,10 +39,14 @@ export const App: React.FC = (): JSX.Element => {
         {isPostsLoading && <CircularPogress />}
 
         {isPostsSuccess &&
-          <>
-            <TopMenu />
-            <PostsList />
-          </>
+          <Routes>
+            <Route path={AppRoute.MAIN} element={<Layout />}>
+              <Route index element={<PostsList />} />
+              <Route path={AppRoute.POST_PAGE} element={<Post />} />
+            </Route>
+
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
         }
       </Box>
     </>
