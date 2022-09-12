@@ -10,6 +10,7 @@ import { PostsList } from "../posts-list/posts-list";
 import { TopMenu } from "../top-menu/top-menu";
 import { styles } from "./styles";
 import { useGetPostsQuery } from "../../api/apiSlice";
+import { CircularPogress } from "../circular-pogress/circular-pogress";
 
 
 export const App: React.FC = (): JSX.Element => {
@@ -30,7 +31,7 @@ export const App: React.FC = (): JSX.Element => {
         className="app"
         sx={styles.appStyles}
       >
-        {isPostsLoading && <CircularProgress color="secondary" />}
+        {isPostsLoading && <CircularPogress />}
 
         {isPostsSuccess &&
           <>
