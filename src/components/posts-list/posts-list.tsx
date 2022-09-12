@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   Avatar,
   Box,
@@ -8,11 +9,12 @@ import {
   Typography,
 } from "@mui/material";
 
+import { AppRoute } from "../../constants";
 import { createStringAvatar } from "../../helpers/create-string-avatar";
+import { formatDate } from "../../helpers/utils";
 import { styles } from "./styles";
 import { useGetPostsQuery, useGetUsersQuery } from "../../api/apiSlice";
-import { PostType } from "../../types";
-import { formatDate } from "../../helpers/utils";
+import type { PostType } from "../../types";
 
 
 export const PostsList: React.FC = (): JSX.Element => {
@@ -42,6 +44,7 @@ export const PostsList: React.FC = (): JSX.Element => {
         {posts.map((post) => {
           const user = users.find((user) => user.id === post.userId);
           const date = formatDate(post.date);
+          const postPageUrl = AppRoute.POST_PAGE.replace(`:id`, `${post.id}`);
 
           const stringAvatar:
             ReturnType<typeof createStringAvatar> |
@@ -59,26 +62,32 @@ export const PostsList: React.FC = (): JSX.Element => {
               key={post.id}
 
             >
-              <Button
-                sx={styles.itemButton}
-                onClick={handleItemButtonClick.bind(null, post)}
+              <Link
+                to={postPageUrl}
+                // className={styles.link
+                style={styles.link}
               >
-                {user.avatar &&
-                  <Avatar
-                    src={`${user.avatar}`}
-                    alt=""
-                    sx={styles.avatarStyles}
-                  /> ||
-                  <Avatar
-                    {...stringAvatar}
-                  />
-                }
+                <Button
+                  sx={styles.itemButton}
+                  onClick={handleItemButtonClick.bind(null, post)}
+                >
+                  {user.avatar &&
+                    <Avatar
+                      src={`${user.avatar}`}
+                      alt=""
+                      sx={styles.avatarStyles}
+                    /> ||
+                    <Avatar
+                      {...stringAvatar}
+                    />
+                  }
 
-                <Box sx={styles.info}>
-                  <Typography>{post.title}</Typography>
-                  <Typography fontSize="0.8rem">{date}</Typography>
-                </Box>
-              </Button>
+                  <Box sx={styles.info}>
+                    <Typography>{post.title}</Typography>
+                    <Typography fontSize="0.8rem">{date}</Typography>
+                  </Box>
+                </Button>
+              </Link>
             </ListItem>
           ) : null;
         }

@@ -3,14 +3,19 @@ import { BORDER_RADIUS, Color } from "../../constants";
 
 
 const containerStyles = () => ({
-  height: "calc(100% - 50px)",
-  overflowY: `auto`,
+  // height: "calc(100% - 50px)",
+  // overflowY: `auto`,
 });
 
 const postsListStyles = () => ({
   padding: 0,
   overflowY: `auto`,
 });
+
+const link = {
+  width: "100%",
+  textDecoration: "none",
+};
 
 const itemButton = (theme: Theme) => {
   return {
@@ -42,5 +47,6 @@ export const styles = {
   containerStyles,
   info,
   itemButton,
+  link,
   postsListStyles,
 };
