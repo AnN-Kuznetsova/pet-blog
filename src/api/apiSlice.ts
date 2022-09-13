@@ -21,17 +21,25 @@ export const apiSlice = createApi({
       //   return postsAdapter.setAll(initialState, baseQueryReturnValue);
       // },
     }),
+    getPost: builder.query<PostType, number>({
+      query: (postId) => `/posts/${postId}`,
+    }),
 
     // Users
     getUsers: builder.query<UserType[], void>({
       query: () => `/users`,
       providesTags: [`User`],
     }),
+    getUser: builder.query<UserType, number>({
+      query: (userId) => `/users/${userId}`,
+    }),
   }),
 });
 
 
 export const {
+  useGetPostQuery,
   useGetPostsQuery,
+  useGetUserQuery,
   useGetUsersQuery,
 } = apiSlice;
