@@ -24,6 +24,14 @@ export const apiSlice = createApi({
     getPost: builder.query<PostType, number>({
       query: (postId) => `/posts/${postId}`,
     }),
+    addNewPost: builder.mutation<PostType, Omit<PostType, `id`>>({
+      query: (initialPost) => ({
+        url: `/posts/add`,
+        method: `POST`,
+        body: initialPost,
+      }),
+      invalidatesTags: [`Post`],
+    }),
 
     // Users
     getUsers: builder.query<UserType[], void>({
@@ -33,13 +41,23 @@ export const apiSlice = createApi({
     getUser: builder.query<UserType, number>({
       query: (userId) => `/users/${userId}`,
     }),
+    addNewUser: builder.mutation<UserType, Omit<UserType, `id`>>({
+      query: (initialUser) => ({
+        url: `/users`,
+        method: `POST`,
+        body: initialUser,
+      }),
+      invalidatesTags: [`User`],
+    }),
   }),
 });
 
 
 export const {
-  useGetPostQuery,
   useGetPostsQuery,
-  useGetUserQuery,
+  useGetPostQuery,
+  useAddNewPostMutation,
   useGetUsersQuery,
+  useGetUserQuery,
+  useAddNewUserMutation,
 } = apiSlice;

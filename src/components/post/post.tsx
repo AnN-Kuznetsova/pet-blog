@@ -1,6 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
+import { Box, Button } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 import { useParams } from "react-router-dom";
-import { useGetUserQuery } from "../../api/apiSlice";
+
+import { CircularPogress } from "../circular-pogress/circular-pogress";
+import { styles } from "./styles";
+import { useAddNewPostMutation, useGetUserQuery } from "../../api/apiSlice";
 
 
 export const Post: React.FC = (): JSX.Element => {
@@ -13,10 +18,39 @@ export const Post: React.FC = (): JSX.Element => {
     error,
   } = useGetUserQuery(userId);
 
+  const [addNewPost, {isLoading: isAddPostLoading}] = useAddNewPostMutation();
+  const [isAddPostError, setIsAddPostError] = useState(false);
+
+  const hanleAddPostButtonClick = async () => {
+    try {
+      await addNewPost({
+        userId,
+        title: `111`,
+        date: new Date().toString(),
+        body: `2222222`,
+      }).unwrap();
+    } catch (error: unknown) {
+      console.error(`Failed to save the post: `, error);
+      setIsAddPostError(true);
+    }
+  };
+
   return (
-    <>
-      {postId}
-      {isSuccess && <>{user.name}</> || `User not loading :(`}
-    </>
+    <Box>
+      <LoadingButton
+        type="button"
+        variant="outlined"
+        sx={styles.addPostButton}
+        loading={isAddPostLoading}
+        onClick={hanleAddPostButtonClick}
+      >
+        Add post
+      </LoadingButton>
+
+      <div>
+        {postId}
+        {isSuccess && <>{user.name}</> || `User not loading :(`}
+      </div>
+    </Box>
   );
 };
