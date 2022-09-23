@@ -64,7 +64,6 @@ export const PostsList: React.FC = (): JSX.Element => {
             >
               <Link
                 to={postPageUrl}
-                // className={styles.link
                 style={styles.link}
               >
                 <Button

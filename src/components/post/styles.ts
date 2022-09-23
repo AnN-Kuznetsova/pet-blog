@@ -2,7 +2,7 @@ import { darken, Theme } from "@mui/material";
 import { Color } from "../../constants";
 
 
-const addPostButton = (theme: Theme) => ({
+const postButton = (theme: Theme) => ({
   color: Color.WHITE,
   borderColor: Color.WHITE,
   transition: `all 0.2s`,
@@ -24,5 +24,5 @@ const addPostButton = (theme: Theme) => ({
 
 
 export const styles = {
-  addPostButton,
+  postButton,
 };
