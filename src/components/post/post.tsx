@@ -4,7 +4,8 @@ import { LoadingButton } from "@mui/lab";
 import { useParams } from "react-router-dom";
 
 import { styles } from "./styles";
-import { useAddNewPostMutation, useEditPostMutation, useGetUserQuery } from "../../api/apiSlice";
+import { useAddNewPostMutation, useEditPostMutation } from "../../store/posts/postsSlice";
+import { useGetUserQuery } from "../../store/users/usersSlice";
 
 
 export const Post: React.FC = (): JSX.Element => {

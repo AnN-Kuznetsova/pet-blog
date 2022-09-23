@@ -1,4 +1,5 @@
 import React from "react";
+import { Route, Routes } from "react-router-dom";
 import {
   Box,
   CircularProgress,
@@ -9,13 +10,12 @@ import {
 import { PostsList } from "../posts-list/posts-list";
 import { TopMenu } from "../top-menu/top-menu";
 import { styles } from "./styles";
-import { useGetPostsQuery } from "../../api/apiSlice";
 import { CircularPogress } from "../circular-pogress/circular-pogress";
-import { Route, Routes } from "react-router-dom";
 import { Post } from "../post/post";
 import { AppRoute } from "../../constants";
 import { NotFoundPage } from "../not-found-page/not-found-page";
 import { Layout } from "../layout/layout";
+import { useGetPostsQuery } from "../../store/posts/postsSlice";
 
 
 export const App: React.FC = (): JSX.Element => {

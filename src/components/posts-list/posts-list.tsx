@@ -13,7 +13,8 @@ import { AppRoute } from "../../constants";
 import { createStringAvatar } from "../../helpers/create-string-avatar";
 import { formatDate } from "../../helpers/utils";
 import { styles } from "./styles";
-import { useGetPostsQuery, useGetUsersQuery } from "../../api/apiSlice";
+import { useGetPostsQuery } from "../../store/posts/postsSlice";
+import { useGetUsersQuery } from "../../store/users/usersSlice";
 import type { PostType } from "../../types";
 
 

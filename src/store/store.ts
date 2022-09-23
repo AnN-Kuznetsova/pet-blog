@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { apiSlice } from "../api/apiSlice";
-import { reducer as postsReducer} from "./posts/posts";
+import { reducer as postsReducer} from "./posts/postsSlice";
 
 
 export const createStore = () => {
