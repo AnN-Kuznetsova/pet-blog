@@ -1,70 +1,87 @@
-import { createEntityAdapter, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createEntityAdapter, createSelector } from "@reduxjs/toolkit";
+import type { EntityState } from "@reduxjs/toolkit";
 
-import { RootStateType } from "../..";
 import { apiSlice } from "../../api/apiSlice";
 import type { PostType } from "../../types";
+import type { RootStateType } from "../..";
 
 
-export interface PostsStateType {
-  ids: string[],
-  entities: {
-    [key: string]: PostType,
-  },
-}
+const postsAdapter = createEntityAdapter<PostType>();
+const initialState = postsAdapter.getInitialState();
 
 
 export const extendedApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getPosts: builder.query<PostType[], void>({
+
+    getPosts: builder.query<EntityState<PostType>, void>({
       query: () => `/posts`,
-      providesTags: (result = [], error, arg) => [
-        `Post`,
-        ...result.map(({ id }) => ({ type: `Post` as const, id })),
-      ],
+      transformResponse: (responseData: PostType[]) => {
+        return postsAdapter.setAll(initialState, responseData);
+      },
+      providesTags: (result, error, arg) => {
+        if (!result) {
+          return [ `Post` ];
+        }
+
+        return [
+          `Post`,
+          ...result.ids.map((id) => ({ type: `Post` as const, id })),
+        ];
+      },
     }),
-    getPost: builder.query<PostType, number>({
+
+    getPost: builder.query<PostType, string>({
       query: (postId) => `/posts/${postId}`,
-      providesTags: (result, error, arg) => [{ type: `Post` as const, id: arg }],
+      // transformResponse: (responseData: PostType) => {
+      //   return postsAdapter.upsertOne(initialState, responseData);
+      // },
+      providesTags: (result, error, arg) => {
+        if (!result) {
+          return [];
+        }
+
+        return [{ type: `Post` as const, id: arg }];
+      },
     }),
-    addNewPost: builder.mutation<null, Omit<PostType, `id`>>({
+
+    addNewPost: builder.mutation<PostType, Omit<PostType, `id`>>({
       query: (initialPost) => ({
         url: `/posts/add`,
         method: `POST`,
         body: initialPost,
       }),
-      invalidatesTags: [`Post`],
+      // transformResponse: (responseData, meta, arg) => {
+      //   return postsAdapter.addOne(initialState, {...arg, id: `55`});
+      // },
+      invalidatesTags: (result, error, arg) => {
+        if (error) {
+          return [];
+        }
+
+        return [`Post`];
+      },
     }),
-    editPost: builder.mutation<null, PostType>({
+
+    editPost: builder.mutation<PostType, PostType>({
       query: (post) => ({
-        url: `/posts/${post.id}`,
+        url: `/posts/edit/${post.id}`,
         method: `PUT`,
         body: post,
       }),
-      invalidatesTags: (result, error, arg) => [{ type: `Post` as const, id: arg.id }],
+      // transformResponse: (responseData, meta, arg) => {
+      //   const { id, ...changes } = arg;
+      //   return postsAdapter.updateOne(initialState, { id, changes });
+      // },
+      invalidatesTags: (result, error, arg) => {
+        if (error) {
+          return [];
+        }
+
+        return [{ type: `Post` as const, id: arg.id }];
+      },
     }),
   }),
 });
-
-
-export const postsAdapter = createEntityAdapter();
-const initialState = postsAdapter.getInitialState() as PostsStateType;
-
-export const postsSelectors = postsAdapter.getSelectors(
-  (state: RootStateType) => state.posts
-);
-
-
-const postsSlice = createSlice({
-  name: `posts`,
-  initialState,
-  reducers: {
-    addPosts: (state, action: PayloadAction<PostType[]>) => {
-      postsAdapter.setAll(state, action.payload);
-    },
-  },
-});
-
-const {actions, reducer} = postsSlice;
 
 
 export const {
@@ -74,10 +91,16 @@ export const {
   useEditPostMutation,
 } = extendedApiSlice;
 
-export const {
-  addPosts,
-} = actions;
 
-export {
-  reducer,
-};
+export const selectPostsResult = extendedApiSlice.endpoints.getPosts.select();
+export const useGetPostsQueryState = () => extendedApiSlice.endpoints.getPosts.useQueryState();
+
+const selectPostsData = createSelector(
+  selectPostsResult,
+  (postsResult) => postsResult.data,
+);
+
+export const {
+  selectAll: selectAllPosts,
+  selectById: selectPostById,
+} = postsAdapter.getSelectors<RootStateType>((state) => selectPostsData(state) ?? initialState);

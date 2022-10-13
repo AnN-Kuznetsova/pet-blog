@@ -22,7 +22,12 @@ const postButton = (theme: Theme) => ({
   },
 });
 
+const userInfo = () => ({
+  display: `flex`,
+  alignItems: `flex-end`,
+});
 
 export const styles = {
   postButton,
+  userInfo,
 };

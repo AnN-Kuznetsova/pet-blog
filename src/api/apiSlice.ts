@@ -10,5 +10,5 @@ export const apiSlice = createApi({
     baseUrl: `http://localhost:3000`, // 8080`,
   }),
   tagTypes: [`Post`, `User`],
-  endpoints: (builder) => ({}),
+  endpoints: () => ({}),
 });

@@ -1,13 +1,13 @@
 interface PostType {
-  userId: number;
-  id: number;
+  userId: string;
+  id: string;
   title: string;
   date: string;
   body: string;
 }
 
 interface UserType {
-  id: number;
+  id: string;
   avatar: string | null;
   name: string;
 }

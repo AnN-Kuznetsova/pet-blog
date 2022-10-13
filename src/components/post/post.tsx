@@ -1,23 +1,25 @@
 import React, { useState } from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { useParams } from "react-router-dom";
 
 import { styles } from "./styles";
-import { useAddNewPostMutation, useEditPostMutation } from "../../store/posts/postsSlice";
+import { selectPostById, useAddNewPostMutation, useEditPostMutation } from "../../store/posts/postsSlice";
 import { useGetUserQuery } from "../../store/users/usersSlice";
+import { useSelector } from "react-redux";
+import { RootStateType } from "../..";
+import { UserAvatar } from "../user-avatar/user-avatar";
 
 
-export const Post: React.FC = (): JSX.Element => {
+export const Post: React.FC = (): JSX.Element | null => {
   const {id: postId} = useParams();
-  const userId = 1;
-
+  const post = useSelector((state: RootStateType) => postId ? selectPostById(state, postId) : null);
   const {
     data: user,
-    isSuccess,
-    isError,
-    error,
-  } = useGetUserQuery(userId);
+    isSuccess: isLoadUserSuccess,
+    isError: isLoadUserError,
+  } = useGetUserQuery(post?.userId ?? skipToken);
 
   const [addNewPost, {isLoading: isAddPostLoading}] = useAddNewPostMutation();
   const [editPost, {isLoading: isEditPostLoading}] = useEditPostMutation();
@@ -26,7 +28,7 @@ export const Post: React.FC = (): JSX.Element => {
   const hanleAddPostButtonClick = async () => {
     try {
       await addNewPost({
-        userId,
+        userId: `1`,
         title: `111`,
         date: new Date().toString(),
         body: `2222222`,
@@ -39,11 +41,11 @@ export const Post: React.FC = (): JSX.Element => {
 
 
   const hanleEditPostButtonClick = async () => {
-    if (postId) {
+    if (post) {
       try {
         await editPost({
-          id: +postId,
-          userId,
+          id: post.id,
+          userId: post.userId,
           title: `111`,
           date: new Date().toString(),
           body: `2222222`,
@@ -55,7 +57,7 @@ export const Post: React.FC = (): JSX.Element => {
     }
   };
 
-  return (
+  return post ? (
     <Box>
       <Box>
         <LoadingButton
@@ -80,9 +82,18 @@ export const Post: React.FC = (): JSX.Element => {
       </Box>
 
       <div>
-        {postId}
-        {isSuccess && <>{user.name}</> || `User not loading :(`}
+        <Box sx={styles.userInfo}>
+          <UserAvatar user={user} />
+
+          {isLoadUserSuccess && <Typography>{user.name}</Typography>}
+          {isLoadUserError && <Typography>User is not available ... </Typography>}
+        </Box>
+
+        <Typography variant="h4">{post.title}</Typography>
+        <Typography>{post.body}</Typography>
       </div>
     </Box>
+  ) : (
+    <Typography>Sorry, post not found :(</Typography>
   );
 };

@@ -1,98 +1,43 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import {
-  Avatar,
   Box,
-  Button,
   List,
-  ListItem,
-  Typography,
 } from "@mui/material";
 
-import { AppRoute } from "../../constants";
-import { createStringAvatar } from "../../helpers/create-string-avatar";
-import { formatDate } from "../../helpers/utils";
+import { CircularPogress } from "../circular-pogress/circular-pogress";
+import { PostsListItem } from "../posts-list-item/posts-list-item";
+import { selectAllPosts, useGetPostsQueryState } from "../../store/posts/postsSlice";
 import { styles } from "./styles";
-import { useGetPostsQuery } from "../../store/posts/postsSlice";
-import { useGetUsersQuery } from "../../store/users/usersSlice";
-import type { PostType } from "../../types";
 
 
 export const PostsList: React.FC = (): JSX.Element => {
   const {
-    data: posts = [],
-    // isLoading,
-    // isSuccess,
-    // isError,
-    // error,
-  } = useGetPostsQuery();
+    isLoading: isPostsLoading,
+    isSuccess: isPostsSuccess,
+  } = useGetPostsQueryState();
 
-  const {
-    data: users = [],
-    // isLoading,
-    // isSuccess,
-    // isError,
-    // error,
-  } = useGetUsersQuery();
-
-  const handleItemButtonClick = (post: PostType) => {
-    console.log(post);
-  };
+  const posts = useSelector(selectAllPosts);
 
   return (
     <Box sx={styles.containerStyles}>
-      <List sx={styles.postsListStyles}>
-        {posts.map((post) => {
-          const user = users.find((user) => user.id === post.userId);
-          const date = formatDate(post.date);
-          const postPageUrl = AppRoute.POST_PAGE.replace(`:id`, `${post.id}`);
+      {isPostsLoading && <CircularPogress />}
 
-          const stringAvatar:
-            ReturnType<typeof createStringAvatar> |
-            ReturnType<typeof createStringAvatar> & {sx: ReturnType<typeof styles.avatarStyles>} |
-            null = user && !user.avatar ? createStringAvatar(user.name) : null;
+      {isPostsLoading && <div>{posts.map((post) => post.id)}</div>}
 
-          if (stringAvatar && stringAvatar.sx) {
-            Object.entries(styles.avatarStyles()).forEach(([key, value]) => {
-              stringAvatar.sx[key] = value;
-            });
+      {isPostsSuccess &&
+        <List sx={styles.postsListStyles}>
+          {posts.map((post) => {
+            return (
+              <PostsListItem
+                key={post.id}
+                post={post}
+              />
+            );
           }
-
-          return user ? (
-            <ListItem
-              key={post.id}
-
-            >
-              <Link
-                to={postPageUrl}
-                style={styles.link}
-              >
-                <Button
-                  sx={styles.itemButton}
-                  onClick={handleItemButtonClick.bind(null, post)}
-                >
-                  {user.avatar &&
-                    <Avatar
-                      src={`${user.avatar}`}
-                      alt=""
-                      sx={styles.avatarStyles}
-                    /> ||
-                    <Avatar
-                      {...stringAvatar}
-                    />
-                  }
-
-                  <Box sx={styles.info}>
-                    <Typography>{post.title}</Typography>
-                    <Typography fontSize="0.8rem">{date}</Typography>
-                  </Box>
-                </Button>
-              </Link>
-            </ListItem>
-          ) : null;
-        }
-        )}
-      </List>
+          )}
+        </List>
+      }
     </Box>
   );
 };
