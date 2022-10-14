@@ -1,18 +1,22 @@
 const container = () => ({
   width: "100%",
   height: "100%",
+
+  "&:first-child": {
+    marginTop: "6rem",
+  },
 });
 
 const title = () => ({
   width: "100%",
   textAlign: "center",
-  marginTop: 35,
 });
 
 const text = () => ({
   width: "100%",
-  fontSize: "2.5rem",
+  fontSize: "2rem",
   textAlign: "center",
+  whiteSpace: "pre-line",
 });
 
 

@@ -1,20 +1,23 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box, Typography } from "@mui/material";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
-import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
 
 import { AvatarSize, UserAvatar } from "../user-avatar/user-avatar";
+import { CircularPogress } from "../circular-pogress/circular-pogress";
 import { formatDate } from "../../helpers/utils";
-import { selectPostById } from "../../store/posts/postsSlice";
 import { styles } from "./styles";
+import { useGetPostsQueryState } from "../../store/posts/postsSlice";
 import { useGetUserQuery } from "../../store/users/usersSlice";
-import type { RootStateType } from "../..";
+import { usePost } from "../../hooks/usePost";
 
 
 export const Post: React.FC = (): JSX.Element | null => {
-  const {id: postId} = useParams();
-  const post = useSelector((state: RootStateType) => postId ? selectPostById(state, postId) : null);
+  const {
+    isLoading: isPostsLoading,
+    isSuccess: isPostsSuccess,
+    isError: isPostsError,
+  } = useGetPostsQueryState();
+  const post = usePost();
   const date = post ? formatDate(post.date) : ``;
 
   const {
@@ -23,32 +26,40 @@ export const Post: React.FC = (): JSX.Element | null => {
     isError: isLoadUserError,
   } = useGetUserQuery(post?.userId ?? skipToken);
 
-  const [isPostError, setIsPostError] = useState(false);
-
-  return post ? (
+  return (
     <Box>
-      <Box sx={styles.userInfo}>
-        <UserAvatar
-          user={user}
-          size={AvatarSize.BIG}
-        />
+      {isPostsLoading && <CircularPogress/>}
 
-        {isLoadUserSuccess && <Typography>{user.name}</Typography>}
-        {isLoadUserError && <Typography>User is not available ... </Typography>}
-      </Box>
+      {isPostsSuccess && post &&
+        <>
+          <Box sx={styles.userInfo}>
+            <UserAvatar
+              user={user}
+              size={AvatarSize.BIG}
+            />
 
-      <Box sx={styles.postInfo}>
-        <Typography sx={styles.date}>{date}</Typography>
-        <Typography
-          variant="h4"
-          sx={styles.title}
-        >
-          {post.title}
-        </Typography>
-        <Typography>{post.body}</Typography>
-      </Box>
+            {isLoadUserSuccess && <Typography>{user.name}</Typography>}
+            {isLoadUserError && <Typography>User is not available ... </Typography>}
+          </Box>
+
+          <Box sx={styles.postInfo}>
+            <Typography sx={styles.date}>{date}</Typography>
+            <Typography
+              variant="h4"
+              sx={styles.title}
+            >
+              {post.title}
+            </Typography>
+            <Typography>{post.body}</Typography>
+          </Box>
+        </>
+      }
+
+      {isPostsSuccess && !post &&
+        <Typography variant="h5">Sorry, post not found :(</Typography>
+      }
+
+      {isPostsError && <></>}
     </Box>
-  ) : (
-    <Typography>Sorry, post not found :(</Typography>
   );
 };

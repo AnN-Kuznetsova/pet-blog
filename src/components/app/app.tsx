@@ -10,7 +10,7 @@ import { PostsList } from "../posts-list/posts-list";
 import { styles } from "./styles";
 import { Post } from "../post/post";
 import { AppRoute } from "../../constants";
-import { NotFoundPage } from "../not-found-page/not-found-page";
+import { ErrorPage } from "../error-page/error-page";
 import { Layout } from "../layout/layout";
 
 
@@ -30,7 +30,7 @@ export const App: React.FC = (): JSX.Element => {
             <Route path={AppRoute.POST_PAGE} element={<Post />} />
           </Route>
 
-          <Route path="*" element={<NotFoundPage />} />
+          <Route path="*" element={<ErrorPage error={5005} />} />
         </Routes>
       </Box>
     </>

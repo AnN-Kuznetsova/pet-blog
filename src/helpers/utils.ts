@@ -15,17 +15,17 @@ const formatDate = (date: string) => {
 
 const getColor = (theme: Theme ,colorType: ColorType) => {
   switch (colorType) {
-  case ColorType.BG:
-    return `${darken(theme.palette.primary.light, 0.5)}`;
+    case ColorType.BG:
+      return `${darken(theme.palette.primary.light, 0.5)}`;
 
-  case ColorType.HOVER_BG:
-    return `${darken(theme.palette.primary.light, 0.3)}`;
+    case ColorType.HOVER_BG:
+      return `${darken(theme.palette.primary.light, 0.3)}`;
 
-  case ColorType.DISABLED_BG:
-    return theme.palette.grey[600];
+    case ColorType.DISABLED_BG:
+      return theme.palette.grey[600];
 
-  default:
-    return theme.palette.primary.main;
+    default:
+      return theme.palette.primary.main;
   }
 };
 

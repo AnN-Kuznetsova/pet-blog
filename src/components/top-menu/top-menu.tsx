@@ -3,9 +3,10 @@ import { Box, Button } from "@mui/material";
 import { Link, useMatch } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
 
-import { styles } from "./styles";
 import { AppRoute } from "../../constants";
+import { styles } from "./styles";
 import { useAddNewPostMutation, useEditPostMutation, useGetPostsQueryState } from "../../store/posts/postsSlice";
+import { usePost } from "../../hooks/usePost";
 
 
 export const TopMenu: React.FC = (): JSX.Element => {
@@ -13,10 +14,7 @@ export const TopMenu: React.FC = (): JSX.Element => {
   const [addNewPost, {isLoading: isAddPostLoading}] = useAddNewPostMutation();
   const [editPost, {isLoading: isEditPostLoading}] = useEditPostMutation();
   const [isPostError, setIsPostError] = useState(false);
-
-  console.log(isPostsSuccess);
-
-
+  const post = usePost();
   const isMainPage = useMatch(AppRoute.MAIN);
   const isPostPage = useMatch(AppRoute.POST_PAGE);
 
@@ -76,7 +74,7 @@ export const TopMenu: React.FC = (): JSX.Element => {
         </Link>
       }
 
-      {isPostPage &&
+      {isPostPage && post &&
         <LoadingButton
           type="button"
           variant="contained"
