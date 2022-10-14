@@ -27,7 +27,7 @@ export const PostsListItem: React.FC<PropsTypes> = (props): JSX.Element | null =
   const {data: user} = useGetUserQuery(post.userId);
 
   const handleItemButtonClick = (post: PostType) => {
-    console.log(post);
+    // console.log(post);
   };
 
   return (
@@ -35,10 +35,7 @@ export const PostsListItem: React.FC<PropsTypes> = (props): JSX.Element | null =
       key={post.id}
 
     >
-      <Link
-        to={postPageUrl}
-        style={styles.link}
-      >
+      <Link to={postPageUrl}>
         <Button
           sx={styles.itemButton}
           onClick={handleItemButtonClick.bind(null, post)}

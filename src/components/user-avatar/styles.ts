@@ -1,8 +1,10 @@
-const avatar = (): {
+import type { AvatarSize } from "./user-avatar";
+
+const avatar = (size: AvatarSize): {
   [key: string]: number | string;
 } => ({
-  width: 56,
-  height: 56,
+  width: size,
+  height: size,
 });
 
 

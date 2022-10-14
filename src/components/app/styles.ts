@@ -18,6 +18,11 @@ const globalStyles = (theme: Theme) => ({
     backgroundColor: `${darken(theme.palette.primary.light, 0.65)}`,
     borderRadius: BORDER_RADIUS,
   },
+
+  "a": {
+    width: "100%",
+    textDecoration: "none",
+  },
 });
 
 const appStyles = () => ({

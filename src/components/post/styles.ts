@@ -1,8 +1,8 @@
-import { darken, Theme } from "@mui/material";
-import { Color } from "../../constants";
+// import { darken, Theme } from "@mui/material";
+// import { Color } from "../../constants";
 
 
-const postButton = (theme: Theme) => ({
+/* const postButton = (theme: Theme) => ({
   color: Color.WHITE,
   borderColor: Color.WHITE,
   transition: `all 0.2s`,
@@ -20,14 +20,30 @@ const postButton = (theme: Theme) => ({
   "& .MuiLoadingButton-loadingIndicator": {
     color: `${darken(theme.palette.primary.light, 0.5)}`,
   },
-});
+}); */
 
 const userInfo = () => ({
   display: `flex`,
   alignItems: `flex-end`,
 });
 
+const postInfo = () => ({
+  marginTop: 7,
+});
+
+const date = () => ({
+  fontSize: 14,
+});
+
+const title = () => ({
+  marginBottom: 3,
+  textTransform: `capitalize`,
+});
+
+
 export const styles = {
-  postButton,
   userInfo,
+  postInfo,
+  date,
+  title,
 };

@@ -2,11 +2,6 @@ import { darken, Theme } from "@mui/material";
 import { BORDER_RADIUS, Color } from "../../constants";
 
 
-const link = {
-  width: "100%",
-  textDecoration: "none",
-};
-
 const itemButton = (theme: Theme) => {
   return {
     display: `flex`,
@@ -34,5 +29,4 @@ export const styles = {
   avatar,
   info,
   itemButton,
-  link,
 };

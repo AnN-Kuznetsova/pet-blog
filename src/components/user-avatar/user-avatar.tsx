@@ -9,6 +9,13 @@ import type { UserType } from "../../types";
 interface PropsTypes {
   user: UserType | undefined;
   styles?: {[key: string]: number | string};
+  size?: AvatarSize;
+}
+
+
+export enum AvatarSize {
+  MIDDLE = 56,
+  BIG = 100,
 }
 
 
@@ -16,11 +23,12 @@ export const UserAvatar: React.FC<PropsTypes> = (props): JSX.Element => {
   const {
     user,
     styles: stylesRaw,
+    size = AvatarSize.MIDDLE,
   } = props;
 
   const avatarStyles = {
     ...stylesRaw,
-    ...styles.avatar(),
+    ...styles.avatar(size),
   };
 
   const stringAvatar:
