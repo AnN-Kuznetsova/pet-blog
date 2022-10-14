@@ -5,13 +5,17 @@ import { LoadingButton } from "@mui/lab";
 
 import { styles } from "./styles";
 import { AppRoute } from "../../constants";
-import { useAddNewPostMutation, useEditPostMutation } from "../../store/posts/postsSlice";
+import { useAddNewPostMutation, useEditPostMutation, useGetPostsQueryState } from "../../store/posts/postsSlice";
 
 
 export const TopMenu: React.FC = (): JSX.Element => {
+  const {isSuccess: isPostsSuccess} = useGetPostsQueryState();
   const [addNewPost, {isLoading: isAddPostLoading}] = useAddNewPostMutation();
   const [editPost, {isLoading: isEditPostLoading}] = useEditPostMutation();
   const [isPostError, setIsPostError] = useState(false);
+
+  console.log(isPostsSuccess);
+
 
   const isMainPage = useMatch(AppRoute.MAIN);
   const isPostPage = useMatch(AppRoute.POST_PAGE);
@@ -55,6 +59,7 @@ export const TopMenu: React.FC = (): JSX.Element => {
           variant="contained"
           loading={isAddPostLoading}
           onClick={hanleAddPostButtonClick}
+          disabled={!isPostsSuccess}
         >
           Add post
         </LoadingButton>
@@ -62,7 +67,10 @@ export const TopMenu: React.FC = (): JSX.Element => {
 
       {!isMainPage &&
         <Link to={AppRoute.MAIN}>
-          <Button variant="contained">
+          <Button
+            variant="contained"
+            disabled={!isPostsSuccess}
+          >
             Home
           </Button>
         </Link>
@@ -74,6 +82,7 @@ export const TopMenu: React.FC = (): JSX.Element => {
           variant="contained"
           loading={isEditPostLoading}
           onClick={hanleEditPostButtonClick}
+          disabled={!isPostsSuccess}
         >
           Edit post
         </LoadingButton>

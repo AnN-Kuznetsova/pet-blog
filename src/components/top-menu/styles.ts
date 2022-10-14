@@ -1,50 +1,38 @@
-import { darken, Theme } from "@mui/material";
+import { Theme } from "@mui/material";
 
-
-enum ColorType {
-  BG = `BG`,
-  HOVER_BG = `HOVER_BG`,
-}
+import { ColorType } from "../../constants";
+import { getColor as getColorRaw } from "../../helpers/utils";
 
 
 const container = (theme: Theme) => {
-  const getColor = (colorType: ColorType) => {
-    switch (colorType) {
-    case ColorType.BG:
-      return `${darken(theme.palette.primary.light, 0.5)}`;
-
-    case ColorType.HOVER_BG:
-      return `${darken(theme.palette.primary.light, 0.3)}`;
-
-    default:
-      return theme.palette.primary.main;
-    }
-  };
+  const getColor = getColorRaw.bind(null, theme);
 
   return {
     display: `flex`,
     marginBottom: 7,
 
-    "& > *": {
-      width: `auto`,
-      backgroundColor: getColor(ColorType.BG),
-      borderRadius: 1,
-
-      "&:hover": {
-        backgroundColor: getColor(ColorType.HOVER_BG),
-      },
-    },
-
-    "& button": {
-      backgroundColor: getColor(ColorType.BG),
-
-      "&:hover": {
-        backgroundColor: getColor(ColorType.HOVER_BG),
-      },
-    },
-
     "& >:not(:last-child)": {
       marginRight: 1,
+    },
+
+    "&  >*:has(button)": {
+      width: `auto`,
+    },
+
+    "&  >*:has(button.Mui-disabled)": {
+      pointerEvents: `none`,
+    },
+
+    "& button.MuiButton-root": {
+      backgroundColor: getColor(ColorType.BG),
+
+      "&.Mui-disabled": {
+        backgroundColor: getColor(ColorType.DISABLED_BG),
+      },
+
+      "&:hover": {
+        backgroundColor: getColor(ColorType.HOVER_BG),
+      },
     },
   };
 };
