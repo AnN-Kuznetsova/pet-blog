@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Box, Button } from "@mui/material";
+import { Link, useMatch } from "react-router-dom";
+import { LoadingButton } from "@mui/lab";
 
 import { styles } from "./styles";
-import { Link } from "react-router-dom";
 import { AppRoute } from "../../constants";
-import { LoadingButton } from "@mui/lab";
 import { useAddNewPostMutation, useEditPostMutation } from "../../store/posts/postsSlice";
 
 
@@ -12,6 +12,9 @@ export const TopMenu: React.FC = (): JSX.Element => {
   const [addNewPost, {isLoading: isAddPostLoading}] = useAddNewPostMutation();
   const [editPost, {isLoading: isEditPostLoading}] = useEditPostMutation();
   const [isPostError, setIsPostError] = useState(false);
+
+  const isMainPage = useMatch(AppRoute.MAIN);
+  const isPostPage = useMatch(AppRoute.POST_PAGE);
 
   const hanleAddPostButtonClick = async () => {
     try {
@@ -26,7 +29,6 @@ export const TopMenu: React.FC = (): JSX.Element => {
       setIsPostError(true);
     }
   };
-
 
   const hanleEditPostButtonClick = async () => {
     // if (post) {
@@ -47,29 +49,35 @@ export const TopMenu: React.FC = (): JSX.Element => {
 
   return (
     <Box sx={styles.container}>
-      <Link to={AppRoute.MAIN}>
-        <Button variant="contained">
-          Home
-        </Button>
-      </Link>
+      {isMainPage &&
+        <LoadingButton
+          type="button"
+          variant="contained"
+          loading={isAddPostLoading}
+          onClick={hanleAddPostButtonClick}
+        >
+          Add post
+        </LoadingButton>
+      }
 
-      <LoadingButton
-        type="button"
-        variant="contained"
-        loading={isAddPostLoading}
-        onClick={hanleAddPostButtonClick}
-      >
-        Add post
-      </LoadingButton>
+      {!isMainPage &&
+        <Link to={AppRoute.MAIN}>
+          <Button variant="contained">
+            Home
+          </Button>
+        </Link>
+      }
 
-      <LoadingButton
-        type="button"
-        variant="contained"
-        loading={isEditPostLoading}
-        onClick={hanleEditPostButtonClick}
-      >
-        Edit post
-      </LoadingButton>
+      {isPostPage &&
+        <LoadingButton
+          type="button"
+          variant="contained"
+          loading={isEditPostLoading}
+          onClick={hanleEditPostButtonClick}
+        >
+          Edit post
+        </LoadingButton>
+      }
     </Box>
   );
 };

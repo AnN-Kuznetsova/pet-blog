@@ -6,7 +6,7 @@ const BORDER_RADIUS = `4px`;
 
 enum AppRoute {
   MAIN = `/`,
-  POST_PAGE = `post/:id`,
+  POST_PAGE = `/post/:id`,
 }
 
 
