@@ -7,9 +7,9 @@ import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
 import { SerializedError } from "@reduxjs/toolkit";
 
 
-type ErrorType = FetchBaseQueryError | SerializedError | number | undefined;
+export type ErrorType = FetchBaseQueryError | SerializedError | number | undefined;
 
-interface PropsTypes {
+interface PropsType {
   error: ErrorType;
 }
 
@@ -32,7 +32,7 @@ const getErrorMessage = (error: number) => {
 };
 
 
-export const ErrorPage: React.FC<PropsTypes> = (props): JSX.Element => {
+export const ErrorPage: React.FC<PropsType> = (props): JSX.Element => {
   const {error: errorRaw} = props;
 
   let error: {

@@ -9,6 +9,7 @@ import { styles } from "./styles";
 import { useGetPostsQueryState } from "../../store/posts/postsSlice";
 import { useGetUserQuery } from "../../store/users/usersSlice";
 import { usePost } from "../../hooks/usePost";
+import { ErrorPage } from "../error-page/error-page";
 
 
 export const Post: React.FC = (): JSX.Element | null => {
@@ -16,6 +17,7 @@ export const Post: React.FC = (): JSX.Element | null => {
     isLoading: isPostsLoading,
     isSuccess: isPostsSuccess,
     isError: isPostsError,
+    error: postsError,
   } = useGetPostsQueryState();
   const post = usePost();
   const date = post ? formatDate(post.date) : ``;
@@ -59,7 +61,7 @@ export const Post: React.FC = (): JSX.Element | null => {
         <Typography variant="h5">Sorry, post not found :(</Typography>
       }
 
-      {isPostsError && <></>}
+      {isPostsError && <ErrorPage error={postsError} />}
     </Box>
   );
 };

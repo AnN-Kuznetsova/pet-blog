@@ -15,12 +15,12 @@ import { styles } from "./styles";
 import type { PostType } from "../../types";
 
 
-export interface PropsTypes {
+export interface PropsType {
   post: PostType;
 }
 
 
-export const PostsListItem: React.FC<PropsTypes> = (props): JSX.Element | null => {
+export const PostsListItem: React.FC<PropsType> = (props): JSX.Element | null => {
   const {post} = props;
   const date = formatDate(post.date);
   const postPageUrl = AppRoute.POST_PAGE.replace(`:id`, `${post.id}`);
