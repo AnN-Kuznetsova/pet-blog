@@ -4,12 +4,12 @@ import { skipToken } from "@reduxjs/toolkit/dist/query";
 
 import { AvatarSize, UserAvatar } from "../user-avatar/user-avatar";
 import { CircularPogress } from "../circular-pogress/circular-pogress";
-import { formatDate } from "../../helpers/utils";
+import { DateFormatMode, formatDate } from "../../helpers/utils";
+import { ErrorPage } from "../error-page/error-page";
 import { styles } from "./styles";
 import { useGetPostsQueryState } from "../../store/posts/postsSlice";
 import { useGetUserQuery } from "../../store/users/usersSlice";
 import { usePost } from "../../hooks/usePost";
-import { ErrorPage } from "../error-page/error-page";
 
 
 export const Post: React.FC = (): JSX.Element | null => {
@@ -20,7 +20,7 @@ export const Post: React.FC = (): JSX.Element | null => {
     error: postsError,
   } = useGetPostsQueryState();
   const post = usePost();
-  const date = post ? formatDate(post.date) : ``;
+  const date = post ? formatDate(post.date, DateFormatMode.LONG) : ``;
 
   const {
     data: user,

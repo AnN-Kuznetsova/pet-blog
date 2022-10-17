@@ -7,8 +7,15 @@ import ru from "date-fns/locale/ru";
 import { ColorType } from "../constants";
 
 
-const formatDate = (date: string) => {
-  return format(new Date(date), `do MMM yyyy`, {
+enum DateFormatMode {
+  SHORT = `MMM yyyy`,
+  LONG = `do MMMM yyyy, k:mm`,
+}
+
+const formatDate = (dateString: string, mode: DateFormatMode = DateFormatMode.SHORT): string => {
+  const date = new Date(dateString);
+
+  return format(date, mode, {
     locale: enUS,
   });
 };
@@ -31,6 +38,7 @@ const getColor = (theme: Theme ,colorType: ColorType) => {
 
 
 export {
+  DateFormatMode,
   formatDate,
   getColor,
 };
