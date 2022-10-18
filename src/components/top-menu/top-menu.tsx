@@ -4,12 +4,16 @@ import { Link, useMatch } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
 
 import { AppRoute } from "../../constants";
+import { ModalType } from "../modal/modal";
 import { styles } from "./styles";
 import { useAddNewPostMutation, useEditPostMutation, useGetPostsQueryState } from "../../store/posts/postsSlice";
 import { usePost } from "../../hooks/usePost";
+import { useDispatch } from "react-redux";
+import { setModalType } from "../../store/application/application";
 
 
 export const TopMenu: React.FC = (): JSX.Element => {
+  const dispatch = useDispatch();
   const {isSuccess: isPostsSuccess} = useGetPostsQueryState();
   const [addNewPost, {isLoading: isAddPostLoading}] = useAddNewPostMutation();
   const [editPost, {isLoading: isEditPostLoading}] = useEditPostMutation();
@@ -19,17 +23,19 @@ export const TopMenu: React.FC = (): JSX.Element => {
   const isPostPage = useMatch(AppRoute.POST_PAGE);
 
   const hanleAddPostButtonClick = async () => {
-    try {
-      await addNewPost({
-        userId: `1`,
-        title: `111`,
-        date: new Date().toString(),
-        body: `2222222`,
-      }).unwrap();
-    } catch (error: unknown) {
-      console.error(`Failed to save the post: `, error);
-      setIsPostError(true);
-    }
+    dispatch(setModalType(ModalType.ADD_POST));
+
+    // try {
+    //   await addNewPost({
+    //     userId: `1`,
+    //     title: `111`,
+    //     date: new Date().toString(),
+    //     body: `2222222`,
+    //   }).unwrap();
+    // } catch (error: unknown) {
+    //   console.error(`Failed to save the post: `, error);
+    //   setIsPostError(true);
+    // }
   };
 
   const hanleEditPostButtonClick = async () => {

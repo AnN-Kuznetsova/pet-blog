@@ -1,4 +1,5 @@
 import { darken, Theme } from "@mui/material";
+
 import { BORDER_RADIUS, Color } from "../../constants";
 
 
@@ -22,6 +23,15 @@ const globalStyles = (theme: Theme) => ({
   "a": {
     width: "100%",
     textDecoration: "none",
+  },
+
+  "#modal-root": {
+    position: "fixed" as const,
+    top: "50%",
+    left: "50%",
+    maxHeight: "80%",
+    maxWidth: "80%",
+    transform: "translate(-50%, -50%)",
   },
 });
 
