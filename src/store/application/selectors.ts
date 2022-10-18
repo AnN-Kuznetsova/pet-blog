@@ -1,5 +1,5 @@
 import { RootStateType } from "../..";
-import { ModalType } from "../../components/modal/modal";
+import type { ModalType } from "../../constants";
 
 
 const getModalType = (state: RootStateType): ModalType => state.application.modalType;

@@ -15,6 +15,12 @@ enum AppRoute {
   POST_PAGE = `/post/:id`,
 }
 
+export enum ModalType {
+  NO_MODAL,
+  ADD_POST,
+  EDIT_POST,
+}
+
 
 export {
   AppRoute,

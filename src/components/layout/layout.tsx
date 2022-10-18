@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
 
 import { TopMenu } from "../top-menu/top-menu";
-import { BasicModal } from "../modal/modal";
+import { BasicModal } from "../basic-modal/basic-modal";
 import { styles } from "./styles";
 
 

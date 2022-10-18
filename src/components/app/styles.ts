@@ -24,15 +24,6 @@ const globalStyles = (theme: Theme) => ({
     width: "100%",
     textDecoration: "none",
   },
-
-  "#modal-root": {
-    position: "fixed" as const,
-    top: "50%",
-    left: "50%",
-    maxHeight: "80%",
-    maxWidth: "80%",
-    transform: "translate(-50%, -50%)",
-  },
 });
 
 const appStyles = () => ({
