@@ -15,11 +15,16 @@ enum AppRoute {
   POST_PAGE = `/post/:id`,
 }
 
-export enum ModalType {
+enum ModalType {
   NO_MODAL,
   ADD_POST,
   EDIT_POST,
 }
+
+const ModalTitle: Omit< Record<ModalType, string>, ModalType.NO_MODAL > = {
+  [ModalType.ADD_POST]: `Add new post`,
+  [ModalType.EDIT_POST]: `Edit post`,
+};
 
 
 export {
@@ -27,4 +32,6 @@ export {
   BORDER_RADIUS,
   Color,
   ColorType,
+  ModalType,
+  ModalTitle,
 };

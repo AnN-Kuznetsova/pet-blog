@@ -4,11 +4,11 @@ import { Link, useMatch } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
 
 import { AppRoute, ModalType } from "../../constants";
+import { setModalType } from "../../store/application/application";
 import { styles } from "./styles";
 import { useAddNewPostMutation, useEditPostMutation, useGetPostsQueryState } from "../../store/posts/postsSlice";
 import { usePost } from "../../hooks/usePost";
 import { useDispatch } from "react-redux";
-import { setModalType } from "../../store/application/application";
 
 
 export const TopMenu: React.FC = (): JSX.Element => {

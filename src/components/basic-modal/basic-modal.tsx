@@ -1,37 +1,70 @@
 import React from "react";
-import { Box, Button, Modal } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { Box, IconButton, Modal, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 
-import { ModalType } from "../../constants";
+import { ModalTitle, ModalType } from "../../constants";
 import { PostForm } from "../post-form/post-form";
 import { getModalType } from "../../store/application/selectors";
-import { styles } from "./styles";
 import { setModalType } from "../../store/application/application";
+import { styles } from "./styles";
 
 
-export const BasicModal: React.FC = (): JSX.Element | null => {
+// const getModalContent = (modalType: ModalType, onClose: () => void): JSX.Element => {
+//   switch (modalType) {
+//     case ModalType.ADD_POST:
+//       return <PostForm onModalClose={onClose} />;
+
+//     case ModalType.EDIT_POST:
+//       return <PostForm onModalClose={onClose} />;
+
+//     default:
+//       return <></>;
+//   }
+// };
+
+
+export const BasicModal: React.FC = (): JSX.Element => {
   const dispatch = useDispatch();
   const modalType = useSelector(getModalType);
+  const isModal = modalType !== ModalType.NO_MODAL;
+  const modalTitle = isModal ? ModalTitle[modalType] : ``;
 
   const handleClose = () => {
     dispatch(setModalType(ModalType.NO_MODAL));
   };
 
+  // const modalContent = getModalContent(modalType, handleClose);
+
+  const ModalContent: Omit< Record<ModalType, JSX.Element>, ModalType.NO_MODAL >= {
+    [ModalType.ADD_POST]: <PostForm onModalClose={handleClose} />,
+    [ModalType.EDIT_POST]: <PostForm onModalClose={handleClose} />,
+  };
+
+  const modalContent = isModal ? ModalContent[modalType] : null;
+
   return (
     <Modal
-      open={modalType !== ModalType.NO_MODAL}
+      open={isModal}
       onClose={handleClose}
     >
       <Box sx={styles.container}>
-        <Button></Button>
+        <Typography
+          variant="h5"
+          sx={styles.title}
+        >
+          {modalTitle}
+        </Typography>
 
-        {modalType === ModalType.ADD_POST &&
-          <PostForm />
-        }
+        <IconButton
+          aria-label="close"
+          sx={styles.closeButton}
+          onClick={handleClose}
+        >
+          <CloseIcon />
+        </IconButton>
 
-        {modalType === ModalType.EDIT_POST &&
-          <PostForm />
-        }
+        {modalContent}
       </Box>
     </Modal>
   );
