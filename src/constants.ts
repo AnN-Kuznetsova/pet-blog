@@ -21,7 +21,8 @@ enum ModalType {
   EDIT_POST,
 }
 
-const ModalTitle: Omit< Record<ModalType, string>, ModalType.NO_MODAL > = {
+const ModalTitle: Record<ModalType, string> = {
+  [ModalType.NO_MODAL]: ``,
   [ModalType.ADD_POST]: `Add new post`,
   [ModalType.EDIT_POST]: `Edit post`,
 };

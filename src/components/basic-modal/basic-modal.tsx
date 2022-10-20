@@ -10,38 +10,37 @@ import { setModalType } from "../../store/application/application";
 import { styles } from "./styles";
 
 
-// const getModalContent = (modalType: ModalType, onClose: () => void): JSX.Element => {
-//   switch (modalType) {
-//     case ModalType.ADD_POST:
-//       return <PostForm onModalClose={onClose} />;
-
-//     case ModalType.EDIT_POST:
-//       return <PostForm onModalClose={onClose} />;
-
-//     default:
-//       return <></>;
-//   }
-// };
+interface ModalContentPropsType {
+  modalType: ModalType;
+  onClose: () => void;
+}
 
 
-export const BasicModal: React.FC = (): JSX.Element => {
+const ModalContent: React.FC<ModalContentPropsType> = (props): JSX.Element => {
+  const {
+    modalType,
+    onClose,
+  } = props;
+
+  const Content: Record<ModalType, JSX.Element> = {
+    [ModalType.NO_MODAL]: <></>,
+    [ModalType.ADD_POST]: <PostForm onModalClose={onClose} />,
+    [ModalType.EDIT_POST]: <PostForm onModalClose={onClose} />,
+  };
+
+  return Content[modalType];
+};
+
+
+export const BasicModal: React.FC = (): JSX.Element | null => {
   const dispatch = useDispatch();
   const modalType = useSelector(getModalType);
   const isModal = modalType !== ModalType.NO_MODAL;
-  const modalTitle = isModal ? ModalTitle[modalType] : ``;
+  const modalTitle = ModalTitle[modalType];
 
   const handleClose = () => {
     dispatch(setModalType(ModalType.NO_MODAL));
   };
-
-  // const modalContent = getModalContent(modalType, handleClose);
-
-  const ModalContent: Omit< Record<ModalType, JSX.Element>, ModalType.NO_MODAL >= {
-    [ModalType.ADD_POST]: <PostForm onModalClose={handleClose} />,
-    [ModalType.EDIT_POST]: <PostForm onModalClose={handleClose} />,
-  };
-
-  const modalContent = isModal ? ModalContent[modalType] : null;
 
   return (
     <Modal
@@ -64,7 +63,10 @@ export const BasicModal: React.FC = (): JSX.Element => {
           <CloseIcon />
         </IconButton>
 
-        {modalContent}
+        <ModalContent
+          modalType={modalType}
+          onClose={handleClose}
+        />
       </Box>
     </Modal>
   );
