@@ -1,5 +1,6 @@
-import { darken, Theme } from "@mui/material";
-import { BORDER_RADIUS, Color } from "../../constants";
+import type { Theme } from "@mui/material";
+
+import { BORDER_RADIUS } from "../../helpers/constants";
 
 
 const itemButton = (theme: Theme) => {
@@ -7,9 +8,8 @@ const itemButton = (theme: Theme) => {
     display: `flex`,
     justifyContent: `flex-start`,
     width: `100%`,
-    color: `${Color.WHITE}`,
     textTransform: `none`,
-    border: `1px solid ${darken(theme.palette.primary.light, 0.5)}`,
+    border: `1px solid ${theme.palette.primary.main}`,
     borderRadius: BORDER_RADIUS,
   };
 };

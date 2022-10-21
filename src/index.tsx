@@ -1,9 +1,11 @@
+import { ThemeProvider } from "@mui/material";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 
 import { App } from "./components/app/app";
+import { THEME } from "./helpers/theme";
 import { extendedApiSlice as extendedPostsApiSlice} from "./store/posts/postsSlice";
 import { createStore } from "./store/store";
 
@@ -19,7 +21,9 @@ root.render(
   <BrowserRouter>
     <Provider store={store}>
       <React.StrictMode>
-        <App />
+        <ThemeProvider theme={THEME}>
+          <App />
+        </ThemeProvider>
       </React.StrictMode>
     </Provider>
   </BrowserRouter>

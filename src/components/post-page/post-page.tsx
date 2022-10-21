@@ -12,7 +12,7 @@ import { useGetUserQuery } from "../../store/users/usersSlice";
 import { usePost } from "../../hooks/usePost";
 
 
-export const Post: React.FC = (): JSX.Element | null => {
+export const PostPage: React.FC = (): JSX.Element | null => {
   const {
     isLoading: isPostsLoading,
     isSuccess: isPostsSuccess,

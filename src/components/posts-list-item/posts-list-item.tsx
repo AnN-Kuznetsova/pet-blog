@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 
-import { AppRoute } from "../../constants";
+import { AppRoute } from "../../helpers/constants";
 import { UserAvatar } from "../user-avatar/user-avatar";
 import { formatDate } from "../../helpers/utils";
 import { useGetUserQuery } from "../../store/users/usersSlice";

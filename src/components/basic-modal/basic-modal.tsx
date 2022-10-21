@@ -1,9 +1,9 @@
 import React from "react";
 import CloseIcon from "@mui/icons-material/Close";
-import { Box, IconButton, Modal, Typography } from "@mui/material";
+import { IconButton, Modal, Paper, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 
-import { ModalTitle, ModalType } from "../../constants";
+import { ModalTitle, ModalType } from "../../helpers/constants";
 import { PostForm } from "../post-form/post-form";
 import { getModalType } from "../../store/application/selectors";
 import { setModalType } from "../../store/application/application";
@@ -47,7 +47,7 @@ export const BasicModal: React.FC = (): JSX.Element | null => {
       open={isModal}
       onClose={handleClose}
     >
-      <Box sx={styles.container}>
+      <Paper sx={styles.container}>
         <Typography
           variant="h5"
           sx={styles.title}
@@ -67,7 +67,7 @@ export const BasicModal: React.FC = (): JSX.Element | null => {
           modalType={modalType}
           onClose={handleClose}
         />
-      </Box>
+      </Paper>
     </Modal>
   );
 };

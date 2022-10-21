@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { ModalType } from "../../constants";
+import { ModalType } from "../../helpers/constants";
 
 
 const initialState = {

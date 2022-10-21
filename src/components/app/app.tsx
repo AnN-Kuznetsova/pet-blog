@@ -8,8 +8,8 @@ import {
 
 import { PostsList } from "../posts-list/posts-list";
 import { styles } from "./styles";
-import { Post } from "../post/post";
-import { AppRoute } from "../../constants";
+import { PostPage } from "../post-page/post-page";
+import { AppRoute } from "../../helpers/constants";
 import { ErrorPage } from "../error-page/error-page";
 import { Layout } from "../layout/layout";
 import { ErrorBoundary } from "../error-boundary/error-boundary";
@@ -29,7 +29,7 @@ export const App: React.FC = (): JSX.Element => {
           <Routes>
             <Route path={AppRoute.MAIN} element={<Layout />}>
               <Route index element={<PostsList />} />
-              <Route path={AppRoute.POST_PAGE} element={<Post />} />
+              <Route path={AppRoute.POST_PAGE} element={<PostPage />} />
             </Route>
 
             <Route path="*" element={<ErrorPage error={5005} />} />

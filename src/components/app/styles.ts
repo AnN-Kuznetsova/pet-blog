@@ -1,28 +1,33 @@
-import { darken, Theme } from "@mui/material";
+import { Theme } from "@mui/material";
 
-import { BORDER_RADIUS, Color } from "../../constants";
+import { BORDER_RADIUS } from "../../helpers/constants";
 
 
 const globalStyles = (theme: Theme) => ({
   "::-webkit-scrollbar": {
     width: `10px`,
-    backgroundColor: `${darken(theme.palette.primary.light, 0.5)}`,
+    backgroundColor: theme.palette.primary.main,
     borderRadius: BORDER_RADIUS,
   },
 
   "::-webkit-scrollbar-track": {
-    backgroundColor: `${darken(theme.palette.primary.light, 0.5)}`,
+    backgroundColor: theme.palette.primary.main,
     borderRadius: BORDER_RADIUS,
   },
 
   "::-webkit-scrollbar-thumb": {
-    backgroundColor: `${darken(theme.palette.primary.light, 0.65)}`,
+    backgroundColor: theme.palette.primary.light,
     borderRadius: BORDER_RADIUS,
   },
 
   "a": {
     width: "100%",
     textDecoration: "none",
+    color: theme.palette.text.primary,
+
+    "&:has(button.Mui-disabled)": {
+      pointerEvents: `none` as const,
+    },
   },
 });
 
@@ -30,10 +35,6 @@ const appStyles = () => ({
   padding: "30px 50px",
   height: "100vh",
   overflowY: "hidden",
-
-  color: Color.WHITE,
-
-  backgroundColor: (theme: Theme) => darken(theme.palette.primary.dark, 0.7),
 });
 
 

@@ -6,7 +6,7 @@ const container = () => ({
 });
 
 const main = {
-  height: "calc(100vh - 2 * 30px - 60.5px)",
+  height: "calc(100vh - 2 * 30px - 92.5px)",
   overflowY: "auto",
 } as React.CSSProperties;
 

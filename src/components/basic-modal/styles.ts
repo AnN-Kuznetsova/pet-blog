@@ -1,13 +1,12 @@
 import { Theme } from "@mui/material";
 
 
-const container = (theme: Theme) => ({
+const container = () => ({
   position: "fixed",
   top: "50%",
   left: "50%",
   padding: 4,
   transform: "translate(-50%, -50%)",
-  backgroundColor: theme.palette.primary.light,
 });
 
 const title = () => ({

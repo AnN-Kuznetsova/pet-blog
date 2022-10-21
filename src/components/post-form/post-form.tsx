@@ -4,7 +4,7 @@ import { useFormik } from "formik";
 import { useSelector } from "react-redux";
 
 import { ControlButtonType, FormButtonControlsType, FormButtonControls } from "../form-button-controls/form-button-controls";
-import { ModalType } from "../../constants";
+import { ModalType } from "../../helpers/constants";
 import { styles } from "./styles";
 import { usePost } from "../../hooks/usePost";
 import { getModalType } from "../../store/application/selectors";
