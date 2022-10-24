@@ -4,8 +4,9 @@ import { Box, TextField } from "@mui/material";
 import { useFormik } from "formik";
 
 import { styles } from "./styles";
+import { useAddNewPostMutation, useEditPostMutation } from "../../store/posts/postsSlice";
 import { usePost } from "../../hooks/usePost";
-import { PostType } from "../../types";
+import type { PostType } from "../../types";
 
 
 interface PropsType {
@@ -24,6 +25,8 @@ const validationSchema = Yup.object({
 
 export const PostForm: React.FC<PropsType> = (props) => {
   const {formSubmitId} = props;
+  const [addNewPost, {isLoading: isAddPostLoading}] = useAddNewPostMutation();
+  const [editPost, {isLoading: isEditPostLoading}] = useEditPostMutation();
   const post = usePost();
   const userId = post ? post.userId : ``;
 
@@ -33,7 +36,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
       body: post ? post.body : ``,
     },
     validationSchema,
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       const newPostData: PostType | Omit<PostType, `id`> = {
         id: post ? post.id : undefined,
         userId: userId,
@@ -42,8 +45,15 @@ export const PostForm: React.FC<PropsType> = (props) => {
         body: values.body,
       };
 
-      console.log(newPostData);
-
+      try {
+        if ((newPostData as PostType).id) {
+          await editPost(newPostData as PostType).unwrap();
+        } else {
+          await addNewPost(newPostData).unwrap();
+        }
+      } catch (error: unknown) {
+        console.error(`Failed to save the post: `, error);
+      }
     },
     initialTouched: {
       title: false,
