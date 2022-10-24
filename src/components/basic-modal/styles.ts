@@ -5,12 +5,26 @@ const container = () => ({
   position: "fixed",
   top: "50%",
   left: "50%",
+  display: "flex",
+  flexDirection: "column",
+  maxWidth: "80vw",
+  minHeight: 400,
+  maxHeight: "80vh",
   padding: 4,
   transform: "translate(-50%, -50%)",
 });
 
+const containerInner = () => ({
+  display: "flex",
+  height: "100%",
+  maxHeight: "calc(80vh - 64px - 65px - 68.5px)",
+  marginBottom: "auto",
+  overflow: "auto",
+});
+
 const title = () => ({
-  marginBottom: 3,
+  marginBottom: 4,
+  textTransform: "uppercase",
 });
 
 const closeButton = (theme: Theme) => ({
@@ -28,6 +42,7 @@ const closeButton = (theme: Theme) => ({
 
 export const styles = {
   container,
+  containerInner,
   title,
   closeButton,
 };

@@ -5,7 +5,8 @@ import { BORDER_RADIUS } from "../../helpers/constants";
 
 const globalStyles = (theme: Theme) => ({
   "::-webkit-scrollbar": {
-    width: `10px`,
+    width: `5px`,
+    height: `5px`,
     backgroundColor: theme.palette.primary.main,
     borderRadius: BORDER_RADIUS,
   },
