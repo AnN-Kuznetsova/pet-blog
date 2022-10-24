@@ -14,7 +14,10 @@ const wrapper = () => ({
 
 const control = () => ({
   width: "100%",
-  marginBottom: 5,
+
+  "&:not(:last-child)": {
+    marginBottom: 4,
+  },
 });
 
 
