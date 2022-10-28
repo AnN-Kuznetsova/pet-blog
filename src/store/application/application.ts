@@ -1,9 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { ControlButtonType } from "../../components/modal-button-controls/modal-button-controls";
 import { ModalType } from "../../helpers/constants";
 
 
-const initialState = {
-  modalType: ModalType.NO_MODAL,
+const initialState: {
+  modal: {
+    type: ModalType;
+    buttonControls: ControlButtonType[];
+  }
+} = {
+  modal: {
+    type: ModalType.NO_MODAL,
+    buttonControls: [],
+  },
 };
 
 
@@ -12,7 +21,14 @@ const applicationSlice = createSlice({
   initialState,
   reducers: {
     setModalType: (state, action) => {
-      state.modalType = action.payload;
+      state.modal.type = action.payload;
+
+      if (action.payload === ModalType.NO_MODAL) {
+        state.modal.buttonControls = [];
+      }
+    },
+    setModalButtonControls: (state, action) => {
+      state.modal.buttonControls = action.payload;
     },
   },
 });
@@ -22,6 +38,7 @@ const {actions, reducer} = applicationSlice;
 
 export const {
   setModalType,
+  setModalButtonControls,
 } = actions;
 
 export {

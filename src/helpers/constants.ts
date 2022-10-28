@@ -6,9 +6,9 @@ enum AppRoute {
 }
 
 enum ModalType {
-  NO_MODAL,
-  ADD_POST,
-  EDIT_POST,
+  NO_MODAL = `NO_MODAL`,
+  ADD_POST = `ADD_POST`,
+  EDIT_POST = `EDIT_POST`,
 }
 
 const ModalTitle: Record<ModalType, string> = {

@@ -1,16 +1,23 @@
 import * as Yup from "yup";
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, TextField } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 
+import { ModalType } from "../../helpers/constants";
+import { ModalButtonControlsType } from "../modal-button-controls/modal-button-controls";
+import { getModalType } from "../../store/application/selectors";
+import { setModalButtonControls } from "../../store/application/application";
 import { styles } from "./styles";
 import { useAddNewPostMutation, useEditPostMutation } from "../../store/posts/postsSlice";
 import { usePost } from "../../hooks/usePost";
 import type { PostType } from "../../types";
 
 
+const PostTextRowsCount = 5;
+
 interface PropsType {
-  formSubmitId: string;
+  onModalClose: () => void;
 }
 
 const validationSchema = Yup.object({
@@ -24,11 +31,14 @@ const validationSchema = Yup.object({
 
 
 export const PostForm: React.FC<PropsType> = (props) => {
-  const {formSubmitId} = props;
+  const {onModalClose} = props;
+  const dispatch = useDispatch();
+  const modalType = useSelector(getModalType);
   const [addNewPost, {isLoading: isAddPostLoading}] = useAddNewPostMutation();
   const [editPost, {isLoading: isEditPostLoading}] = useEditPostMutation();
   const post = usePost();
   const userId = post ? post.userId : ``;
+  const formDisabled = isAddPostLoading || isEditPostLoading;
 
   const formik = useFormik({
     initialValues: {
@@ -61,9 +71,50 @@ export const PostForm: React.FC<PropsType> = (props) => {
     },
   });
 
+  useEffect(() => {
+    const buttonControls = [];
+    const isNewData = !post && Object.values(formik.touched).every((touch) => touch === true);
+
+    if(modalType === ModalType.ADD_POST) {
+      buttonControls.push({
+        label: ModalButtonControlsType.SAVE,
+        formSubmitId: `${modalType}`,
+        isDisabled: !(formik.isValid && isNewData) || isAddPostLoading,
+        isLoading: isAddPostLoading,
+      });
+    }
+
+    if (modalType === ModalType.EDIT_POST) {
+      buttonControls.push({
+        label: ModalButtonControlsType.SEND,
+        formSubmitId: `${modalType}`,
+        isDisabled: !(formik.isValid && isNewData) || isEditPostLoading,
+        isLoading: isEditPostLoading,
+      });
+    }
+
+    buttonControls.push({
+      label: ModalButtonControlsType.CANCEL,
+      onClick: onModalClose,
+      isDisabled: formDisabled,
+    });
+
+    dispatch(setModalButtonControls(buttonControls));
+  }, [
+    dispatch,
+    isAddPostLoading,
+    isEditPostLoading,
+    modalType,
+    onModalClose,
+    formDisabled,
+    formik.isValid,
+    formik.touched,
+    post,
+  ]);
+
   return (
     <form
-      id={formSubmitId}
+      id={`${modalType}`}
       onSubmit={formik.handleSubmit}
     >
       <Box sx={styles.container}>
@@ -77,6 +128,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
             onBlur={formik.handleBlur}
             error={formik.touched.title && Boolean(formik.errors.title)}
             helperText={formik.touched.title && formik.errors.title}
+            disabled={formDisabled}
             sx={styles.control}
             // autoFocus={true}
           />
@@ -91,7 +143,9 @@ export const PostForm: React.FC<PropsType> = (props) => {
             onBlur={formik.handleBlur}
             error={formik.touched.body && Boolean(formik.errors.body)}
             helperText={formik.touched.body && formik.errors.body}
+            disabled={formDisabled}
             sx={styles.control}
+            rows={PostTextRowsCount}
           />
         </Box>
       </Box>

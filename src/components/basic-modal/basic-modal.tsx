@@ -14,6 +14,7 @@ import { getModalType } from "../../store/application/selectors";
 import { setModalType } from "../../store/application/application";
 import { styles } from "./styles";
 import { useModalContent } from "../../hooks/useModalContent";
+import { ModalButtonControls } from "../modal-button-controls/modal-button-controls";
 
 
 export const BasicModal: React.FC = (): JSX.Element | null => {
@@ -50,10 +51,10 @@ export const BasicModal: React.FC = (): JSX.Element | null => {
         </IconButton>
 
         <Box sx={styles.containerInner}>
-          {modalContent.content}
+          {modalContent}
         </Box>
 
-        {modalContent.buttonControls}
+        <ModalButtonControls />
       </Paper>
     </Modal>
   );
