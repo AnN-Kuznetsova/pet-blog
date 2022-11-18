@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box } from "@mui/material";
-import { useSelector } from "react-redux";
 
-import { getModalButtonControls } from "../../store/application/selectors";
 import { styles } from "./styles";
 import { LoadingButton } from "@mui/lab";
+import { ModalButtonsContext } from "../basic-modal/basic-modal";
+import { ModalType } from "../../helpers/constants";
 
 
 export enum ModalButtonControlsType {
@@ -22,15 +22,17 @@ export interface ControlButtonType {
   isDisabled?: boolean;
 }
 
-// export const ModalControls: Record<ModalType, ModalButtonControlsType[]> = {
-//   [ModalType.NO_MODAL]: [],
-//   [ModalType.ADD_POST]: [ModalButtonControlsType.SAVE, ModalButtonControlsType.CANCEL],
-//   [ModalType.EDIT_POST]: [ModalButtonControlsType.SEND, ModalButtonControlsType.CANCEL],
-// };
+export const ModalControls: Record<ModalType, ModalButtonControlsType[]> = {
+  [ModalType.NO_MODAL]: [],
+  [ModalType.ADD_POST]: [ModalButtonControlsType.SAVE, ModalButtonControlsType.CANCEL],
+  [ModalType.EDIT_POST]: [ModalButtonControlsType.SEND, ModalButtonControlsType.CANCEL],
+};
+
+export const DEFAULT_MODAL_BUTTON_CONTROLS: ControlButtonType[] = []; //ModalControls[ModalType.NO_MODAL]; //[];
 
 
 export const ModalButtonControls: React.FC = () => {
-  const modalButtonControls = useSelector(getModalButtonControls);
+  const [modalButtonControls, setModalButtonControls] = useContext(ModalButtonsContext);
 
   return (
     <Box sx={styles.container}>

@@ -1,13 +1,18 @@
 import * as Yup from "yup";
-import React, { useEffect } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { Box, TextField } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
+import { useSelector } from "react-redux";
 
 import { ModalType } from "../../helpers/constants";
-import { ModalButtonControlsType } from "../modal-button-controls/modal-button-controls";
+import { ControlButtonType, ModalButtonControlsType } from "../modal-button-controls/modal-button-controls";
+import { ModalButtonsContext } from "../basic-modal/basic-modal";
 import { getModalType } from "../../store/application/selectors";
-import { setModalButtonControls } from "../../store/application/application";
 import { styles } from "./styles";
 import { useAddNewPostMutation, useEditPostMutation } from "../../store/posts/postsSlice";
 import { usePost } from "../../hooks/usePost";
@@ -19,6 +24,8 @@ const PostTextRowsCount = 5;
 interface PropsType {
   onModalClose: () => void;
 }
+
+type ButtonControlsType = Partial<Record<ModalButtonControlsType, ControlButtonType>>;
 
 const validationSchema = Yup.object({
   title: Yup.string()
@@ -32,7 +39,6 @@ const validationSchema = Yup.object({
 
 export const PostForm: React.FC<PropsType> = (props) => {
   const {onModalClose} = props;
-  const dispatch = useDispatch();
   const modalType = useSelector(getModalType);
   const [addNewPost, {isLoading: isAddPostLoading}] = useAddNewPostMutation();
   const [editPost, {isLoading: isEditPostLoading}] = useEditPostMutation();
@@ -40,12 +46,15 @@ export const PostForm: React.FC<PropsType> = (props) => {
   const userId = post ? post.userId : ``;
   const formDisabled = isAddPostLoading || isEditPostLoading;
 
+  const [modalButtonControls, setModalButtonControls] = useContext(ModalButtonsContext);
+
   const formik = useFormik({
     initialValues: {
       title: post ? post.title : ``,
       body: post ? post.body : ``,
     },
     validationSchema,
+    validateOnMount: true,
     onSubmit: async (values) => {
       const newPostData: PostType | Omit<PostType, `id`> = {
         id: post ? post.id : undefined,
@@ -71,45 +80,83 @@ export const PostForm: React.FC<PropsType> = (props) => {
     },
   });
 
-  useEffect(() => {
-    const buttonControls = [];
-    const isNewData = !post && Object.values(formik.touched).every((touch) => touch === true);
-
-    if(modalType === ModalType.ADD_POST) {
-      buttonControls.push({
-        label: ModalButtonControlsType.SAVE,
-        formSubmitId: `${modalType}`,
-        isDisabled: !(formik.isValid && isNewData) || isAddPostLoading,
-        isLoading: isAddPostLoading,
-      });
-    }
-
-    if (modalType === ModalType.EDIT_POST) {
-      buttonControls.push({
-        label: ModalButtonControlsType.SEND,
-        formSubmitId: `${modalType}`,
-        isDisabled: !(formik.isValid && isNewData) || isEditPostLoading,
-        isLoading: isEditPostLoading,
-      });
-    }
-
-    buttonControls.push({
+  const [buttonControls, setButtonControls]: [
+    ButtonControlsType,
+    React.Dispatch<React.SetStateAction<ButtonControlsType>>,
+  ] = useState({
+    [ModalButtonControlsType.SAVE]: {
+      label: ModalButtonControlsType.SAVE,
+      formSubmitId: `${modalType}`,
+      isDisabled: !formik.isValid || isAddPostLoading,
+      isLoading: isAddPostLoading,
+    },
+    [ModalButtonControlsType.SEND]: {
+      label: ModalButtonControlsType.SEND,
+      formSubmitId: `${modalType}`,
+      isDisabled: formik.isValid || isEditPostLoading,
+      isLoading: isEditPostLoading,
+    },
+    [ModalButtonControlsType.CANCEL]: {
       label: ModalButtonControlsType.CANCEL,
       onClick: onModalClose,
       isDisabled: formDisabled,
-    });
+    },
+  } as ButtonControlsType);
 
-    dispatch(setModalButtonControls(buttonControls));
+  const updateButtonControls = useCallback((buttonType: ModalButtonControlsType, buttonLoading: boolean) => {
+    if (
+      buttonControls[buttonType]?.isDisabled !== (!formik.isValid || buttonLoading) ||
+      buttonControls[buttonType]?.isLoading !== buttonLoading
+    ) {
+      setButtonControls({
+        ...buttonControls,
+        [buttonType]: {
+          ...buttonControls[buttonType],
+          isDisabled: !formik.isValid || buttonLoading,
+          isLoading: buttonLoading,
+        } as ControlButtonType,
+      });
+    }
   }, [
-    dispatch,
+    formik.isValid,
+    buttonControls,
+  ]);
+
+  const getError = (touched?: boolean, error?: string) => {
+    const isNewPost = modalType === ModalType.ADD_POST;
+
+    return isNewPost ?
+      touched && Boolean(error)
+      : Boolean(error);
+  };
+
+  useEffect(() => {
+    if(modalType === ModalType.ADD_POST) {
+      setModalButtonControls([
+        buttonControls[ModalButtonControlsType.SAVE],
+        buttonControls[ModalButtonControlsType.CANCEL],
+      ] as ControlButtonType[]);
+    }
+
+    if(modalType === ModalType.EDIT_POST) {
+      setModalButtonControls([
+        buttonControls[ModalButtonControlsType.SEND],
+        buttonControls[ModalButtonControlsType.CANCEL],
+      ] as ControlButtonType[]);
+    }
+  }, [
+    setModalButtonControls,
+    modalType,
+    buttonControls,
+  ]);
+
+  useEffect(() => {
+    updateButtonControls(ModalButtonControlsType.SAVE, isAddPostLoading);
+    updateButtonControls(ModalButtonControlsType.SEND, isEditPostLoading);
+  }, [
     isAddPostLoading,
     isEditPostLoading,
-    modalType,
-    onModalClose,
-    formDisabled,
-    formik.isValid,
-    formik.touched,
-    post,
+    updateButtonControls,
   ]);
 
   return (
@@ -126,7 +173,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
             value={formik.values.title}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            error={formik.touched.title && Boolean(formik.errors.title)}
+            error={getError(formik.touched.title, formik.errors.title)}
             helperText={formik.touched.title && formik.errors.title}
             disabled={formDisabled}
             sx={styles.control}
@@ -141,7 +188,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
             value={formik.values.body}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            error={formik.touched.body && Boolean(formik.errors.body)}
+            error={getError(formik.touched.body,formik.errors.body)}
             helperText={formik.touched.body && formik.errors.body}
             disabled={formDisabled}
             sx={styles.control}

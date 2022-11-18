@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   Box,
@@ -9,12 +9,27 @@ import {
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 
+import { ControlButtonType, DEFAULT_MODAL_BUTTON_CONTROLS, ModalButtonControls } from "../modal-button-controls/modal-button-controls";
 import { ModalTitle, ModalType } from "../../helpers/constants";
 import { getModalType } from "../../store/application/selectors";
 import { setModalType } from "../../store/application/application";
 import { styles } from "./styles";
 import { useModalContent } from "../../hooks/useModalContent";
-import { ModalButtonControls } from "../modal-button-controls/modal-button-controls";
+
+
+// interface ModalButtonsContextType {
+//   buttons: ControlButtonType[];
+//   setButtons: Dispatch<SetStateAction<ControlButtonType[]>>;
+// }
+type ModalButtonsContextType = [
+  modalButtonControls: ControlButtonType[],
+  setModalButtonControls: Dispatch<SetStateAction<ControlButtonType[]>>,
+];
+
+export const ModalButtonsContext = React.createContext({
+  // buttons: DEFAULT_MODAL_BUTTON_CONTROLS,
+  // setButtons:
+} as ModalButtonsContextType);
 
 
 export const BasicModal: React.FC = (): JSX.Element | null => {
@@ -22,6 +37,13 @@ export const BasicModal: React.FC = (): JSX.Element | null => {
   const modalType = useSelector(getModalType);
   const isModal = modalType !== ModalType.NO_MODAL;
   const modalTitle = ModalTitle[modalType];
+
+  // const [modalButtonControls, setModalButtonControls] = useState(DEFAULT_MODAL_BUTTON_CONTROLS);
+  const modalButtonControls = useState(DEFAULT_MODAL_BUTTON_CONTROLS);
+  // const [modalButtonContext, setModalButtonContext] = useState({
+  //   buttons: modalButtonControls,
+  //   setButtons: setModalButtonControls,
+  // });
 
   const handleClose = () => {
     dispatch(setModalType(ModalType.NO_MODAL));
@@ -34,28 +56,30 @@ export const BasicModal: React.FC = (): JSX.Element | null => {
       open={isModal}
       onClose={handleClose}
     >
-      <Paper sx={styles.container}>
-        <Typography
-          variant="h5"
-          sx={styles.title}
-        >
-          {modalTitle}
-        </Typography>
+      <ModalButtonsContext.Provider value={modalButtonControls}>
+        <Paper sx={styles.container}>
+          <Typography
+            variant="h5"
+            sx={styles.title}
+          >
+            {modalTitle}
+          </Typography>
 
-        <IconButton
-          aria-label="close"
-          sx={styles.closeButton}
-          onClick={handleClose}
-        >
-          <CloseIcon />
-        </IconButton>
+          <IconButton
+            aria-label="close"
+            sx={styles.closeButton}
+            onClick={handleClose}
+          >
+            <CloseIcon />
+          </IconButton>
 
-        <Box sx={styles.containerInner}>
-          {modalContent}
-        </Box>
+          <Box sx={styles.containerInner}>
+            {modalContent}
+          </Box>
 
-        <ModalButtonControls />
-      </Paper>
+          <ModalButtonControls />
+        </Paper>
+      </ModalButtonsContext.Provider>
     </Modal>
   );
 };
