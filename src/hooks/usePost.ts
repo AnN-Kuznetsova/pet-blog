@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
-import { selectPostById } from "../store/posts/postsSlice";
+import { selectPostById } from "../components/api/postsSlice";
 import type { RootStateType } from "..";
 
 

@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { AppRoute, ModalType } from "../../helpers/constants";
 import { setModalType } from "../../store/application/application";
 import { styles } from "./styles";
-import { useGetPostsQueryState } from "../../store/posts/postsSlice";
+import { useGetPostsQueryState } from "../api/postsSlice";
 
 
 export const TopMenu: React.FC = (): JSX.Element => {

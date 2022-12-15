@@ -14,7 +14,7 @@ import { ControlButtonType, ModalButtonControlsType } from "../modal-button-cont
 import { ModalButtonsContext } from "../basic-modal/basic-modal";
 import { getModalType } from "../../store/application/selectors";
 import { styles } from "./styles";
-import { useAddNewPostMutation, useEditPostMutation } from "../../store/posts/postsSlice";
+import { useAddNewPostMutation, useEditPostMutation } from "../api/postsSlice";
 import { usePost } from "../../hooks/usePost";
 import type { PostType } from "../../types";
 

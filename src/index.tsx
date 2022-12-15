@@ -6,7 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 
 import { App } from "./components/app/app";
 import { THEME } from "./helpers/theme";
-import { extendedApiSlice as extendedPostsApiSlice} from "./store/posts/postsSlice";
+import { extendedApiSlice as extendedPostsApiSlice} from "./components/api/postsSlice";
 import { createStore } from "./store/store";
 
 

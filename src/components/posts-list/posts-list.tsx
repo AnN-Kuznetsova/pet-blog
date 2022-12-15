@@ -7,7 +7,7 @@ import {
 
 import { CircularPogress } from "../circular-pogress/circular-pogress";
 import { PostsListItem } from "../posts-list-item/posts-list-item";
-import { selectAllPosts, useGetPostsQueryState } from "../../store/posts/postsSlice";
+import { selectAllPosts, useGetPostsQueryState } from "../api/postsSlice";
 import { styles } from "./styles";
 import { ErrorPage } from "../error-page/error-page";
 
