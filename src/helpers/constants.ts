@@ -1,4 +1,5 @@
 const BORDER_RADIUS = `4px`;
+const SNACKBAR_AUTO_HIDE_DURATION = 6000; // ms
 
 enum AppRoute {
   MAIN = `/`,
@@ -19,8 +20,9 @@ const ModalTitle: Record<ModalType, string> = {
 
 
 export {
-  AppRoute,
   BORDER_RADIUS,
+  SNACKBAR_AUTO_HIDE_DURATION,
+  AppRoute,
   ModalType,
   ModalTitle,
 };

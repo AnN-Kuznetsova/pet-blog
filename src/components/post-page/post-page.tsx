@@ -8,7 +8,7 @@ import { DateFormatMode, formatDate } from "../../helpers/utils";
 import { ErrorPage } from "../error-page/error-page";
 import { styles } from "./styles";
 import { useGetPostsQueryState } from "../api/postsSlice";
-import { useGetUserQuery } from "../../store/users/usersSlice";
+import { useGetUserQuery } from "../api/usersSlice";
 import { usePost } from "../../hooks/usePost";
 
 

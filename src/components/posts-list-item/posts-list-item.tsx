@@ -10,7 +10,7 @@ import {
 import { AppRoute } from "../../helpers/constants";
 import { UserAvatar } from "../user-avatar/user-avatar";
 import { formatDate } from "../../helpers/utils";
-import { useGetUserQuery } from "../../store/users/usersSlice";
+import { useGetUserQuery } from "../api/usersSlice";
 import { styles } from "./styles";
 import type { PostType } from "../../types";
 

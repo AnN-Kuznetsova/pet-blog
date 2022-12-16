@@ -6,26 +6,38 @@ import React, {
   useState,
 } from "react";
 import { Box, TextField } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
-import { useSelector } from "react-redux";
-
-import { ModalType } from "../../helpers/constants";
 import { ControlButtonType, ModalButtonControlsType } from "../modal-button-controls/modal-button-controls";
+import { ModalType } from "../../helpers/constants";
 import { ModalButtonsContext } from "../basic-modal/basic-modal";
+import { SnackbarType } from "../snack/snack";
 import { getModalType } from "../../store/application/selectors";
+import { setModalType, setSnackbar } from "../../store/application/application";
 import { styles } from "./styles";
 import { useAddNewPostMutation, useEditPostMutation } from "../api/postsSlice";
 import { usePost } from "../../hooks/usePost";
 import type { PostType } from "../../types";
 
 
-const PostTextRowsCount = 5;
-
 interface PropsType {
   onModalClose: () => void;
 }
 
 type ButtonControlsType = Partial<Record<ModalButtonControlsType, ControlButtonType>>;
+
+interface PostFormValuesType {
+  title: string;
+  body: string;
+}
+
+
+const POST_TEXT_ROWS_COUNT = 5;
+
+const SnackbarMessage: Omit<Record<SnackbarType, string>, SnackbarType.NO_SNACK> = {
+  [SnackbarType.SUCCESS]: `It\`s Successful Success!`,
+  [SnackbarType.ERROR]: `It\`s Fiasco Bro :(`,
+};
 
 const validationSchema = Yup.object({
   title: Yup.string()
@@ -39,6 +51,7 @@ const validationSchema = Yup.object({
 
 export const PostForm: React.FC<PropsType> = (props) => {
   const {onModalClose} = props;
+  const dispatch = useDispatch();
   const modalType = useSelector(getModalType);
   const [addNewPost, {isLoading: isAddPostLoading}] = useAddNewPostMutation();
   const [editPost, {isLoading: isEditPostLoading}] = useEditPostMutation();
@@ -48,6 +61,35 @@ export const PostForm: React.FC<PropsType> = (props) => {
 
   const [modalButtonControls, setModalButtonControls] = useContext(ModalButtonsContext);
 
+  const handleSubmit = async (values: PostFormValuesType) => {
+    const newPostData: PostType | Omit<PostType, `id`> = {
+      id: post ? post.id : undefined,
+      userId: userId,
+      date: new Date().toString(),
+      title: values.title,
+      body: values.body,
+    };
+
+    try {
+      if ((newPostData as PostType).id) {
+        await editPost(newPostData as PostType).unwrap();
+      } else {
+        await addNewPost(newPostData).unwrap();
+      }
+      dispatch(setModalType(ModalType.NO_MODAL));
+      dispatch(setSnackbar({
+        type: SnackbarType.SUCCESS,
+        message: SnackbarMessage[SnackbarType.SUCCESS],
+      }));
+    } catch (error: unknown) {
+      //  console.error(`Failed to save the post: `, error);
+      dispatch(setSnackbar({
+        type: SnackbarType.ERROR,
+        message: SnackbarMessage[SnackbarType.ERROR],
+      }));
+    }
+  };
+
   const formik = useFormik({
     initialValues: {
       title: post ? post.title : ``,
@@ -55,31 +97,15 @@ export const PostForm: React.FC<PropsType> = (props) => {
     },
     validationSchema,
     validateOnMount: true,
-    onSubmit: async (values) => {
-      const newPostData: PostType | Omit<PostType, `id`> = {
-        id: post ? post.id : undefined,
-        userId: userId,
-        date: new Date().toString(),
-        title: values.title,
-        body: values.body,
-      };
-
-      try {
-        if ((newPostData as PostType).id) {
-          await editPost(newPostData as PostType).unwrap();
-        } else {
-          await addNewPost(newPostData).unwrap();
-        }
-      } catch (error: unknown) {
-        console.error(`Failed to save the post: `, error);
-      }
-    },
+    onSubmit: handleSubmit,
     initialTouched: {
       title: false,
       body: false,
     },
   });
 
+  // TODO: вынести создание кнопок в отдельную функцию,
+  // чтоб отплёвывала нужную кнопку сама по запросу с аргументами
   const [buttonControls, setButtonControls]: [
     ButtonControlsType,
     React.Dispatch<React.SetStateAction<ButtonControlsType>>,
@@ -192,7 +218,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
             helperText={formik.touched.body && formik.errors.body}
             disabled={formDisabled}
             sx={styles.control}
-            rows={PostTextRowsCount}
+            rows={POST_TEXT_ROWS_COUNT}
           />
         </Box>
       </Box>
