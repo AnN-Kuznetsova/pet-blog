@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { ModalType } from "../../helpers/constants";
-import type { SnackType } from "../../types";
+import type { SnackType, SnackTypeRaw } from "../../types";
 
 
 const initialState: {
@@ -24,10 +24,26 @@ const applicationSlice = createSlice({
       state.modal.type = action.payload;
     },
 
-    addSnack: (state, action: {type: string; payload: SnackType}) => {
-      const addedSnack = action.payload;
+    addSnack: (state, action: {type: string; payload: SnackTypeRaw}) => {
+      const addedSnack: SnackType = {
+        ...action.payload,
+        isOpen: true,
+        isTimeout: false,
+      };
       const newSnackbar = [...state.snackbar, addedSnack];
       state.snackbar = newSnackbar;
+    },
+
+    changeSnack: (state, action: {type: string; payload: SnackType}) => {
+      const newSnackData = action.payload;
+
+      state.snackbar = state.snackbar.map((snack) => {
+        if (snack.id === newSnackData.id) {
+          return newSnackData;
+        }
+
+        return {...snack};
+      });
     },
 
     hideSnack: (state, action: {type: string; payload: SnackType}) => {
@@ -58,6 +74,7 @@ const {actions, reducer} = applicationSlice;
 export const {
   setModalType,
   addSnack,
+  changeSnack,
   hideSnack,
   removeSnack,
 } = actions;

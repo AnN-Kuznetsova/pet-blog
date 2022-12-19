@@ -11,13 +11,13 @@ import { useFormik } from "formik";
 import { ControlButtonType, ModalButtonControlsType } from "../modal-button-controls/modal-button-controls";
 import { ModalType } from "../../helpers/constants";
 import { ModalButtonsContext } from "../basic-modal/basic-modal";
-import { setSnackTimeout, SnackbarType } from "../snack/snack";
+import { SnackbarType } from "../snack/snack";
 import { getModalType } from "../../store/application/selectors";
-import { setModalType, addSnack, hideSnack } from "../../store/application/application";
+import { setModalType, addSnack } from "../../store/application/application";
 import { styles } from "./styles";
 import { useAddNewPostMutation, useEditPostMutation } from "../api/postsSlice";
 import { usePost } from "../../hooks/usePost";
-import type { PostType } from "../../types";
+import type { PostType, SnackTypeRaw } from "../../types";
 
 
 interface PropsType {
@@ -76,26 +76,22 @@ export const PostForm: React.FC<PropsType> = (props) => {
       } else {
         await addNewPost(newPostData).unwrap();
       }
-      const snack = {
+      const snack: SnackTypeRaw = {
         id: new Date().getTime(),
         type: SnackbarType.SUCCESS,
         message: SnackbarMessage[SnackbarType.SUCCESS],
-        isOpen: true,
       };
 
       dispatch(setModalType(ModalType.NO_MODAL));
       dispatch(addSnack(snack));
-      setSnackTimeout(() => dispatch(hideSnack(snack)));
     } catch (error: unknown) {
-      const snack = {
+      const snack: SnackTypeRaw = {
         id: new Date().getTime(),
         type: SnackbarType.ERROR,
         message: SnackbarMessage[SnackbarType.ERROR],
-        isOpen: true,
       };
 
       dispatch(addSnack(snack));
-      setSnackTimeout(() => dispatch(hideSnack(snack)));
     }
   };
 

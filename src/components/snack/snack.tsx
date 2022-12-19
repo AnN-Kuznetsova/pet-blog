@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Alert,
   AlertColor,
@@ -11,7 +11,7 @@ import { TransitionProps } from "@mui/material/transitions";
 import { Stack } from "@mui/system";
 import { SNACKBAR_AUTO_HIDE_DURATION } from "../../helpers/constants";
 import { getSnackbar } from "../../store/application/selectors";
-import { hideSnack, removeSnack } from "../../store/application/application";
+import { changeSnack, hideSnack, removeSnack } from "../../store/application/application";
 import { SnackType } from "../../types";
 import { styles } from "./styles";
 
@@ -33,13 +33,6 @@ const TransitionComponent: React.JSXElementConstructor<TransitionProps & {
 };
 
 
-export const setSnackTimeout = (cb: ()=>void) => {
-  setTimeout(() => {
-    cb();
-  }, SNACKBAR_AUTO_HIDE_DURATION);
-};
-
-
 export const Snack: React.FC = () => {
   const dispatch = useDispatch();
   const snackbar = useSelector(getSnackbar);
@@ -56,6 +49,21 @@ export const Snack: React.FC = () => {
   const handleRemove = (snack: SnackType) => {
     dispatch(removeSnack(snack));
   };
+
+  useEffect(() => {
+    snackbar.forEach((snack) => {
+      if (!snack.isTimeout) {
+        dispatch(changeSnack({
+          ...snack,
+          isTimeout: true,
+        }));
+
+        setTimeout(() => {
+          dispatch(hideSnack(snack));
+        }, SNACKBAR_AUTO_HIDE_DURATION);
+      }
+    });
+  }, [dispatch, snackbar]);
 
   return (
     <Stack

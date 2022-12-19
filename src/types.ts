@@ -15,16 +15,21 @@ interface UserType {
   name: string;
 }
 
-interface SnackType {
+interface SnackTypeRaw {
   id: number
   type: SnackbarType;
   message: string;
-  isOpen: boolean;
 }
+
+type SnackType = SnackTypeRaw & {
+  isOpen: boolean;
+  isTimeout: boolean;
+};
 
 
 export type {
   PostType,
   UserType,
+  SnackTypeRaw,
   SnackType,
 };
