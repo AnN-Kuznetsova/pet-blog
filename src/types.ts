@@ -1,3 +1,6 @@
+import { SnackbarType } from "./components/snack/snack";
+
+
 interface PostType {
   userId: string;
   id: string;
@@ -12,8 +15,16 @@ interface UserType {
   name: string;
 }
 
+interface SnackType {
+  id: number
+  type: SnackbarType;
+  message: string;
+  isOpen: boolean;
+}
+
 
 export type {
   PostType,
   UserType,
+  SnackType,
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Alert,
   AlertColor,
@@ -11,17 +11,17 @@ import { TransitionProps } from "@mui/material/transitions";
 import { Stack } from "@mui/system";
 import { SNACKBAR_AUTO_HIDE_DURATION } from "../../helpers/constants";
 import { getSnackbar } from "../../store/application/selectors";
-import { setSnackbar } from "../../store/application/application";
+import { hideSnack, removeSnack } from "../../store/application/application";
+import { SnackType } from "../../types";
+import { styles } from "./styles";
 
 
 export enum SnackbarType {
-  NO_SNACK = `NO_SNACK`,
   SUCCESS = `SUCCESS`,
   ERROR = `ERROR`,
 }
 
 const SnackbarSeverity: Record<SnackbarType, AlertColor | undefined> = {
-  [SnackbarType.NO_SNACK]: undefined,
   [SnackbarType.SUCCESS]: `success`,
   [SnackbarType.ERROR]: `error`,
 };
@@ -33,49 +33,59 @@ const TransitionComponent: React.JSXElementConstructor<TransitionProps & {
 };
 
 
+export const setSnackTimeout = (cb: ()=>void) => {
+  setTimeout(() => {
+    cb();
+  }, SNACKBAR_AUTO_HIDE_DURATION);
+};
+
+
 export const Snack: React.FC = () => {
-  const {type, message} = useSelector(getSnackbar);
   const dispatch = useDispatch();
-  const isOpen = type !== SnackbarType.NO_SNACK;
-  const [severity, setSeverity] = useState(SnackbarSeverity[SnackbarType[type]]);
+  const snackbar = useSelector(getSnackbar);
 
   const anchorOrigin: SnackbarOrigin = {
     vertical: `top`,
     horizontal: `right`,
   };
 
-  const handleClose = () => {
-    dispatch(setSnackbar({
-      type: SnackbarType.NO_SNACK,
-      message: ``,
-    }));
+  const handleClose = (snack: SnackType) => {
+    dispatch(hideSnack(snack));
   };
 
-  useEffect(() => {
-    const newSeverity = SnackbarSeverity[SnackbarType[type]];
-    if (newSeverity) {
-      setSeverity(newSeverity);
-    }
-  }, [type]);
+  const handleRemove = (snack: SnackType) => {
+    dispatch(removeSnack(snack));
+  };
 
   return (
-    <Stack spacing={1}>
-      <Snackbar
-        open={isOpen}
-        autoHideDuration={SNACKBAR_AUTO_HIDE_DURATION}
-        onClose={handleClose}
-        anchorOrigin={anchorOrigin}
-        TransitionComponent={TransitionComponent}
-      >
-        <Alert
-          onClose={handleClose}
-          severity={severity}
-          variant="filled"
-          sx={{ width: `100%` }}
-        >
-          {message}
-        </Alert>
-      </Snackbar>
+    <Stack
+      spacing={1}
+      sx={styles.snackbarStack}
+    >
+      {snackbar.map((snack) => {
+        const severity = SnackbarSeverity[SnackbarType[snack.type]];
+
+        return (
+          <Snackbar
+            key={snack.id}
+            open={snack.isOpen}
+            anchorOrigin={anchorOrigin}
+            TransitionComponent={TransitionComponent}
+            TransitionProps={{onExited: handleRemove.bind(null, snack)}}
+            sx={styles.snackbar}
+          >
+            <Alert
+              onClose={handleClose.bind(null, snack)}
+              severity={severity}
+              variant="filled"
+              sx={{ width: `100%` }}
+            >
+              {snack.message}
+            </Alert>
+          </Snackbar>
+        );
+      })
+      }
     </Stack>
   );
 };

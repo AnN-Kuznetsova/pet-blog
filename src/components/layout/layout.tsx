@@ -13,14 +13,12 @@ export const Layout: React.FC = (): JSX.Element => {
     <Box sx={styles.container}>
       <TopMenu />
 
-      <Snack />
-
       <main style={styles.main}>
         <Outlet />
       </main>
 
       <BasicModal />
-      {/* <Snack /> */}
+      <Snack />
     </Box>
   );
 };

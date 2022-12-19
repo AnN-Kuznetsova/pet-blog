@@ -1,5 +1,5 @@
 const BORDER_RADIUS = `4px`;
-const SNACKBAR_AUTO_HIDE_DURATION = 6000; // ms
+const SNACKBAR_AUTO_HIDE_DURATION = 5000; // ms
 
 enum AppRoute {
   MAIN = `/`,

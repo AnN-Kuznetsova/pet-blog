@@ -11,9 +11,9 @@ import { useFormik } from "formik";
 import { ControlButtonType, ModalButtonControlsType } from "../modal-button-controls/modal-button-controls";
 import { ModalType } from "../../helpers/constants";
 import { ModalButtonsContext } from "../basic-modal/basic-modal";
-import { SnackbarType } from "../snack/snack";
+import { setSnackTimeout, SnackbarType } from "../snack/snack";
 import { getModalType } from "../../store/application/selectors";
-import { setModalType, setSnackbar } from "../../store/application/application";
+import { setModalType, addSnack, hideSnack } from "../../store/application/application";
 import { styles } from "./styles";
 import { useAddNewPostMutation, useEditPostMutation } from "../api/postsSlice";
 import { usePost } from "../../hooks/usePost";
@@ -34,7 +34,7 @@ interface PostFormValuesType {
 
 const POST_TEXT_ROWS_COUNT = 5;
 
-const SnackbarMessage: Omit<Record<SnackbarType, string>, SnackbarType.NO_SNACK> = {
+const SnackbarMessage: Record<SnackbarType, string> = {
   [SnackbarType.SUCCESS]: `It\`s Successful Success!`,
   [SnackbarType.ERROR]: `It\`s Fiasco Bro :(`,
 };
@@ -76,17 +76,26 @@ export const PostForm: React.FC<PropsType> = (props) => {
       } else {
         await addNewPost(newPostData).unwrap();
       }
-      dispatch(setModalType(ModalType.NO_MODAL));
-      dispatch(setSnackbar({
+      const snack = {
+        id: new Date().getTime(),
         type: SnackbarType.SUCCESS,
         message: SnackbarMessage[SnackbarType.SUCCESS],
-      }));
+        isOpen: true,
+      };
+
+      dispatch(setModalType(ModalType.NO_MODAL));
+      dispatch(addSnack(snack));
+      setSnackTimeout(() => dispatch(hideSnack(snack)));
     } catch (error: unknown) {
-      //  console.error(`Failed to save the post: `, error);
-      dispatch(setSnackbar({
+      const snack = {
+        id: new Date().getTime(),
         type: SnackbarType.ERROR,
         message: SnackbarMessage[SnackbarType.ERROR],
-      }));
+        isOpen: true,
+      };
+
+      dispatch(addSnack(snack));
+      setSnackTimeout(() => dispatch(hideSnack(snack)));
     }
   };
 
