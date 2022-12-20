@@ -28,7 +28,7 @@ export const ModalControls: Record<ModalType, ModalButtonControlsType[]> = {
   [ModalType.EDIT_POST]: [ModalButtonControlsType.SEND, ModalButtonControlsType.CANCEL],
 };
 
-export const DEFAULT_MODAL_BUTTON_CONTROLS: ControlButtonType[] = []; //ModalControls[ModalType.NO_MODAL]; //[];
+export const DEFAULT_MODAL_BUTTON_CONTROLS: ControlButtonType[] = [];
 
 
 export const ModalButtonControls: React.FC = () => {

@@ -1,16 +1,9 @@
 import * as Yup from "yup";
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React from "react";
 import { Box, TextField } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
-import { ControlButtonType, ModalButtonControlsType } from "../modal-button-controls/modal-button-controls";
 import { ModalType } from "../../helpers/constants";
-import { ModalButtonsContext } from "../basic-modal/basic-modal";
 import { SnackbarType } from "../snack/snack";
 import { getModalType } from "../../store/application/selectors";
 import { setModalType, addSnack } from "../../store/application/application";
@@ -18,13 +11,12 @@ import { styles } from "./styles";
 import { useAddNewPostMutation, useEditPostMutation } from "../api/postsSlice";
 import { usePost } from "../../hooks/usePost";
 import type { PostType, SnackTypeRaw } from "../../types";
+import { usePostFormButtonControls } from "./usePostFormButtonControls";
 
 
 interface PropsType {
   onModalClose: () => void;
 }
-
-type ButtonControlsType = Partial<Record<ModalButtonControlsType, ControlButtonType>>;
 
 interface PostFormValuesType {
   title: string;
@@ -59,7 +51,13 @@ export const PostForm: React.FC<PropsType> = (props) => {
   const userId = post ? post.userId : ``;
   const formDisabled = isAddPostLoading || isEditPostLoading;
 
-  const [modalButtonControls, setModalButtonControls] = useContext(ModalButtonsContext);
+  const getError = (touched?: boolean, error?: string) => {
+    const isNewPost = modalType === ModalType.ADD_POST;
+
+    return isNewPost ?
+      touched && Boolean(error)
+      : Boolean(error);
+  };
 
   const handleSubmit = async (values: PostFormValuesType) => {
     const newPostData: PostType | Omit<PostType, `id`> = {
@@ -109,86 +107,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
     },
   });
 
-  // TODO: вынести создание кнопок в отдельную функцию,
-  // чтоб отплёвывала нужную кнопку сама по запросу с аргументами
-  const [buttonControls, setButtonControls]: [
-    ButtonControlsType,
-    React.Dispatch<React.SetStateAction<ButtonControlsType>>,
-  ] = useState({
-    [ModalButtonControlsType.SAVE]: {
-      label: ModalButtonControlsType.SAVE,
-      formSubmitId: `${modalType}`,
-      isDisabled: !formik.isValid || isAddPostLoading,
-      isLoading: isAddPostLoading,
-    },
-    [ModalButtonControlsType.SEND]: {
-      label: ModalButtonControlsType.SEND,
-      formSubmitId: `${modalType}`,
-      isDisabled: formik.isValid || isEditPostLoading,
-      isLoading: isEditPostLoading,
-    },
-    [ModalButtonControlsType.CANCEL]: {
-      label: ModalButtonControlsType.CANCEL,
-      onClick: onModalClose,
-      isDisabled: formDisabled,
-    },
-  } as ButtonControlsType);
-
-  const updateButtonControls = useCallback((buttonType: ModalButtonControlsType, buttonLoading: boolean) => {
-    if (
-      buttonControls[buttonType]?.isDisabled !== (!formik.isValid || buttonLoading) ||
-      buttonControls[buttonType]?.isLoading !== buttonLoading
-    ) {
-      setButtonControls({
-        ...buttonControls,
-        [buttonType]: {
-          ...buttonControls[buttonType],
-          isDisabled: !formik.isValid || buttonLoading,
-          isLoading: buttonLoading,
-        } as ControlButtonType,
-      });
-    }
-  }, [
-    formik.isValid,
-    buttonControls,
-  ]);
-
-  const getError = (touched?: boolean, error?: string) => {
-    const isNewPost = modalType === ModalType.ADD_POST;
-
-    return isNewPost ?
-      touched && Boolean(error)
-      : Boolean(error);
-  };
-
-  useEffect(() => {
-    if(modalType === ModalType.ADD_POST) {
-      setModalButtonControls([
-        buttonControls[ModalButtonControlsType.SAVE],
-        buttonControls[ModalButtonControlsType.CANCEL],
-      ] as ControlButtonType[]);
-    }
-
-    if(modalType === ModalType.EDIT_POST) {
-      setModalButtonControls([
-        buttonControls[ModalButtonControlsType.SEND],
-        buttonControls[ModalButtonControlsType.CANCEL],
-      ] as ControlButtonType[]);
-    }
-  }, [
-    setModalButtonControls,
-    modalType,
-    buttonControls,
-  ]);
-
-  useEffect(() => {
-    updateButtonControls(ModalButtonControlsType.SAVE, isAddPostLoading);
-    updateButtonControls(ModalButtonControlsType.SEND, isEditPostLoading);
-  }, [
-    isAddPostLoading,
-    isEditPostLoading,
-    updateButtonControls,
-  ]);
+  usePostFormButtonControls(onModalClose, formik.isValid);
 
   return (
     <form
