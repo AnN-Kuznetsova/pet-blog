@@ -45,12 +45,12 @@ const calcPostDate = ({
   let postDate = ``;
   const today = new Date();
 
-  if (dateMode === PostDateMode.TODAY) {
-    postDate = today.toString();
-  } else if (dateMode === PostDateMode.IN_FUTURE) {
+  postDate = today.toString();
 
-
-    postDate = add(today, {[measure]: duration}).toString();
+  if (dateMode === PostDateMode.IN_FUTURE) {
+    if (Number.isInteger(duration) && duration > 0) {
+      postDate = add(today, {[measure]: duration}).toString();
+    }
   }
 
   return postDate;

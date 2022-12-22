@@ -9,11 +9,10 @@ import {
   Radio,
   RadioGroup,
   Select,
-  TextField,
   Typography,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { useFormik } from "formik";
+import { FormikProps, useFormik } from "formik";
 import { ModalType } from "../../helpers/constants";
 import { SnackbarType } from "../snack/snack";
 import { getModalType } from "../../store/application/selectors";
@@ -28,11 +27,11 @@ import {
   DateMeasureType,
   PostDateLabel,
   PostDateMode,
-  POST_TEXT_ROWS_COUNT,
   SnackbarMessage,
 } from "./helpers";
 import type { PostType, SnackTypeRaw } from "../../types";
 import { DateFormatMode, formatDate } from "../../helpers/utils";
+import { CustomTextField as CustomTextFieldRaw } from "../../helpers/CustomTextField";
 
 
 interface PropsType {
@@ -40,6 +39,7 @@ interface PropsType {
 }
 
 interface PostFormValuesType {
+  [key: string]: string | number;
   title: string;
   body: string;
   dateMode: PostDateMode;
@@ -64,6 +64,8 @@ const validationSchema = Yup.object({
         .required(`Required`),
     }),
 });
+
+const CustomTextField = CustomTextFieldRaw<PostFormValuesType>;
 
 
 export const PostForm: React.FC<PropsType> = (props) => {
@@ -118,7 +120,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
     }
   };
 
-  const formik = useFormik({
+  const formik: FormikProps<PostFormValuesType> = useFormik<PostFormValuesType>({
     initialValues: {
       title: post ? post.title : ``,
       body: post ? post.body : ``,
@@ -142,7 +144,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
 
   const postDate = calcPostDate({
     dateMode: formik.values.dateMode,
-    duration: formik.values.addDate,
+    duration: +formik.values.addDate,
     measure: formik.values.measure,
   });
   const formattedPostDate = formatDate(postDate, DateFormatMode.LONG);
@@ -155,33 +157,23 @@ export const PostForm: React.FC<PropsType> = (props) => {
       onSubmit={formik.handleSubmit}
     >
       <Box sx={styles.container}>
-        <TextField
-          id="title"
+        <CustomTextField
           name="title"
           label="Header"
-          value={formik.values.title}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
+          formik={formik}
           error={getError(formik.touched.title, formik.errors.title)}
-          helperText={formik.touched.title && formik.errors.title}
           disabled={formDisabled}
-          sx={styles.control}
-          autoFocus={true}
+          styles={styles.control}
         />
 
-        <TextField
-          id="body"
+        <CustomTextField
           name="body"
           label="Post Text"
-          multiline
-          value={formik.values.body}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={getError(formik.touched.body,formik.errors.body)}
-          helperText={formik.touched.body && formik.errors.body}
+          multiline={true}
+          formik={formik}
+          error={getError(formik.touched.body, formik.errors.body)}
           disabled={formDisabled}
-          sx={styles.control}
-          rows={POST_TEXT_ROWS_COUNT}
+          styles={styles.control}
         />
 
         <FormControl>
@@ -211,18 +203,14 @@ export const PostForm: React.FC<PropsType> = (props) => {
 
           {!isPostDateToday &&
             <Box>
-              <TextField
-                id="addDate"
+              <CustomTextField
                 name="addDate"
-                value={formik.values.addDate ? formik.values.addDate : ``}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                disabled={formDisabled}
+                formik={formik}
                 error={getError(formik.touched.addDate,formik.errors.addDate)}
-                helperText={formik.touched.addDate && formik.errors.addDate}
-                inputProps={{ pattern: "[0-9]*" }}
+                disabled={formDisabled}
+                styles={styles.addDate}
                 placeholder="Input number of..."
-                sx={styles.addDate}
+                inputProps={{ pattern: "[0-9]*" }}
               />
 
               <Select
