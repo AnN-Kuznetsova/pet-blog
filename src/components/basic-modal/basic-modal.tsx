@@ -17,19 +17,12 @@ import { styles } from "./styles";
 import { useModalContent } from "../../hooks/useModalContent";
 
 
-// interface ModalButtonsContextType {
-//   buttons: ControlButtonType[];
-//   setButtons: Dispatch<SetStateAction<ControlButtonType[]>>;
-// }
 type ModalButtonsContextType = [
   modalButtonControls: ControlButtonType[],
   setModalButtonControls: Dispatch<SetStateAction<ControlButtonType[]>>,
 ];
 
-export const ModalButtonsContext = React.createContext({
-  // buttons: DEFAULT_MODAL_BUTTON_CONTROLS,
-  // setButtons:
-} as ModalButtonsContextType);
+export const ModalButtonsContext = React.createContext({} as ModalButtonsContextType);
 
 
 export const BasicModal: React.FC = (): JSX.Element | null => {
@@ -37,13 +30,7 @@ export const BasicModal: React.FC = (): JSX.Element | null => {
   const modalType = useSelector(getModalType);
   const isModal = modalType !== ModalType.NO_MODAL;
   const modalTitle = ModalTitle[modalType];
-
-  // const [modalButtonControls, setModalButtonControls] = useState(DEFAULT_MODAL_BUTTON_CONTROLS);
   const modalButtonControls = useState(DEFAULT_MODAL_BUTTON_CONTROLS);
-  // const [modalButtonContext, setModalButtonContext] = useState({
-  //   buttons: modalButtonControls,
-  //   setButtons: setModalButtonControls,
-  // });
 
   const handleClose = () => {
     dispatch(setModalType(ModalType.NO_MODAL));

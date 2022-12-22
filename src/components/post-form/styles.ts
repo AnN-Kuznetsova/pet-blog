@@ -8,10 +8,6 @@ const container = () => ({
   },
 });
 
-const wrapper = () => ({
-
-});
-
 const control = () => ({
   width: "100%",
 
@@ -20,9 +16,23 @@ const control = () => ({
   },
 });
 
+const postDate = () => ({
+  marginBottom: 1.5,
+});
+
+const addDate = () => ({
+  width: "200px",
+});
+
+const measure = () => ({
+  width: "150px",
+});
+
 
 export const styles = {
   container,
-  wrapper,
   control,
+  postDate,
+  addDate,
+  measure,
 };

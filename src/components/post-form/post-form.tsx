@@ -1,6 +1,17 @@
 import * as Yup from "yup";
 import React from "react";
-import { Box, TextField } from "@mui/material";
+import {
+  Box,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from "formik";
 import { ModalType } from "../../helpers/constants";
@@ -10,8 +21,18 @@ import { setModalType, addSnack } from "../../store/application/application";
 import { styles } from "./styles";
 import { useAddNewPostMutation, useEditPostMutation } from "../api/postsSlice";
 import { usePost } from "../../hooks/usePost";
-import type { PostType, SnackTypeRaw } from "../../types";
 import { usePostFormButtonControls } from "./usePostFormButtonControls";
+import {
+  calcPostDate,
+  DateMeasureTitle,
+  DateMeasureType,
+  PostDateLabel,
+  PostDateMode,
+  POST_TEXT_ROWS_COUNT,
+  SnackbarMessage,
+} from "./helpers";
+import type { PostType, SnackTypeRaw } from "../../types";
+import { DateFormatMode, formatDate } from "../../helpers/utils";
 
 
 interface PropsType {
@@ -21,15 +42,10 @@ interface PropsType {
 interface PostFormValuesType {
   title: string;
   body: string;
+  dateMode: PostDateMode;
+  addDate: number;
+  measure: DateMeasureType,
 }
-
-
-const POST_TEXT_ROWS_COUNT = 5;
-
-const SnackbarMessage: Record<SnackbarType, string> = {
-  [SnackbarType.SUCCESS]: `It\`s Successful Success!`,
-  [SnackbarType.ERROR]: `It\`s Fiasco Bro :(`,
-};
 
 const validationSchema = Yup.object({
   title: Yup.string()
@@ -38,6 +54,15 @@ const validationSchema = Yup.object({
   body: Yup.string()
     .max(50, `Must be 50 characters or less`)
     .required(`Required`),
+  addDate: Yup.number()
+    .typeError(`Must be only a number`)
+    .when(`dateMode`, {
+      is: (val: PostDateMode) => val === PostDateMode.IN_FUTURE,
+      then: (schema) => schema
+        .integer(`Must be integer`)
+        .positive(`Must be positive`)
+        .required(`Required`),
+    }),
 });
 
 
@@ -63,7 +88,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
     const newPostData: PostType | Omit<PostType, `id`> = {
       id: post ? post.id : undefined,
       userId: userId,
-      date: new Date().toString(),
+      date: postDate,
       title: values.title,
       body: values.body,
     };
@@ -97,6 +122,9 @@ export const PostForm: React.FC<PropsType> = (props) => {
     initialValues: {
       title: post ? post.title : ``,
       body: post ? post.body : ``,
+      dateMode: PostDateMode.TODAY,
+      addDate: 0,
+      measure: DateMeasureType.DAY,
     },
     validationSchema,
     validateOnMount: true,
@@ -104,8 +132,20 @@ export const PostForm: React.FC<PropsType> = (props) => {
     initialTouched: {
       title: false,
       body: false,
+      dateMode: true,
+      addDate: false,
+      measure: true,
     },
   });
+
+  const isPostDateToday = formik.values.dateMode === PostDateMode.TODAY;
+
+  const postDate = calcPostDate({
+    dateMode: formik.values.dateMode,
+    duration: formik.values.addDate,
+    measure: formik.values.measure,
+  });
+  const formattedPostDate = formatDate(postDate, DateFormatMode.LONG);
 
   usePostFormButtonControls(onModalClose, formik.isValid);
 
@@ -115,36 +155,95 @@ export const PostForm: React.FC<PropsType> = (props) => {
       onSubmit={formik.handleSubmit}
     >
       <Box sx={styles.container}>
-        <Box sx={styles.wrapper}>
-          <TextField
-            id="title"
-            name="title"
-            label="Header"
-            value={formik.values.title}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={getError(formik.touched.title, formik.errors.title)}
-            helperText={formik.touched.title && formik.errors.title}
-            disabled={formDisabled}
-            sx={styles.control}
-            // autoFocus={true}
-          />
+        <TextField
+          id="title"
+          name="title"
+          label="Header"
+          value={formik.values.title}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={getError(formik.touched.title, formik.errors.title)}
+          helperText={formik.touched.title && formik.errors.title}
+          disabled={formDisabled}
+          sx={styles.control}
+          autoFocus={true}
+        />
 
-          <TextField
-            id="body"
-            name="body"
-            label="Post Text"
-            multiline
-            value={formik.values.body}
+        <TextField
+          id="body"
+          name="body"
+          label="Post Text"
+          multiline
+          value={formik.values.body}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={getError(formik.touched.body,formik.errors.body)}
+          helperText={formik.touched.body && formik.errors.body}
+          disabled={formDisabled}
+          sx={styles.control}
+          rows={POST_TEXT_ROWS_COUNT}
+        />
+
+        <FormControl>
+          <FormLabel id="post-date-group-label">Post Date:</FormLabel>
+          <Typography
+            variant="h6"
+            sx={styles.postDate}
+          >
+            {formattedPostDate}
+          </Typography>
+          <RadioGroup
+            id="dateMode"
+            name="dateMode"
+            aria-labelledby="post-date-group-label"
+            value={formik.values.dateMode}
             onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={getError(formik.touched.body,formik.errors.body)}
-            helperText={formik.touched.body && formik.errors.body}
-            disabled={formDisabled}
-            sx={styles.control}
-            rows={POST_TEXT_ROWS_COUNT}
-          />
-        </Box>
+          >
+            {Object.entries(PostDateMode).map(([dateModeKey, dateModeValue]) => (
+              <FormControlLabel
+                key={dateModeKey}
+                value={dateModeValue}
+                control={<Radio />}
+                label={PostDateLabel[dateModeValue]}
+              />
+            ))}
+          </RadioGroup>
+
+          {!isPostDateToday &&
+            <Box>
+              <TextField
+                id="addDate"
+                name="addDate"
+                value={formik.values.addDate ? formik.values.addDate : ``}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                disabled={formDisabled}
+                error={getError(formik.touched.addDate,formik.errors.addDate)}
+                helperText={formik.touched.addDate && formik.errors.addDate}
+                inputProps={{ pattern: "[0-9]*" }}
+                placeholder="Input number of..."
+                sx={styles.addDate}
+              />
+
+              <Select
+                id="measure"
+                name="measure"
+                value={formik.values.measure}
+                onChange={formik.handleChange}
+                sx={styles.measure}
+              >
+                {Object.entries(DateMeasureType).map(([measureType, measureValue]) => (
+                  <MenuItem
+                    key={measureType}
+                    value={measureValue ? measureValue : ``}
+                  >
+                    {DateMeasureTitle[measureValue]}
+                  </MenuItem>
+                ))}
+              </Select>
+            </Box>
+          }
+        </FormControl>
       </Box>
     </form>
   );
