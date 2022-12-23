@@ -1,6 +1,6 @@
 const containerStyles = () => ({
-  // height: "calc(100% - 50px)",
-  // overflowY: `auto`,
+  height: `100%`, // "calc(100% - 50px)",
+  overflowY: `auto`,
 });
 
 const postsListStyles = () => ({

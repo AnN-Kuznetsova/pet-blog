@@ -1,5 +1,6 @@
 const BORDER_RADIUS = `4px`;
 const SNACKBAR_AUTO_HIDE_DURATION = 5000; // ms
+const POST_LIST_ROW_HEIGHT = 86;
 
 enum AppRoute {
   MAIN = `/`,
@@ -22,6 +23,7 @@ const ModalTitle: Record<ModalType, string> = {
 export {
   BORDER_RADIUS,
   SNACKBAR_AUTO_HIDE_DURATION,
+  POST_LIST_ROW_HEIGHT,
   AppRoute,
   ModalType,
   ModalTitle,
