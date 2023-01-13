@@ -7,10 +7,12 @@ import { AppRoute, ModalType } from "../../helpers/constants";
 import { setModalType } from "../../store/application/application";
 import { styles } from "./styles";
 import { useGetPostsQueryState } from "../api/postsSlice";
+import { useTranslation } from "react-i18next";
 
 
 export const TopMenu: React.FC = (): JSX.Element => {
   const dispatch = useDispatch();
+  const {t} = useTranslation();
   const {isSuccess: isPostsSuccess} = useGetPostsQueryState();
   const isMainPage = useMatch(AppRoute.MAIN);
   const isPostPage = useMatch(AppRoute.POST_PAGE);
@@ -32,7 +34,7 @@ export const TopMenu: React.FC = (): JSX.Element => {
           onClick={hanleAddPostButtonClick}
           disabled={!isPostsSuccess}
         >
-          Add post
+          {t(`button.post.add`)}
         </Button>
       }
 

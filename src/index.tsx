@@ -9,6 +9,8 @@ import { THEME } from "./helpers/theme";
 import { extendedApiSlice as extendedPostsApiSlice} from "./components/api/postsSlice";
 import { createStore } from "./store/store";
 
+import "./i18n";
+
 
 const store = createStore();
 store.dispatch(extendedPostsApiSlice.endpoints.getPosts.initiate());
