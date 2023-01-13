@@ -1,21 +1,30 @@
-import React from "react";
+import React, { useEffect } from "react";
+import i18n from "i18next";
 import { Route, Routes } from "react-router-dom";
 import {
   Box,
   CssBaseline,
   GlobalStyles,
 } from "@mui/material";
+import { useSelector } from "react-redux";
 
-import { PostsList } from "../posts-list/posts-list";
-import { styles } from "./styles";
-import { PostPage } from "../post-page/post-page";
 import { AppRoute } from "../../helpers/constants";
+import { ErrorBoundary } from "../error-boundary/error-boundary";
 import { ErrorPage } from "../error-page/error-page";
 import { Layout } from "../layout/layout";
-import { ErrorBoundary } from "../error-boundary/error-boundary";
+import { PostsList } from "../posts-list/posts-list";
+import { PostPage } from "../post-page/post-page";
+import { getLanguage } from "../../store/application/selectors";
+import { styles } from "./styles";
 
 
 export const App: React.FC = (): JSX.Element => {
+  const language = useSelector(getLanguage);
+
+  useEffect(() => {
+    i18n.changeLanguage(language);
+  }, [language]);
+
   return (
     <>
       <CssBaseline />

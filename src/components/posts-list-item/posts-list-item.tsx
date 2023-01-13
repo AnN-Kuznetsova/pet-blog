@@ -31,10 +31,7 @@ export const PostsListItem: React.FC<PropsType> = (props): JSX.Element | null =>
   };
 
   return (
-    <ListItem
-      key={post.id}
-
-    >
+    <ListItem key={post.id}>
       <Link to={postPageUrl}>
         <Button
           sx={styles.itemButton}

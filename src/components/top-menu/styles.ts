@@ -11,7 +11,12 @@ const container = () => ({
   },
 });
 
+const rightMenu = () => ({
+  marginLeft: `auto`,
+});
+
 
 export const styles = {
   container,
+  rightMenu,
 };

@@ -1,14 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { ModalType } from "../../helpers/constants";
+import { Languages } from "../../i18n";
 import type { SnackType, SnackTypeRaw } from "../../types";
 
 
 const initialState: {
+  language: Languages,
   modal: {
     type: ModalType;
   },
   snackbar: Array<SnackType>,
 } = {
+  language: Languages.EN,
   modal: {
     type: ModalType.NO_MODAL,
   },
@@ -20,7 +23,11 @@ const applicationSlice = createSlice({
   name: `application`,
   initialState,
   reducers: {
-    setModalType: (state, action) => {
+    changeLanguage: (state, action: {type: string; payload: Languages}) => {
+      state.language = action.payload;
+    },
+
+    setModalType: (state, action: {type: string; payload: ModalType}) => {
       state.modal.type = action.payload;
     },
 
@@ -72,6 +79,7 @@ const applicationSlice = createSlice({
 const {actions, reducer} = applicationSlice;
 
 export const {
+  changeLanguage,
   setModalType,
   addSnack,
   changeSnack,

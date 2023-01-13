@@ -2,12 +2,17 @@ import React from "react";
 import { Box, Button } from "@mui/material";
 import { Link, useMatch } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 import { AppRoute, ModalType } from "../../helpers/constants";
-import { setModalType } from "../../store/application/application";
+import { Languages } from "../../i18n";
+import { SelectedMenu } from "../selected-menu/selected-menu";
+import { changeLanguage, setModalType } from "../../store/application/application";
 import { styles } from "./styles";
 import { useGetPostsQueryState } from "../api/postsSlice";
-import { useTranslation } from "react-i18next";
+
+
+const languages = Object.values(Languages);
 
 
 export const TopMenu: React.FC = (): JSX.Element => {
@@ -23,6 +28,11 @@ export const TopMenu: React.FC = (): JSX.Element => {
 
   const hanleEditPostButtonClick = async () => {
     dispatch(setModalType(ModalType.EDIT_POST));
+  };
+
+  const handleLanguageChange = (option: string) => {
+    const language = Object.values(Languages).find((lang) => lang === option) || Languages.EN;
+    dispatch(changeLanguage(language));
   };
 
   return (
@@ -44,7 +54,7 @@ export const TopMenu: React.FC = (): JSX.Element => {
             variant="contained"
             disabled={!isPostsSuccess}
           >
-            Home
+            {t(`button.home`)}
           </Button>
         </Link>
       }
@@ -56,9 +66,18 @@ export const TopMenu: React.FC = (): JSX.Element => {
           onClick={hanleEditPostButtonClick}
           disabled={!isPostsSuccess}
         >
-          Edit post
+          {t(`button.post.edit`)}
         </Button>
       }
+
+      <Box sx={styles.rightMenu}>
+        <SelectedMenu
+          name="language"
+          label="Selected language"
+          options={languages}
+          onChange={handleLanguageChange}
+        />
+      </Box>
     </Box>
   );
 };

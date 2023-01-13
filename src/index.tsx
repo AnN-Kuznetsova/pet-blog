@@ -1,19 +1,25 @@
-import { ThemeProvider } from "@mui/material";
+import "./i18n";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { Provider } from "react-redux";
+import i18n from "i18next";
 import { BrowserRouter } from "react-router-dom";
+import { Provider } from "react-redux";
+import { ThemeProvider } from "@mui/material";
 
-import { App } from "./components/app/app";
 import { THEME } from "./helpers/theme";
-import { extendedApiSlice as extendedPostsApiSlice} from "./components/api/postsSlice";
+import { App } from "./components/app/app";
+import { Languages } from "./i18n";
+import { changeLanguage } from "./store/application/application";
 import { createStore } from "./store/store";
+import { extendedApiSlice as extendedPostsApiSlice} from "./components/api/postsSlice";
 
-import "./i18n";
 
+const language = Languages.RU;
 
 const store = createStore();
 store.dispatch(extendedPostsApiSlice.endpoints.getPosts.initiate());
+store.dispatch(changeLanguage(language));
+i18n.changeLanguage(store.getState().application.language);
 
 const root = ReactDOM.createRoot(
   document.getElementById(`root`) as HTMLElement
