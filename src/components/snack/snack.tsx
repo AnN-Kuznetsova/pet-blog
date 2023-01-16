@@ -6,20 +6,17 @@ import {
   Snackbar,
   SnackbarOrigin,
 } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { TransitionProps } from "@mui/material/transitions";
 import { Stack } from "@mui/system";
+import { TransitionProps } from "@mui/material/transitions";
+import { useDispatch, useSelector } from "react-redux";
+
 import { SNACKBAR_AUTO_HIDE_DURATION } from "../../helpers/constants";
-import { getSnackbar } from "../../store/application/selectors";
+import { SnackType } from "../../types/types";
+import { SnackbarType } from "../../types/additional-types";
 import { changeSnack, hideSnack, removeSnack } from "../../store/application/application";
-import { SnackType } from "../../types";
+import { getSnackbar } from "../../store/application/selectors";
 import { styles } from "./styles";
 
-
-export enum SnackbarType {
-  SUCCESS = `SUCCESS`,
-  ERROR = `ERROR`,
-}
 
 const SnackbarSeverity: Record<SnackbarType, AlertColor | undefined> = {
   [SnackbarType.SUCCESS]: `success`,

@@ -3,7 +3,7 @@ import { Box } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 
 import { ModalButtonsContext } from "../basic-modal/basic-modal";
-import { ModalButtonControlsType } from "../post-form/helpers";
+import { ModalButtonControlsType } from "../../types/additional-types";
 import { ModalType } from "../../helpers/constants";
 import { styles } from "./styles";
 

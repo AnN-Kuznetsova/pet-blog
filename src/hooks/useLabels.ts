@@ -4,7 +4,8 @@ import {
   DateMeasureType,
   ModalButtonControlsType,
   PostDateMode,
-} from "../components/post-form/helpers";
+  SnackbarType,
+} from "../types/additional-types";
 
 
 export const useModalButtonControlsLabel = (): Record<ModalButtonControlsType, string> => {
@@ -35,5 +36,15 @@ export const usePostDateLabel = (): Record<PostDateMode, string> => {
   return {
     [PostDateMode.TODAY]: t(`post.form.date.today`),
     [PostDateMode.IN_FUTURE]: t(`post.form.date.other`),
+  };
+};
+
+
+export const useSnackbarMessage = (): Record<SnackbarType, string> => {
+  const {t} = useTranslation();
+
+  return {
+    [SnackbarType.SUCCESS]: t(`snackbar.success`),
+    [SnackbarType.ERROR]: t(`snackbar.error`),
   };
 };

@@ -1,4 +1,4 @@
-import { SnackbarType } from "./components/snack/snack";
+import { SnackbarType } from "./additional-types";
 
 
 interface PostType {

@@ -3,7 +3,7 @@ import React from "react";
 
 import { createStringAvatar } from "./create-string-avatar";
 import { styles } from "./styles";
-import type { UserType } from "../../types";
+import type { UserType } from "../../types/types";
 
 
 interface PropsType {

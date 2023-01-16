@@ -1,5 +1,5 @@
 import { RootStateType } from "../..";
-import { SnackType } from "../../types";
+import { SnackType } from "../../types/types";
 import type { ModalType } from "../../helpers/constants";
 import { Languages } from "../../i18n";
 

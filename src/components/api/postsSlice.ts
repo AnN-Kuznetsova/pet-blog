@@ -2,7 +2,7 @@ import { createEntityAdapter, createSelector } from "@reduxjs/toolkit";
 import type { EntityState } from "@reduxjs/toolkit";
 
 import { apiSlice } from "./apiSlice";
-import type { PostType } from "../../types";
+import type { PostType } from "../../types/types";
 import type { RootStateType } from "../..";
 
 

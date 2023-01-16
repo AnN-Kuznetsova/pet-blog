@@ -14,25 +14,25 @@ import {
 import { FormikProps, useFormik } from "formik";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 
 import { CustomTextField as CustomTextFieldRaw } from "../../helpers/CustomTextField";
-import { DateFormatMode, formatDate } from "../../helpers/utils";
+import { calcPostDate, DateFormatMode, formatDate } from "../../helpers/utils";
 import { ModalType } from "../../helpers/constants";
-import { SnackbarType } from "../snack/snack";
+
 import { getModalType } from "../../store/application/selectors";
 import { setModalType, addSnack } from "../../store/application/application";
 import { styles } from "./styles";
 import { useAddNewPostMutation, useEditPostMutation } from "../api/postsSlice";
-import { useDateMeasureTitle, usePostDateLabel } from "../../hooks/useLabels";
+import { useDateMeasureTitle, usePostDateLabel, useSnackbarMessage } from "../../hooks/useLabels";
 import { usePost } from "../../hooks/usePost";
 import { usePostFormButtonControls } from "./usePostFormButtonControls";
 import {
-  calcPostDate,
   DateMeasureType,
   PostDateMode,
-  SnackbarMessage,
-} from "./helpers";
-import type { PostType, SnackTypeRaw } from "../../types";
+  SnackbarType,
+} from "../../types/additional-types";
+import type { PostType, SnackTypeRaw } from "../../types/types";
 
 
 interface PropsType {
@@ -48,23 +48,25 @@ interface PostFormValuesType {
   measure: DateMeasureType,
 }
 
-const validationSchema = Yup.object({
-  title: Yup.string()
-    .max(15, `Must be 15 characters or less`)
-    .required(`Required`),
-  body: Yup.string()
-    .max(50, `Must be 50 characters or less`)
-    .required(`Required`),
-  addDate: Yup.number()
-    .typeError(`Must be only a number`)
-    .when(`dateMode`, {
-      is: (val: PostDateMode) => val === PostDateMode.IN_FUTURE,
-      then: (schema) => schema
-        .integer(`Must be integer`)
-        .positive(`Must be positive`)
-        .required(`Required`),
-    }),
-});
+const getValidationSchema = (t: TFunction<"translation", undefined, "translation">) => {
+  return Yup.object({
+    title: Yup.string()
+      .max(15, `${t(`validation.maxLength`, {count: 15})}`)
+      .required(`${t(`validation.required`)}`),
+    body: Yup.string()
+      .max(50, `${t(`validation.maxLength`, {count: 50})}`)
+      .required(`${t(`validation.required`)}`),
+    addDate: Yup.number()
+      .typeError(`${t(`validation.onlyANumber`)}`)
+      .when(`dateMode`, {
+        is: (val: PostDateMode) => val === PostDateMode.IN_FUTURE,
+        then: (schema) => schema
+          .integer(`${t(`validation.mustBeInteger`)}`)
+          .positive(`${t(`validation.mustBePositive`)}`)
+          .required(`${t(`validation.required`)}`),
+      }),
+  });
+};
 
 const CustomTextField = CustomTextFieldRaw<PostFormValuesType>;
 
@@ -79,8 +81,10 @@ export const PostForm: React.FC<PropsType> = (props) => {
   const post = usePost();
   const userId = post ? post.userId : ``;
   const formDisabled = isAddPostLoading || isEditPostLoading;
-  const dateMeasureTitles = useDateMeasureTitle();
-  const postDateModeLabels = usePostDateLabel();
+  const dateMeasureTitle = useDateMeasureTitle();
+  const postDateModeLabel = usePostDateLabel();
+  const snackbarMessage = useSnackbarMessage();
+  const validationSchema = getValidationSchema(t);
 
   const getError = (touched?: boolean, error?: string) => {
     const isNewPost = modalType === ModalType.ADD_POST;
@@ -108,7 +112,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
       const snack: SnackTypeRaw = {
         id: new Date().getTime(),
         type: SnackbarType.SUCCESS,
-        message: SnackbarMessage[SnackbarType.SUCCESS],
+        message: snackbarMessage[SnackbarType.SUCCESS],
       };
 
       dispatch(setModalType(ModalType.NO_MODAL));
@@ -117,7 +121,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
       const snack: SnackTypeRaw = {
         id: new Date().getTime(),
         type: SnackbarType.ERROR,
-        message: SnackbarMessage[SnackbarType.ERROR],
+        message: snackbarMessage[SnackbarType.ERROR],
       };
 
       dispatch(addSnack(snack));
@@ -163,7 +167,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
       <Box sx={styles.container}>
         <CustomTextField
           name="title"
-          label={t(`post.form.title`) || `Header`}
+          label={`${t(`post.form.title`)}`}
           formik={formik}
           error={getError(formik.touched.title, formik.errors.title)}
           disabled={formDisabled}
@@ -172,7 +176,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
 
         <CustomTextField
           name="body"
-          label={t(`post.form.text`) || `Post Text`}
+          label={`${t(`post.form.text`)}`}
           multiline={true}
           formik={formik}
           error={getError(formik.touched.body, formik.errors.body)}
@@ -200,7 +204,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
                 key={dateModeKey}
                 value={dateModeValue}
                 control={<Radio />}
-                label={postDateModeLabels[dateModeValue]}
+                label={postDateModeLabel[dateModeValue]}
               />
             ))}
           </RadioGroup>
@@ -213,7 +217,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
                 error={getError(formik.touched.addDate,formik.errors.addDate)}
                 disabled={formDisabled}
                 styles={styles.addDate}
-                placeholder={t(`post.form.date.placeholder`) || `Input number of...`}
+                placeholder={`${t(`post.form.date.placeholder`)}`}
                 inputProps={{ pattern: "[0-9]*" }}
               />
 
@@ -229,7 +233,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
                     key={measureType}
                     value={measureValue ? measureValue : ``}
                   >
-                    {dateMeasureTitles[measureValue]}
+                    {dateMeasureTitle[measureValue]}
                   </MenuItem>
                 ))}
               </Select>

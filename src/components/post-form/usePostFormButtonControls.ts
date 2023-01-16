@@ -7,7 +7,7 @@ import React, {
 import { useSelector } from "react-redux";
 
 import { ControlButtonType } from "../modal-button-controls/modal-button-controls";
-import { ModalButtonControlsType } from "./helpers";
+import { ModalButtonControlsType } from "../../types/additional-types";
 import { ModalButtonsContext } from "../basic-modal/basic-modal";
 import { ModalType } from "../../helpers/constants";
 import { getModalType } from "../../store/application/selectors";

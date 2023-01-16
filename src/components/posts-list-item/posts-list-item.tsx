@@ -12,7 +12,7 @@ import { UserAvatar } from "../user-avatar/user-avatar";
 import { formatDate } from "../../helpers/utils";
 import { useGetUserQuery } from "../api/usersSlice";
 import { styles } from "./styles";
-import type { PostType } from "../../types";
+import type { PostType } from "../../types/types";
 
 
 export interface PropsType {
