@@ -1,18 +1,19 @@
 import add from "date-fns/add";
+
 import { SnackbarType } from "../snack/snack";
 
 
-const POST_TEXT_ROWS_COUNT = 5;
+enum ModalButtonControlsType {
+  CHANGE,
+  SAVE,
+  SEND,
+  CANCEL,
+}
 
 enum PostDateMode {
   TODAY = `TODAY`,
   IN_FUTURE = `IN_FUTURE`,
 }
-
-const PostDateLabel: Record<PostDateMode, string> = {
-  [PostDateMode.TODAY]: `Today`,
-  [PostDateMode.IN_FUTURE]: `In Future add`,
-};
 
 enum DateMeasureType {
   HOUR = `hours`,
@@ -20,13 +21,6 @@ enum DateMeasureType {
   WEEK = `weeks`,
   MONTH = `months`,
 }
-
-const DateMeasureTitle: Record<DateMeasureType, string> = {
-  [DateMeasureType.HOUR]: `Houres`,
-  [DateMeasureType.DAY]: `Days`,
-  [DateMeasureType.WEEK]: `Weeks`,
-  [DateMeasureType.MONTH]: `Months`,
-};
 
 const SnackbarMessage: Record<SnackbarType, string> = {
   [SnackbarType.SUCCESS]: `It\`s Successful Success!`,
@@ -56,12 +50,11 @@ const calcPostDate = ({
   return postDate;
 };
 
+
 export {
-  POST_TEXT_ROWS_COUNT,
-  PostDateMode,
-  PostDateLabel,
   DateMeasureType,
-  DateMeasureTitle,
+  ModalButtonControlsType,
+  PostDateMode,
   SnackbarMessage,
   calcPostDate,
 };

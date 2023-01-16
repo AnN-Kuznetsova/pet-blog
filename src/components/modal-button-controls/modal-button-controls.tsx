@@ -1,21 +1,15 @@
 import React, { useContext } from "react";
 import { Box } from "@mui/material";
-
-import { styles } from "./styles";
 import { LoadingButton } from "@mui/lab";
+
 import { ModalButtonsContext } from "../basic-modal/basic-modal";
+import { ModalButtonControlsType } from "../post-form/helpers";
 import { ModalType } from "../../helpers/constants";
+import { styles } from "./styles";
 
-
-export enum ModalButtonControlsType {
-  CHANGE = `Change`,
-  SAVE = `Save`,
-  SEND = `Send`,
-  CANCEL = `Cancel`,
-}
 
 export interface ControlButtonType {
-  label: ModalButtonControlsType;
+  label: string;
   onClick?: () => void;
   formSubmitId?: string;
   isLoading?:boolean;

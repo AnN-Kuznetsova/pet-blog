@@ -1,7 +1,8 @@
 import React, { ReactNode } from "react";
 import { FormikProps } from "formik";
 import { TextField } from "@mui/material";
-import { POST_TEXT_ROWS_COUNT } from "../components/post-form/helpers";
+
+import { POST_TEXT_ROWS_COUNT } from "./constants";
 
 
 interface PropsType<T> {

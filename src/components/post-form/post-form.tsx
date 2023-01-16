@@ -11,27 +11,28 @@ import {
   Select,
   Typography,
 } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
 import { FormikProps, useFormik } from "formik";
+import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
+
+import { CustomTextField as CustomTextFieldRaw } from "../../helpers/CustomTextField";
+import { DateFormatMode, formatDate } from "../../helpers/utils";
 import { ModalType } from "../../helpers/constants";
 import { SnackbarType } from "../snack/snack";
 import { getModalType } from "../../store/application/selectors";
 import { setModalType, addSnack } from "../../store/application/application";
 import { styles } from "./styles";
 import { useAddNewPostMutation, useEditPostMutation } from "../api/postsSlice";
+import { useDateMeasureTitle, usePostDateLabel } from "../../hooks/useLabels";
 import { usePost } from "../../hooks/usePost";
 import { usePostFormButtonControls } from "./usePostFormButtonControls";
 import {
   calcPostDate,
-  DateMeasureTitle,
   DateMeasureType,
-  PostDateLabel,
   PostDateMode,
   SnackbarMessage,
 } from "./helpers";
 import type { PostType, SnackTypeRaw } from "../../types";
-import { DateFormatMode, formatDate } from "../../helpers/utils";
-import { CustomTextField as CustomTextFieldRaw } from "../../helpers/CustomTextField";
 
 
 interface PropsType {
@@ -71,12 +72,15 @@ const CustomTextField = CustomTextFieldRaw<PostFormValuesType>;
 export const PostForm: React.FC<PropsType> = (props) => {
   const {onModalClose} = props;
   const dispatch = useDispatch();
+  const {t} = useTranslation();
   const modalType = useSelector(getModalType);
   const [addNewPost, {isLoading: isAddPostLoading}] = useAddNewPostMutation();
   const [editPost, {isLoading: isEditPostLoading}] = useEditPostMutation();
   const post = usePost();
   const userId = post ? post.userId : ``;
   const formDisabled = isAddPostLoading || isEditPostLoading;
+  const dateMeasureTitles = useDateMeasureTitle();
+  const postDateModeLabels = usePostDateLabel();
 
   const getError = (touched?: boolean, error?: string) => {
     const isNewPost = modalType === ModalType.ADD_POST;
@@ -159,7 +163,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
       <Box sx={styles.container}>
         <CustomTextField
           name="title"
-          label="Header"
+          label={t(`post.form.title`) || `Header`}
           formik={formik}
           error={getError(formik.touched.title, formik.errors.title)}
           disabled={formDisabled}
@@ -168,7 +172,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
 
         <CustomTextField
           name="body"
-          label="Post Text"
+          label={t(`post.form.text`) || `Post Text`}
           multiline={true}
           formik={formik}
           error={getError(formik.touched.body, formik.errors.body)}
@@ -177,7 +181,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
         />
 
         <FormControl>
-          <FormLabel id="post-date-group-label">Post Date:</FormLabel>
+          <FormLabel id="post-date-group-label">{t(`post.form.date.title`)}:</FormLabel>
           <Typography
             variant="h6"
             sx={styles.postDate}
@@ -196,7 +200,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
                 key={dateModeKey}
                 value={dateModeValue}
                 control={<Radio />}
-                label={PostDateLabel[dateModeValue]}
+                label={postDateModeLabels[dateModeValue]}
               />
             ))}
           </RadioGroup>
@@ -209,7 +213,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
                 error={getError(formik.touched.addDate,formik.errors.addDate)}
                 disabled={formDisabled}
                 styles={styles.addDate}
-                placeholder="Input number of..."
+                placeholder={t(`post.form.date.placeholder`) || `Input number of...`}
                 inputProps={{ pattern: "[0-9]*" }}
               />
 
@@ -225,7 +229,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
                     key={measureType}
                     value={measureValue ? measureValue : ``}
                   >
-                    {DateMeasureTitle[measureValue]}
+                    {dateMeasureTitles[measureValue]}
                   </MenuItem>
                 ))}
               </Select>

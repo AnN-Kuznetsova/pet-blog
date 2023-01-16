@@ -44,7 +44,7 @@ export const TopMenu: React.FC = (): JSX.Element => {
           onClick={hanleAddPostButtonClick}
           disabled={!isPostsSuccess}
         >
-          {t(`button.post.add`)}
+          {t(`post.button.add`)}
         </Button>
       }
 
@@ -66,7 +66,7 @@ export const TopMenu: React.FC = (): JSX.Element => {
           onClick={hanleEditPostButtonClick}
           disabled={!isPostsSuccess}
         >
-          {t(`button.post.edit`)}
+          {t(`post.button.edit`)}
         </Button>
       }
 

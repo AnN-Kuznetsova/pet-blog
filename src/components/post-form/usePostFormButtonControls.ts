@@ -4,12 +4,15 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { ControlButtonType, ModalButtonControlsType } from "../modal-button-controls/modal-button-controls";
+import { useSelector } from "react-redux";
+
+import { ControlButtonType } from "../modal-button-controls/modal-button-controls";
+import { ModalButtonControlsType } from "./helpers";
 import { ModalButtonsContext } from "../basic-modal/basic-modal";
 import { ModalType } from "../../helpers/constants";
-import { useSelector } from "react-redux";
 import { getModalType } from "../../store/application/selectors";
 import { useAddNewPostMutation, useEditPostMutation } from "../api/postsSlice";
+import { useModalButtonControlsLabel } from "../../hooks/useLabels";
 
 
 type ButtonControlsType = Partial<Record<ModalButtonControlsType, ControlButtonType>>;
@@ -20,6 +23,7 @@ export const usePostFormButtonControls = (onModalClose: () => void, isFormValid:
   const [addNewPost, {isLoading: isAddPostLoading}] = useAddNewPostMutation();
   const [editPost, {isLoading: isEditPostLoading}] = useEditPostMutation();
   const formDisabled = isAddPostLoading || isEditPostLoading;
+  const modalButtonControlsLabels = useModalButtonControlsLabel();
 
   const [modalButtonControls, setModalButtonControls] = useContext(ModalButtonsContext);
 
@@ -28,19 +32,19 @@ export const usePostFormButtonControls = (onModalClose: () => void, isFormValid:
     React.Dispatch<React.SetStateAction<ButtonControlsType>>,
   ] = useState({
     [ModalButtonControlsType.SAVE]: {
-      label: ModalButtonControlsType.SAVE,
+      label: modalButtonControlsLabels[ModalButtonControlsType.SAVE],
       formSubmitId: `${modalType}`,
       isDisabled: !isFormValid || isAddPostLoading,
       isLoading: isAddPostLoading,
     },
     [ModalButtonControlsType.SEND]: {
-      label: ModalButtonControlsType.SEND,
+      label: modalButtonControlsLabels[ModalButtonControlsType.SEND],
       formSubmitId: `${modalType}`,
       isDisabled: isFormValid || isEditPostLoading,
       isLoading: isEditPostLoading,
     },
     [ModalButtonControlsType.CANCEL]: {
-      label: ModalButtonControlsType.CANCEL,
+      label: modalButtonControlsLabels[ModalButtonControlsType.CANCEL],
       onClick: onModalClose,
       isDisabled: formDisabled,
     },

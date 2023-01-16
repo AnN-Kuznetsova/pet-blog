@@ -8,14 +8,21 @@ import {
   Typography,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 import { ControlButtonType, DEFAULT_MODAL_BUTTON_CONTROLS, ModalButtonControls } from "../modal-button-controls/modal-button-controls";
-import { ModalTitle, ModalType } from "../../helpers/constants";
+import { ModalType } from "../../helpers/constants";
 import { getModalType } from "../../store/application/selectors";
 import { setModalType } from "../../store/application/application";
 import { styles } from "./styles";
 import { useModalContent } from "../../hooks/useModalContent";
 
+
+const ModalTitle: Record<ModalType, string> = {
+  [ModalType.NO_MODAL]: ``,
+  [ModalType.ADD_POST]: `post.title.add`,
+  [ModalType.EDIT_POST]: `post.title.edit`,
+};
 
 type ModalButtonsContextType = [
   modalButtonControls: ControlButtonType[],
@@ -27,9 +34,10 @@ export const ModalButtonsContext = React.createContext({} as ModalButtonsContext
 
 export const BasicModal: React.FC = (): JSX.Element | null => {
   const dispatch = useDispatch();
+  const {t} = useTranslation();
   const modalType = useSelector(getModalType);
   const isModal = modalType !== ModalType.NO_MODAL;
-  const modalTitle = ModalTitle[modalType];
+  const modalTitle = t(ModalTitle[modalType]);
   const modalButtonControls = useState(DEFAULT_MODAL_BUTTON_CONTROLS);
 
   const handleClose = () => {

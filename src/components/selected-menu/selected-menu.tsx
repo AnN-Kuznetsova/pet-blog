@@ -4,10 +4,8 @@ import {
   Button,
   List,
   ListItem,
-  ListItemText,
   Menu,
   MenuItem,
-  Typography,
 } from "@mui/material";
 
 import { styles } from "./styles";

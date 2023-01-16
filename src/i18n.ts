@@ -19,10 +19,35 @@ i18n
         translation: {
           button: {
             save: `Save`,
+            send: `Send`,
+            cancel: `Cancel`,
+            change: `Change`,
             home: `Home`,
-            post: {
+          },
+          dateMeasure: {
+            hours: `Houres`,
+            days: `Days`,
+            weeks: `Weeks`,
+            months: `Months`,
+          },
+          post: {
+            button: {
               add: `Add post`,
               edit: `Edit post`,
+            },
+            title: {
+              add: `New post`,
+              edit: `Edit post`,
+            },
+            form: {
+              title: `Header`,
+              text: `Post Text`,
+              date: {
+                title: `Post Date`,
+                today: `Today`,
+                other: `In Future add...`,
+                placeholder: `Input number of...`,
+              },
             },
           },
         },
@@ -32,10 +57,35 @@ i18n
         translation: {
           button: {
             save: `Сохранить`,
+            send: `Отправить`,
+            cancel: `Отменить`,
+            change: `Изменить`,
             home: `На главную`,
-            post: {
+          },
+          dateMeasure: {
+            hours: `Часов`,
+            days: `Дней`,
+            weeks: `Недель`,
+            months: `Месяцев`,
+          },
+          post: {
+            button: {
               add: `Добавить новый пост`,
               edit: `Редактировать пост`,
+            },
+            title: {
+              add: `Новый пост`,
+              edit: `Редактирование`,
+            },
+            form: {
+              title: `Заголовок`,
+              text: `Текст`,
+              date: {
+                title: `Дата поста`,
+                today: `Сегодня`,
+                other: `Через...`,
+                placeholder: `Введите количество...`,
+              },
             },
           },
         },
