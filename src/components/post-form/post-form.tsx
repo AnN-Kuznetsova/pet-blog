@@ -57,12 +57,12 @@ const getValidationSchema = (t: TFunction<"translation", undefined, "translation
       .max(50, `${t(`validation.maxLength`, {count: 50})}`)
       .required(`${t(`validation.required`)}`),
     addDate: Yup.number()
-      .typeError(`${t(`validation.onlyANumber`)}`)
+      .typeError(`${t(`validation.mustBe.aNumber`)}`)
       .when(`dateMode`, {
         is: (val: PostDateMode) => val === PostDateMode.IN_FUTURE,
         then: (schema) => schema
-          .integer(`${t(`validation.mustBeInteger`)}`)
-          .positive(`${t(`validation.mustBePositive`)}`)
+          .integer(`${t(`validation.mustBe.integer`)}`)
+          .positive(`${t(`validation.mustBe.positive`)}`)
           .required(`${t(`validation.required`)}`),
       }),
   });

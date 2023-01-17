@@ -23,9 +23,12 @@ export const translation = {
   validation: {
     required: `Required`,
     maxLength: `Must be {{count}} characters or less`,
-    onlyANumber: `Must be only a number`,
-    mustBeInteger: `Must be integer`,
-    mustBePositive: `Must be positive`,
+    mustBe: {
+      title: `Must be`,
+      positive: `$t(validation.mustBe.title) positive`,
+      aNumber: `$t(validation.mustBe.title) only a number`,
+      integer: `$t(validation.mustBe.title) integer`,
+    },
   },
   post: {
     button: {

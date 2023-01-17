@@ -23,9 +23,12 @@ export const translation = {
   validation: {
     required: `Обязательно`,
     maxLength: `Должно быть не более {{count}} символов`,
-    onlyANumber: `Должно быть только цифровое значение`,
-    mustBeInteger: `Должно быть целым`,
-    mustBePositive: `Должно быть положительным`,
+    mustBe: {
+      title: `Должно быть`,
+      positive: `$t(validation.mustBe.title) положительным`,
+      aNumber: `$t(validation.mustBe.title) только цифровое значение`,
+      integer: `$t(validation.mustBe.title) целым`,
+    },
   },
   post: {
     button: {
