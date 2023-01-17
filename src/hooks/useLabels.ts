@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { Languages } from "../i18n";
 
 import {
   DateMeasureType,
@@ -46,5 +47,15 @@ export const useSnackbarMessage = (): Record<SnackbarType, string> => {
   return {
     [SnackbarType.SUCCESS]: t(`snackbar.success`),
     [SnackbarType.ERROR]: t(`snackbar.error`),
+  };
+};
+
+
+export const useLanguageLabel = (): Record<Languages, string> => {
+  const {t} = useTranslation();
+
+  return {
+    [Languages.EN]: t(`languages.en`),
+    [Languages.RU]: t(`languages.ru`),
   };
 };

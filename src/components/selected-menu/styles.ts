@@ -1,3 +1,8 @@
+const icon = () => ({
+  marginRight: 1,
+  height: `24px`,
+});
+
 const list = () => ({
   padding: 0,
 });
@@ -8,6 +13,7 @@ const listItem = () => ({
 
 
 export const styles = {
+  icon,
   list,
   listItem,
 };

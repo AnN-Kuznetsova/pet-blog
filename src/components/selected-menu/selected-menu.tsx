@@ -14,7 +14,9 @@ import { styles } from "./styles";
 interface PropsType {
   name: string;
   label: string;
+  iconComponent: JSX.Element;
   options: string[];
+  optionsLabel: {[key: string]: string};
   onChange: (option: string) => void;
 }
 
@@ -23,7 +25,9 @@ export const SelectedMenu: React.FC<PropsType> = (props): JSX.Element => {
   const {
     name,
     label,
+    iconComponent,
     options,
+    optionsLabel,
     onChange,
   } = props;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -34,10 +38,7 @@ export const SelectedMenu: React.FC<PropsType> = (props): JSX.Element => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMenuItemClick = (
-    event: React.MouseEvent<HTMLElement>,
-    index: number,
-  ) => {
+  const handleMenuItemClick = (index: number) => {
     setSelectedIndex(index);
     setAnchorEl(null);
     onChange(options[index]);
@@ -67,6 +68,11 @@ export const SelectedMenu: React.FC<PropsType> = (props): JSX.Element => {
             variant="contained"
             onClick={handleClickListItem}
           >
+            {!!iconComponent &&
+              <Box sx={styles.icon}>
+                {iconComponent}
+              </Box>
+            }
             {options[selectedIndex]}
           </Button>
         </ListItem>
@@ -87,9 +93,9 @@ export const SelectedMenu: React.FC<PropsType> = (props): JSX.Element => {
             key={option}
             disabled={index === selectedIndex}
             selected={index === selectedIndex}
-            onClick={(event) => handleMenuItemClick(event, index)}
+            onClick={() => handleMenuItemClick(index)}
           >
-            {option}
+            {optionsLabel[option]}
           </MenuItem>
         ))}
       </Menu>

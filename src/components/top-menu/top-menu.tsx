@@ -1,4 +1,5 @@
 import React from "react";
+import LanguageIcon from "@mui/icons-material/Language";
 import { Box, Button } from "@mui/material";
 import { Link, useMatch } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -10,6 +11,7 @@ import { SelectedMenu } from "../selected-menu/selected-menu";
 import { changeLanguage, setModalType } from "../../store/application/application";
 import { styles } from "./styles";
 import { useGetPostsQueryState } from "../api/postsSlice";
+import { useLanguageLabel } from "../../hooks/useLabels";
 
 
 const languages = Object.values(Languages);
@@ -21,6 +23,7 @@ export const TopMenu: React.FC = (): JSX.Element => {
   const {isSuccess: isPostsSuccess} = useGetPostsQueryState();
   const isMainPage = useMatch(AppRoute.MAIN);
   const isPostPage = useMatch(AppRoute.POST_PAGE);
+  const languagesLabel = useLanguageLabel();
 
   const hanleAddPostButtonClick = async () => {
     dispatch(setModalType(ModalType.ADD_POST));
@@ -74,7 +77,9 @@ export const TopMenu: React.FC = (): JSX.Element => {
         <SelectedMenu
           name="language"
           label="Selected language"
+          iconComponent={<LanguageIcon />}
           options={languages}
+          optionsLabel={languagesLabel}
           onChange={handleLanguageChange}
         />
       </Box>

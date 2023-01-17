@@ -1,4 +1,8 @@
 export const translation = {
+  languages: {
+    ru: `Russian`,
+    en: `English`,
+  },
   button: {
     save: `Save`,
     send: `Send`,
