@@ -41,7 +41,7 @@ export const App: React.FC = (): JSX.Element => {
               <Route path={AppRoute.POST_PAGE} element={<PostPage />} />
             </Route>
 
-            <Route path="*" element={<ErrorPage error={5005} />} />
+            <Route path="*" element={<ErrorPage error={404} />} />
           </Routes>
         </ErrorBoundary>
       </Box>

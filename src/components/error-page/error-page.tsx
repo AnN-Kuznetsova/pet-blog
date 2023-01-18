@@ -1,10 +1,10 @@
 import React from "react";
-import { Typography } from "@mui/material";
-import { Box } from "@mui/system";
-
-import { styles } from "./styles";
+import { Box, Typography } from "@mui/material";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
 import { SerializedError } from "@reduxjs/toolkit";
+import { useTranslation } from "react-i18next";
+
+import { styles } from "./styles";
 
 
 export type ErrorType = FetchBaseQueryError | SerializedError | number | undefined;
@@ -13,27 +13,30 @@ interface PropsType {
   error: ErrorType;
 }
 
-enum Error {
-  PAGE_NOT_FOUND = 404,
-  SERVER = 500,
-}
-
-const getErrorMessage = (error: number) => {
-  switch (error) {
-    case Error.PAGE_NOT_FOUND:
-      return `Page not found.`;
-
-    case Error.SERVER:
-      return `Server not available.\nPlease try again later.`;
-
-    default:
-      return `The request failed`;
-  }
+const Error: {
+  [key: string]: number[];
+} = {
+  NOT_FOUND: [404],
+  SERVER: [500],
 };
+
+// const getErrorMessage = (error: number) => {
+//   switch (error) {
+//     case Error.PAGE_NOT_FOUND:
+//       return `Page not found.`;
+
+//     case Error.SERVER:
+//       return `Server not available.\nPlease try again later.`;
+
+//     default:
+//       return `The request failed`;
+//   }
+// };
 
 
 export const ErrorPage: React.FC<PropsType> = (props): JSX.Element => {
   const {error: errorRaw} = props;
+  const {t} = useTranslation();
 
   let error: {
     status: number | null,
@@ -41,6 +44,11 @@ export const ErrorPage: React.FC<PropsType> = (props): JSX.Element => {
   } = {
     status: null,
     message: ``,
+  };
+
+  const getErrorMessage = (errorCode: number) => {
+    const errorKey = Object.keys(Error).find((key) => Error[key].includes(errorCode));
+    return t([`error.${errorKey?.toLocaleLowerCase()}`, `error.unknown`]);
   };
 
   if (errorRaw) {
