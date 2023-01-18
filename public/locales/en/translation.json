@@ -31,9 +31,10 @@
     }
   },
   "error": {
-    "not_found": "Page not found.",
+    "page-not-found": "Page not found.",
     "server": "Server not available.\nPlease try again later.",
-    "unknown": "The request failed"
+    "unknown": "The request failed",
+    "post-not-found": "Sorry, post not found :("
   },
   "post": {
     "button": {

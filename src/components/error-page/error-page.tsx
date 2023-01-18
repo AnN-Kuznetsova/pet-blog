@@ -16,7 +16,7 @@ interface PropsType {
 const Error: {
   [key: string]: number[];
 } = {
-  NOT_FOUND: [404],
+  PAGE_NOT_FOUND: [404],
   SERVER: [500],
 };
 
@@ -47,8 +47,12 @@ export const ErrorPage: React.FC<PropsType> = (props): JSX.Element => {
   };
 
   const getErrorMessage = (errorCode: number) => {
-    const errorKey = Object.keys(Error).find((key) => Error[key].includes(errorCode));
-    return t([`error.${errorKey?.toLocaleLowerCase()}`, `error.unknown`]);
+    const errorKey = Object.keys(Error)
+      .find((key) => Error[key].includes(errorCode))
+      ?.toLocaleLowerCase()
+      .replaceAll(`_`, `-`);
+
+    return t([`error.${errorKey}`, `error.unknown`]);
   };
 
   if (errorRaw) {

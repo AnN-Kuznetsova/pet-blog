@@ -10,9 +10,11 @@ import { styles } from "./styles";
 import { useGetPostsQueryState } from "../api/postsSlice";
 import { useGetUserQuery } from "../api/usersSlice";
 import { usePost } from "../../hooks/usePost";
+import { useTranslation } from "react-i18next";
 
 
 export const PostPage: React.FC = (): JSX.Element | null => {
+  const {t} = useTranslation();
   const {
     isLoading: isPostsLoading,
     isSuccess: isPostsSuccess,
@@ -58,7 +60,7 @@ export const PostPage: React.FC = (): JSX.Element | null => {
       }
 
       {isPostsSuccess && !post &&
-        <Typography variant="h5">Sorry, post not found :(</Typography>
+        <Typography variant="h5">{t(`error.post-not-found`)}</Typography>
       }
 
       {isPostsError && <ErrorPage error={postsError} />}
