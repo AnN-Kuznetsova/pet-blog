@@ -8,17 +8,12 @@ import { ThemeProvider } from "@mui/material";
 
 import { THEME } from "./helpers/theme";
 import { App } from "./components/app/app";
-import { Languages } from "./i18n";
-import { changeLanguage } from "./store/application/application";
 import { createStore } from "./store/store";
 import { extendedApiSlice as extendedPostsApiSlice} from "./components/api/postsSlice";
 
 
-const language = Languages.RU;
-
 const store = createStore();
 store.dispatch(extendedPostsApiSlice.endpoints.getPosts.initiate());
-store.dispatch(changeLanguage(language));
 i18n.changeLanguage(store.getState().application.language);
 
 const root = ReactDOM.createRoot(

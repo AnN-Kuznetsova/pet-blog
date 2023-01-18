@@ -17,6 +17,7 @@ interface PropsType {
   iconComponent: JSX.Element;
   options: string[];
   optionsLabel: {[key: string]: string};
+  selectedOption: string;
   onChange: (option: string) => void;
 }
 
@@ -28,10 +29,13 @@ export const SelectedMenu: React.FC<PropsType> = (props): JSX.Element => {
     iconComponent,
     options,
     optionsLabel,
+    selectedOption,
     onChange,
   } = props;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  const [selectedIndex, setSelectedIndex] = React.useState(
+    () => options.findIndex((option) => option === selectedOption)
+  );
   const open = Boolean(anchorEl);
 
   const handleClickListItem = (event: React.MouseEvent<HTMLElement>) => {

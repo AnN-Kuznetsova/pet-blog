@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+
 import { ModalType } from "../../helpers/constants";
 import { Languages } from "../../i18n";
 import type { SnackType, SnackTypeRaw } from "../../types/types";
