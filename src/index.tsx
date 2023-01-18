@@ -1,7 +1,7 @@
 import "./i18n";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import i18n from "i18next";
+import i18next from "i18next";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { ThemeProvider } from "@mui/material";
@@ -14,7 +14,7 @@ import { extendedApiSlice as extendedPostsApiSlice} from "./components/api/posts
 
 const store = createStore();
 store.dispatch(extendedPostsApiSlice.endpoints.getPosts.initiate());
-i18n.changeLanguage(store.getState().application.language);
+i18next.changeLanguage(store.getState().application.language);
 
 const root = ReactDOM.createRoot(
   document.getElementById(`root`) as HTMLElement
