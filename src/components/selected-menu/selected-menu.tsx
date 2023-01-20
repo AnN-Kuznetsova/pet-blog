@@ -1,12 +1,12 @@
 import React from "react";
 import {
   Box,
-  Button,
   List,
   ListItem,
   Menu,
   MenuItem,
 } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 
 import { styles } from "./styles";
 
@@ -18,6 +18,7 @@ interface PropsType {
   options: string[];
   optionsLabel: {[key: string]: string};
   selectedOption: string;
+  isLoading: boolean;
   onChange: (option: string) => void;
 }
 
@@ -30,22 +31,19 @@ export const SelectedMenu: React.FC<PropsType> = (props): JSX.Element => {
     options,
     optionsLabel,
     selectedOption,
+    isLoading,
     onChange,
   } = props;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [selectedIndex, setSelectedIndex] = React.useState(
-    () => options.findIndex((option) => option === selectedOption)
-  );
   const open = Boolean(anchorEl);
 
   const handleClickListItem = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleMenuItemClick = (index: number) => {
-    setSelectedIndex(index);
+  const handleMenuItemClick = (option: string) => {
     setAnchorEl(null);
-    onChange(options[index]);
+    onChange(option);
   };
 
   const handleClose = () => {
@@ -67,18 +65,20 @@ export const SelectedMenu: React.FC<PropsType> = (props): JSX.Element => {
           aria-expanded={open ? `true` : undefined}
           sx={styles.listItem}
         >
-          <Button
+          <LoadingButton
             type="button"
             variant="contained"
+            loading={isLoading}
+            loadingPosition="start"
             onClick={handleClickListItem}
           >
             {!!iconComponent &&
-              <Box sx={styles.icon}>
+              <Box sx={styles.icon(isLoading)}>
                 {iconComponent}
               </Box>
             }
-            {options[selectedIndex]}
-          </Button>
+            {selectedOption}
+          </LoadingButton>
         </ListItem>
       </List>
 
@@ -92,12 +92,12 @@ export const SelectedMenu: React.FC<PropsType> = (props): JSX.Element => {
           role: `listbox`,
         }}
       >
-        {options.map((option, index) => (
+        {options.map((option) => (
           <MenuItem
             key={option}
-            disabled={index === selectedIndex}
-            selected={index === selectedIndex}
-            onClick={() => handleMenuItemClick(index)}
+            disabled={option === selectedOption}
+            selected={option === selectedOption}
+            onClick={() => handleMenuItemClick(option)}
           >
             {optionsLabel[option]}
           </MenuItem>

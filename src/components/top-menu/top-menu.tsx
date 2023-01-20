@@ -1,21 +1,14 @@
 import React from "react";
-import LanguageIcon from "@mui/icons-material/Language";
 import { Box, Button } from "@mui/material";
 import { Link, useMatch } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 
 import { AppRoute, ModalType } from "../../helpers/constants";
-import { Languages } from "../../i18n";
-import { SelectedMenu } from "../selected-menu/selected-menu";
-import { changeLanguage, setModalType } from "../../store/application/application";
-import { getLanguage } from "../../store/application/selectors";
+import { LanguageComponent } from "../language-component/language-component";
+import { setModalType } from "../../store/application/application";
 import { styles } from "./styles";
 import { useGetPostsQueryState } from "../api/postsSlice";
-import { useLanguageLabel } from "../../hooks/useLabels";
-
-
-const languages = Object.values(Languages);
 
 
 export const TopMenu: React.FC = (): JSX.Element => {
@@ -24,8 +17,6 @@ export const TopMenu: React.FC = (): JSX.Element => {
   const {isSuccess: isPostsSuccess} = useGetPostsQueryState();
   const isMainPage = useMatch(AppRoute.MAIN);
   const isPostPage = useMatch(AppRoute.POST_PAGE);
-  const language = useSelector(getLanguage);
-  const languagesLabel = useLanguageLabel();
 
   const hanleAddPostButtonClick = async () => {
     dispatch(setModalType(ModalType.ADD_POST));
@@ -33,11 +24,6 @@ export const TopMenu: React.FC = (): JSX.Element => {
 
   const hanleEditPostButtonClick = async () => {
     dispatch(setModalType(ModalType.EDIT_POST));
-  };
-
-  const handleLanguageChange = (option: string) => {
-    const language = Object.values(Languages).find((lang) => lang === option) || Languages.EN;
-    dispatch(changeLanguage(language));
   };
 
   return (
@@ -76,15 +62,7 @@ export const TopMenu: React.FC = (): JSX.Element => {
       }
 
       <Box sx={styles.rightMenu}>
-        <SelectedMenu
-          name="language"
-          label="Selected language"
-          iconComponent={<LanguageIcon />}
-          options={languages}
-          optionsLabel={languagesLabel}
-          selectedOption={language}
-          onChange={handleLanguageChange}
-        />
+        <LanguageComponent />
       </Box>
     </Box>
   );

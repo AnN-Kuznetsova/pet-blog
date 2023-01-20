@@ -109,6 +109,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
       } else {
         await addNewPost(newPostData).unwrap();
       }
+
       const snack: SnackTypeRaw = {
         id: new Date().getTime(),
         type: SnackbarType.SUCCESS,
