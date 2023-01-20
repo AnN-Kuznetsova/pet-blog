@@ -1,8 +1,11 @@
 import add from "date-fns/add";
 import format from "date-fns/format";
 import enUS from "date-fns/locale/en-US";
+import ru from "date-fns/locale/ru";
 
 import { DateMeasureType, PostDateMode } from "../types/additional-types";
+import { Languages } from "../i18n";
+import { Locale } from "date-fns";
 
 
 enum DateFormatMode {
@@ -10,11 +13,16 @@ enum DateFormatMode {
   LONG = `do MMMM yyyy, k:mm`,
 }
 
-const formatDate = (dateString: string, mode: DateFormatMode = DateFormatMode.SHORT): string => {
+const LanguageToLocale: Record<Languages, Locale> = {
+  [Languages.EN]: enUS,
+  [Languages.RU]: ru,
+};
+
+const formatDate = (dateString: string, language: Languages, mode: DateFormatMode = DateFormatMode.SHORT): string => {
   const date = new Date(dateString);
 
   return format(date, mode, {
-    locale: enUS,
+    locale: LanguageToLocale[language],
   });
 };
 

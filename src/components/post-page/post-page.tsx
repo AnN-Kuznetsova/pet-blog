@@ -1,11 +1,13 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
+import { useSelector } from "react-redux";
 
 import { AvatarSize, UserAvatar } from "../user-avatar/user-avatar";
 import { CircularPogress } from "../circular-pogress/circular-pogress";
 import { DateFormatMode, formatDate } from "../../helpers/utils";
 import { ErrorPage } from "../error-page/error-page";
+import { getLanguage } from "../../store/application/selectors";
 import { styles } from "./styles";
 import { useGetPostsQueryState } from "../api/postsSlice";
 import { useGetUserQuery } from "../api/usersSlice";
@@ -15,6 +17,7 @@ import { useTranslation } from "react-i18next";
 
 export const PostPage: React.FC = (): JSX.Element | null => {
   const {t} = useTranslation();
+  const language = useSelector(getLanguage);
   const {
     isLoading: isPostsLoading,
     isSuccess: isPostsSuccess,
@@ -22,7 +25,7 @@ export const PostPage: React.FC = (): JSX.Element | null => {
     error: postsError,
   } = useGetPostsQueryState();
   const post = usePost();
-  const date = post ? formatDate(post.date, DateFormatMode.LONG) : ``;
+  const date = post ? formatDate(post.date, language, DateFormatMode.LONG) : ``;
 
   const {
     data: user,

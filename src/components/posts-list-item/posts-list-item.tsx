@@ -10,8 +10,10 @@ import {
 import { AppRoute } from "../../helpers/constants";
 import { UserAvatar } from "../user-avatar/user-avatar";
 import { formatDate } from "../../helpers/utils";
-import { useGetUserQuery } from "../api/usersSlice";
+import { getLanguage } from "../../store/application/selectors";
 import { styles } from "./styles";
+import { useGetUserQuery } from "../api/usersSlice";
+import { useSelector } from "react-redux";
 import type { PostType } from "../../types/types";
 
 
@@ -22,7 +24,8 @@ export interface PropsType {
 
 export const PostsListItem: React.FC<PropsType> = (props): JSX.Element | null => {
   const {post} = props;
-  const date = formatDate(post.date);
+  const language = useSelector(getLanguage);
+  const date = formatDate(post.date, language);
   const postPageUrl = AppRoute.POST_PAGE.replace(`:id`, `${post.id}`);
   const {data: user} = useGetUserQuery(post.userId);
 

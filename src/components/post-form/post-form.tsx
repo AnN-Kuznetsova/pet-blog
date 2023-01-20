@@ -20,7 +20,7 @@ import { CustomTextField as CustomTextFieldRaw } from "../../helpers/CustomTextF
 import { calcPostDate, DateFormatMode, formatDate } from "../../helpers/utils";
 import { ModalType } from "../../helpers/constants";
 
-import { getModalType } from "../../store/application/selectors";
+import { getLanguage, getModalType } from "../../store/application/selectors";
 import { setModalType, addSnack } from "../../store/application/application";
 import { styles } from "./styles";
 import { useAddNewPostMutation, useEditPostMutation } from "../api/postsSlice";
@@ -76,6 +76,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
   const dispatch = useDispatch();
   const {t} = useTranslation();
   const modalType = useSelector(getModalType);
+  const language = useSelector(getLanguage);
   const [addNewPost, {isLoading: isAddPostLoading}] = useAddNewPostMutation();
   const [editPost, {isLoading: isEditPostLoading}] = useEditPostMutation();
   const post = usePost();
@@ -156,7 +157,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
     duration: +formik.values.addDate,
     measure: formik.values.measure,
   });
-  const formattedPostDate = formatDate(postDate, DateFormatMode.LONG);
+  const formattedPostDate = formatDate(postDate, language, DateFormatMode.LONG);
 
   usePostFormButtonControls(onModalClose, formik.isValid);
 
