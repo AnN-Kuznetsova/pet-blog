@@ -69,15 +69,18 @@ export const SelectedMenu: React.FC<PropsType> = (props): JSX.Element => {
             type="button"
             variant="contained"
             loading={isLoading}
-            loadingPosition="start"
+            loadingPosition="end"
+            endIcon={<></>}
             onClick={handleClickListItem}
           >
             {!!iconComponent &&
-              <Box sx={styles.icon(isLoading)}>
+              <Box sx={styles.icon}>
                 {iconComponent}
               </Box>
             }
-            {selectedOption}
+            <Box sx={styles.buttonLabel}>
+              {!isLoading && selectedOption}
+            </Box>
           </LoadingButton>
         </ListItem>
       </List>

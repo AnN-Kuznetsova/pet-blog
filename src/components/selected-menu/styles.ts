@@ -1,7 +1,10 @@
-const icon = (isLoading: boolean) => ({
+const icon = () => ({
   marginRight: 1,
   height: `24px`,
-  color: isLoading ? `transparent` : `auto`,
+});
+
+const buttonLabel = () => ({
+  minWidth: 24,
 });
 
 const list = () => ({
@@ -15,6 +18,7 @@ const listItem = () => ({
 
 export const styles = {
   icon,
+  buttonLabel,
   list,
   listItem,
 };
