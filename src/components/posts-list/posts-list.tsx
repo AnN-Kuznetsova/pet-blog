@@ -1,4 +1,5 @@
 import React from "react";
+import { Box } from "@mui/material";
 import {
   AutoSizer as _AutoSizer,
   AutoSizerProps,
@@ -6,7 +7,6 @@ import {
   ListProps,
 } from "react-virtualized";
 import { useSelector } from "react-redux";
-import { Box } from "@mui/material";
 
 import { POST_LIST_ROW_HEIGHT } from "../../helpers/constants";
 import { CircularPogress } from "../circular-pogress/circular-pogress";
