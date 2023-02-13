@@ -6,10 +6,10 @@ import { Theme } from "@mui/material";
 // const BORDER_RADIUS = `47%`;
 
 
-const SCROLL_SIZE = 40; // px
-const SCROLL_RADIUS = 4; // px - половина ширины видимой части
+const SCROLL_ACTIVE_SIZE = 30; // px
+const SCROLL_VISIBLE_SIZE = 8; // px
 
-const borderWidth = SCROLL_SIZE / 2 - SCROLL_RADIUS;
+const scrollRadius = SCROLL_VISIBLE_SIZE / 2;
 
 enum ScrollOrientation {
   VERTICAL,
@@ -24,25 +24,27 @@ enum GradientMode {
 const GradientPosition = {
   TO_RIGHT: `to right`,
   TO_BOTTOM: `to bottom`,
-  TOP: `50% ${SCROLL_RADIUS}px`,
-  BOTTOM: `50% calc(100% - ${SCROLL_RADIUS}px)`,
-  LEFT: `${SCROLL_RADIUS}px 50%`,
-  RIGHT: `calc(100% - ${SCROLL_RADIUS}px) 50%`,
+  TOP: `50% ${scrollRadius}px`,
+  BOTTOM: `50% calc(100% - ${scrollRadius}px)`,
+  LEFT: `${scrollRadius}px 50%`,
+  RIGHT: `calc(100% - ${scrollRadius}px) 50%`,
 };
 
 const getGradients = (mode: GradientMode, positions: string[], color: string) => (
   positions
     .map((position) => {
       if (mode === GradientMode.RADIAL) {
-        return `radial-gradient(circle closest-side at ${position}, ${color} ${SCROLL_RADIUS}px, transparent ${SCROLL_RADIUS}px)`;
+        return `radial-gradient(circle closest-side at ${position}, ${color} ${scrollRadius}px, transparent ${scrollRadius}px)`;
       }
 
-      return `linear-gradient(${position}, transparent ${SCROLL_RADIUS}px, ${color} ${SCROLL_RADIUS}px, ${color} calc(100% - ${SCROLL_RADIUS}px), transparent calc(100% - ${SCROLL_RADIUS}px))`;
+      return `linear-gradient(${position}, transparent ${scrollRadius}px, ${color} ${scrollRadius}px, ${color} calc(100% - ${scrollRadius}px), transparent calc(100% - ${scrollRadius}px))`;
     })
     .join()
 );
 
 const getBackgroundStyles = (orientation: ScrollOrientation, color: string) => {
+  const borderStyle = `${SCROLL_ACTIVE_SIZE - SCROLL_VISIBLE_SIZE}px solid transparent`;
+
   const radialGradientPositions = orientation === ScrollOrientation.VERTICAL ?
     [GradientPosition.TOP, GradientPosition.BOTTOM]
     : [GradientPosition.LEFT, GradientPosition.RIGHT];
@@ -50,38 +52,31 @@ const getBackgroundStyles = (orientation: ScrollOrientation, color: string) => {
   const linearGradientPosition = orientation === ScrollOrientation.VERTICAL ?
     [GradientPosition.TO_BOTTOM] : [GradientPosition.TO_RIGHT];
 
-  const borders = orientation === ScrollOrientation.VERTICAL ?
-    {
-      borderTop: `none`,
-      borderBottom: `none`,
-    }
-    : {
-      borderLeft: `none`,
-      borderRight: `none`,
-    };
+  const borders = orientation === ScrollOrientation.VERTICAL ? {
+    borderLeft: borderStyle,
+  } : {
+    borderTop: borderStyle,
+  };
 
   return {
     background: `
-      ${getGradients(GradientMode.LINEAR, linearGradientPosition, color)},
-      ${getGradients(GradientMode.RADIAL, radialGradientPositions, color)}`,
-    ...borders,
+    ${getGradients(GradientMode.LINEAR, linearGradientPosition, color)},
+    ${getGradients(GradientMode.RADIAL, radialGradientPositions, color)}`,
     backgroundClip: `padding-box`,
+    ...borders,
   };
 };
 
 const globalStyles = (theme: Theme) => ({
   "::-webkit-scrollbar": {
-    width: SCROLL_SIZE,
-    height: SCROLL_SIZE,
-    border: `${borderWidth}px solid transparent`,
+    width: SCROLL_ACTIVE_SIZE,
+    height: SCROLL_ACTIVE_SIZE,
 
     "&:vertical": getBackgroundStyles(ScrollOrientation.VERTICAL, theme.palette.primary.main),
     "&:horizontal": getBackgroundStyles(ScrollOrientation.HORIZONTAL, theme.palette.primary.main),
   },
 
   "::-webkit-scrollbar-thumb": {
-    border: `${borderWidth}px solid transparent`,
-
     "&:vertical": getBackgroundStyles(ScrollOrientation.VERTICAL, theme.palette.primary.light),
     "&:horizontal": getBackgroundStyles(ScrollOrientation.HORIZONTAL, theme.palette.primary.light),
   },
