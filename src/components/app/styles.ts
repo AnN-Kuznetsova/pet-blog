@@ -34,10 +34,20 @@ const getGradients = (mode: GradientMode, positions: string[], color: string) =>
   positions
     .map((position) => {
       if (mode === GradientMode.RADIAL) {
-        return `radial-gradient(circle closest-side at ${position}, ${color} ${scrollRadius}px, transparent ${scrollRadius}px)`;
+        return `radial-gradient(
+          circle closest-side at ${position},
+          ${color} ${scrollRadius}px,
+          transparent ${scrollRadius}px)
+        `;
       }
 
-      return `linear-gradient(${position}, transparent ${scrollRadius}px, ${color} ${scrollRadius}px, ${color} calc(100% - ${scrollRadius}px), transparent calc(100% - ${scrollRadius}px))`;
+      return `linear-gradient(
+        ${position},
+        transparent ${scrollRadius}px,
+        ${color} ${scrollRadius}px,
+        ${color} calc(100% - ${scrollRadius}px),
+        transparent calc(100% - ${scrollRadius}px))
+      `;
     })
     .join()
 );
