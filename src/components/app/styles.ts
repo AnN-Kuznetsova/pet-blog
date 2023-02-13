@@ -1,10 +1,5 @@
 import { Theme } from "@mui/material";
 
-// import { BORDER_RADIUS } from "../../helpers/constants";
-
-
-// const BORDER_RADIUS = `47%`;
-
 
 const SCROLL_ACTIVE_SIZE = 30; // px
 const SCROLL_VISIBLE_SIZE = 8; // px
