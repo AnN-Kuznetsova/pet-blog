@@ -52,24 +52,45 @@ export const PostsList: React.FC = (): JSX.Element => {
   };
 
   return (
-    <Box sx={styles.containerStyles}>
-      {isPostsLoading && <CircularPogress/>}
+    <>
+      <Box sx={styles.containerStyles}>
+        {isPostsLoading && <CircularPogress/>}
 
-      {isPostsSuccess &&
-        <AutoSizer>
-          {({height, width}) => (
-            <List
-              width={width}
-              height={height - 1}
-              rowCount={posts.length}
-              rowHeight={POST_LIST_ROW_HEIGHT}
-              rowRenderer={rowRenderer}
-            />
-          )}
-        </AutoSizer>
-      }
+        {isPostsSuccess &&
+          <AutoSizer>
+            {({height, width}) => (
+              <List
+                width={width}
+                height={height - 1}
+                rowCount={posts.length}
+                rowHeight={POST_LIST_ROW_HEIGHT}
+                rowRenderer={rowRenderer}
+              />
+            )}
+          </AutoSizer>
+        }
 
-      {isPostsError && <ErrorPage error={postsError} />}
-    </Box>
+        {isPostsError && <ErrorPage error={postsError} />}
+      </Box>
+      <Box sx={styles.containerStyles}>
+        {isPostsLoading && <CircularPogress/>}
+
+        {isPostsSuccess &&
+          <AutoSizer>
+            {({height, width}) => (
+              <List
+                width={width}
+                height={height - 1}
+                rowCount={posts.length}
+                rowHeight={POST_LIST_ROW_HEIGHT}
+                rowRenderer={rowRenderer}
+              />
+            )}
+          </AutoSizer>
+        }
+
+        {isPostsError && <ErrorPage error={postsError} />}
+      </Box>
+    </>
   );
 };
