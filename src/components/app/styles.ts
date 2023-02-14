@@ -1,8 +1,9 @@
-import { Theme } from "@mui/material";
+import { darken, Theme } from "@mui/material";
 
 
-const SCROLL_ACTIVE_SIZE = 10; // px
+const SCROLL_ACTIVE_SIZE = 30; // px
 const SCROLL_VISIBLE_SIZE = 5; // px
+const SCROLL_HOVER_SIZE = 10; // px
 
 const getBackgroundStyles = (color: string, size: number) => {
   const borderWidth = (SCROLL_ACTIVE_SIZE - size) / 2;
@@ -12,7 +13,7 @@ const getBackgroundStyles = (color: string, size: number) => {
     backgroundColor: `${color}`,
     backgroundClip: `padding-box`,
     border: borderStyle,
-    borderRadius: `${borderWidth ? (SCROLL_ACTIVE_SIZE - size) : SCROLL_ACTIVE_SIZE / 2}px`,
+    borderRadius: `${borderWidth * 2}px`,
   };
 };
 
@@ -28,44 +29,31 @@ const globalStyles = (theme: Theme) => ({
     ...getBackgroundStyles(theme.palette.primary.light, SCROLL_VISIBLE_SIZE),
   },
 
-  "*:hover": {
-    // color: theme.palette.primary.light,
+  "div": {
+    backgroundColor: darken(theme.palette.primary.light, 0.2),
+    backgroundClip: `text`,
+    transition: `background-color .5s`,
 
-    "&::-webkit-scrollbar": {
-      ...getBackgroundStyles(theme.palette.primary.main, SCROLL_ACTIVE_SIZE),
+    "&:hover": {
+      backgroundColor: theme.palette.primary.light,
+
+      "::-webkit-scrollbar": {
+        ...getBackgroundStyles(``, SCROLL_HOVER_SIZE),
+      },
+
+      "&::-webkit-scrollbar-thumb": {
+        ...getBackgroundStyles(``, SCROLL_HOVER_SIZE),
+      },
     },
 
     "&::-webkit-scrollbar-thumb": {
-      ...getBackgroundStyles(theme.palette.primary.light, SCROLL_ACTIVE_SIZE),
+      backgroundColor: `inherit`,
     },
   },
-
-  "div": {
-    // transition: `color .1s ease`,
-    transition: `all .1s ease`,
-  },
-
-  /* "::-webkit-scrollbar": {
-    width: SCROLL_ACTIVE_SIZE,
-    height: SCROLL_ACTIVE_SIZE,
-
-    "&:vertical": getBackgroundStyles(ScrollOrientation.VERTICAL, theme.palette.primary.main),
-    "&:horizontal": getBackgroundStyles(ScrollOrientation.HORIZONTAL, theme.palette.primary.main),
-  },
-
-  "::-webkit-scrollbar-thumb": {
-    "&:vertical": getBackgroundStyles(ScrollOrientation.VERTICAL, theme.palette.primary.light),
-    "&:horizontal": getBackgroundStyles(ScrollOrientation.HORIZONTAL, theme.palette.primary.light),
-  }, */
 
   "::-webkit-scrollbar-corner": {
     backgroundColor: `transparent`,
   },
-
-  /* "::-webkit-scrollbar-track": {
-    background: getBackground(theme.palette.primary.main),
-    borderRadius: BORDER_RADIUS,
-  }, */
 
   "a": {
     width: "100%",
@@ -75,6 +63,10 @@ const globalStyles = (theme: Theme) => ({
     "&:has(button.Mui-disabled)": {
       pointerEvents: `none` as const,
     },
+  },
+
+  ".ReactVirtualized__Grid__innerScrollContainer": {
+    width: `5000px !important`,
   },
 });
 
