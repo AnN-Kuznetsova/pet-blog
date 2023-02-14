@@ -1,8 +1,8 @@
 import { Theme } from "@mui/material";
 
 
-const SCROLL_ACTIVE_SIZE = 30; // px
-const SCROLL_VISIBLE_SIZE = 8; // px
+const SCROLL_ACTIVE_SIZE = 20; // px
+const SCROLL_VISIBLE_SIZE = 6; // px
 
 const scrollRadius = SCROLL_VISIBLE_SIZE / 2;
 
@@ -89,11 +89,6 @@ const globalStyles = (theme: Theme) => ({
   "::-webkit-scrollbar-corner": {
     backgroundColor: `transparent`,
   },
-
-  /* "::-webkit-scrollbar-track": {
-    background: getBackground(theme.palette.primary.main),
-    borderRadius: BORDER_RADIUS,
-  }, */
 
   "a": {
     width: "100%",
