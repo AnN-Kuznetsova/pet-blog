@@ -99,6 +99,10 @@ const globalStyles = (theme: Theme) => ({
       pointerEvents: `none` as const,
     },
   },
+
+  ".ReactVirtualized__Grid__innerScrollContainer": {
+    width: `5000px !important`,
+  },
 });
 
 const appStyles = () => ({
