@@ -1,24 +1,9 @@
 import { Theme } from "@mui/material";
 
 
-const SCROLL_ACTIVE_SIZE = 30; // px
+const SCROLL_ACTIVE_SIZE = 20; // px
 const SCROLL_VISIBLE_SIZE = 5; // px
-const SCROLL_HOVER_SIZE = 10; // px
-
-// document.addEventListener(`mousemove`, (event) => {
-//   const element = event.target as HTMLElement;
-
-//   if (element) {
-//     const params = element.getBoundingClientRect();
-//     if (event.pageX < params.right && event.pageX > params.right - SCROLL_ACTIVE_SIZE ||
-//       event.pageY < params.bottom && event.pageY > params.bottom - SCROLL_ACTIVE_SIZE
-//     ) {
-//       element.classList.add(`scrollbar-hover`);
-//     } else {
-//       element.classList.remove(`scrollbar-hover`);
-//     }
-//   }
-// });
+const SCROLL_ON_HOVER_SIZE = 10; // px
 
 const getBackgroundStyles = (color: string, size: number) => {
   const borderWidth = (SCROLL_ACTIVE_SIZE - size) / 2;
@@ -45,14 +30,12 @@ const globalStyles = (theme: Theme) => ({
   },
 
   "&::-webkit-scrollbar:hover": {
-    ...getBackgroundStyles(theme.palette.primary.main, SCROLL_HOVER_SIZE),
+    ...getBackgroundStyles(theme.palette.primary.main, SCROLL_ON_HOVER_SIZE),
   },
 
   "&::-webkit-scrollbar-thumb:hover": {
-    ...getBackgroundStyles(theme.palette.primary.light, SCROLL_HOVER_SIZE),
+    ...getBackgroundStyles(theme.palette.primary.light, SCROLL_ON_HOVER_SIZE),
   },
-  // ".scrollbar-hover": {
-  // },
 
   "::-webkit-scrollbar-corner": {
     backgroundColor: `transparent`,
