@@ -4,82 +4,15 @@ import { Theme } from "@mui/material";
 const SCROLL_ACTIVE_SIZE = 10; // px
 const SCROLL_VISIBLE_SIZE = 5; // px
 
-enum ScrollOrientation {
-  VERTICAL,
-  HORIZONTAL,
-}
-
-enum GradientMode {
-  LINEAR,
-  RADIAL,
-}
-
-const getGradientPosition = (orientation: ScrollOrientation, mode: GradientMode, size: number) => {
-  const radius = size / 2;
-
-  const position = {
-    TO_RIGHT: `to right`,
-    TO_BOTTOM: `to bottom`,
-    TOP: `50% ${radius}px`,
-    BOTTOM: `50% calc(100% - ${radius}px)`,
-    LEFT: `${radius}px 50%`,
-    RIGHT: `calc(100% - ${radius}px) 50%`,
-  };
-
-  if (mode === GradientMode.LINEAR) {
-    return orientation === ScrollOrientation.VERTICAL ?
-      [position.TO_BOTTOM] : [position.TO_RIGHT];
-  }
-
-  if (mode === GradientMode.RADIAL) {
-    return orientation === ScrollOrientation.VERTICAL ?
-      [position.TOP, position.BOTTOM]
-      : [position.LEFT, position.RIGHT];
-  }
-  return [];
-};
-
-const getGradients = (mode: GradientMode, positions: string[], color: string, size: number) => {
-  const radius = size / 2;
-
-  return positions
-    .map((position) => {
-      if (mode === GradientMode.RADIAL) {
-        return `radial-gradient(
-          circle closest-side at ${position},
-          ${color} ${radius}px,
-          transparent ${radius}px)
-        `;
-      }
-
-      return `linear-gradient(
-        ${position},
-        transparent ${radius}px,
-        ${color} ${radius}px,
-        ${color} calc(100% - ${radius}px),
-        transparent calc(100% - ${radius}px))
-      `;
-    })
-    .join();
-};
-
-const getBackgroundStyles = (orientation: ScrollOrientation, color: string, size: number) => {
-  const borderStyle = `${SCROLL_ACTIVE_SIZE - size}px solid transparent`;
-  const radialGradientPositions = getGradientPosition(orientation, GradientMode.RADIAL, size);
-  const linearGradientPosition = getGradientPosition(orientation, GradientMode.LINEAR, size);
-
-  const borders = orientation === ScrollOrientation.VERTICAL ? {
-    borderLeft: borderStyle,
-  } : {
-    borderTop: borderStyle,
-  };
+const getBackgroundStyles = (color: string, size: number) => {
+  const borderWidth = (SCROLL_ACTIVE_SIZE - size) / 2;
+  const borderStyle = `${borderWidth}px solid transparent`;
 
   return {
-    background: `
-      ${getGradients(GradientMode.RADIAL, radialGradientPositions, color, size)},
-      ${getGradients(GradientMode.LINEAR, linearGradientPosition, color, size)}`,
+    backgroundColor: `${color}`,
     backgroundClip: `padding-box`,
-    ...borders,
+    border: borderStyle,
+    borderRadius: `${borderWidth ? (SCROLL_ACTIVE_SIZE - size) : SCROLL_ACTIVE_SIZE / 2}px`,
   };
 };
 
@@ -88,22 +21,22 @@ const globalStyles = (theme: Theme) => ({
     width: SCROLL_ACTIVE_SIZE,
     height: SCROLL_ACTIVE_SIZE,
 
-    "&:vertical": getBackgroundStyles(ScrollOrientation.VERTICAL, theme.palette.primary.main, SCROLL_VISIBLE_SIZE),
+    ...getBackgroundStyles(theme.palette.primary.main, SCROLL_VISIBLE_SIZE),
   },
 
   "*::-webkit-scrollbar-thumb": {
-    "&:vertical": getBackgroundStyles(ScrollOrientation.VERTICAL, theme.palette.primary.light, SCROLL_VISIBLE_SIZE),
+    ...getBackgroundStyles(theme.palette.primary.light, SCROLL_VISIBLE_SIZE),
   },
 
-  "div:hover": {
-    color: theme.palette.primary.light,
+  "*:hover": {
+    // color: theme.palette.primary.light,
 
     "&::-webkit-scrollbar": {
-      "&:vertical": getBackgroundStyles(ScrollOrientation.VERTICAL, theme.palette.primary.main, SCROLL_ACTIVE_SIZE),
+      ...getBackgroundStyles(theme.palette.primary.main, SCROLL_ACTIVE_SIZE),
     },
 
     "&::-webkit-scrollbar-thumb": {
-      "&:vertical": getBackgroundStyles(ScrollOrientation.VERTICAL, theme.palette.primary.light, SCROLL_ACTIVE_SIZE),
+      ...getBackgroundStyles(theme.palette.primary.light, SCROLL_ACTIVE_SIZE),
     },
   },
 
@@ -123,11 +56,11 @@ const globalStyles = (theme: Theme) => ({
   "::-webkit-scrollbar-thumb": {
     "&:vertical": getBackgroundStyles(ScrollOrientation.VERTICAL, theme.palette.primary.light),
     "&:horizontal": getBackgroundStyles(ScrollOrientation.HORIZONTAL, theme.palette.primary.light),
-  },
+  }, */
 
   "::-webkit-scrollbar-corner": {
     backgroundColor: `transparent`,
-  }, */
+  },
 
   /* "::-webkit-scrollbar-track": {
     background: getBackground(theme.palette.primary.main),
