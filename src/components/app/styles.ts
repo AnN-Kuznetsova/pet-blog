@@ -5,6 +5,32 @@ const SCROLL_ACTIVE_SIZE = 20; // px
 const SCROLL_VISIBLE_SIZE = 5; // px
 const SCROLL_ON_HOVER_SIZE = 10; // px
 
+let currentScrollElement: HTMLElement | null = null;
+
+document.body.addEventListener(`mousemove`, (event) => {
+  const element = event.target as HTMLElement;
+
+  if (element !== currentScrollElement) {
+    if (currentScrollElement) {
+      currentScrollElement.classList.remove(`scrollbar-hover`);
+    }
+
+    currentScrollElement = element;
+  }
+
+  if (currentScrollElement) {
+    const params = currentScrollElement.getBoundingClientRect();
+
+    if (params.right && event.pageX < params.right && event.pageX > params.right - SCROLL_ACTIVE_SIZE ||
+      event.pageY < params.bottom && event.pageY > params.bottom - SCROLL_ACTIVE_SIZE
+    ) {
+      currentScrollElement.classList.add(`scrollbar-hover`);
+    } else {
+      currentScrollElement.classList.remove(`scrollbar-hover`);
+    }
+  }
+});
+
 const getBackgroundStyles = (color: string, size: number) => {
   const borderWidth = (SCROLL_ACTIVE_SIZE - size) / 2;
   const borderStyle = `${borderWidth}px solid transparent`;
@@ -29,12 +55,15 @@ const globalStyles = (theme: Theme) => ({
     ...getBackgroundStyles(theme.palette.primary.light, SCROLL_VISIBLE_SIZE),
   },
 
-  "&::-webkit-scrollbar:hover": {
-    ...getBackgroundStyles(theme.palette.primary.main, SCROLL_ON_HOVER_SIZE),
-  },
+  ".scrollbar-hover": {
+    "&::-webkit-scrollbar": {
+      ...getBackgroundStyles(theme.palette.primary.main, SCROLL_ON_HOVER_SIZE),
+    },
 
-  "&::-webkit-scrollbar-thumb:hover": {
-    ...getBackgroundStyles(theme.palette.primary.light, SCROLL_ON_HOVER_SIZE),
+    "&::-webkit-scrollbar-thumb": {
+      ...getBackgroundStyles(theme.palette.primary.light, SCROLL_ON_HOVER_SIZE),
+    },
+
   },
 
   "::-webkit-scrollbar-corner": {
