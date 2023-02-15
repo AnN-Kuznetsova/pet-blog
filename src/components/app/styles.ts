@@ -99,12 +99,12 @@ document.body.addEventListener(`mousemove`, (event) => {
   }
 });
 
-const getBackgroundStyles = ({orientation, color, size, isHover}: {
+const getBackgroundStyles = ({orientation, color, isHover}: {
   orientation: ScrollOrientation;
   color: string;
-  size: number;
   isHover: boolean;
 }) => {
+  const size = isHover ? SCROLL_ON_HOVER_SIZE : SCROLL_VISIBLE_SIZE;
   const opacity = isHover ? 1 : SCROLLBAR_REST_OPACITY;
   const borderStyle = `${SCROLL_ACTIVE_SIZE - size}px solid transparent`;
 
@@ -129,14 +129,12 @@ const globalStyles = (theme: Theme) => ({
     "&:vertical": getBackgroundStyles({
       orientation: ScrollOrientation.VERTICAL,
       color: theme.palette.primary.main,
-      size: SCROLL_VISIBLE_SIZE,
       isHover: false,
     }),
 
     "&:horizontal": getBackgroundStyles({
       orientation: ScrollOrientation.HORIZONTAL,
       color: theme.palette.primary.main,
-      size: SCROLL_VISIBLE_SIZE,
       isHover: false,
     }),
   },
@@ -145,14 +143,12 @@ const globalStyles = (theme: Theme) => ({
     "&:vertical": getBackgroundStyles({
       orientation: ScrollOrientation.VERTICAL,
       color: theme.palette.primary.light,
-      size: SCROLL_VISIBLE_SIZE,
       isHover: false,
     }),
 
     "&:horizontal": getBackgroundStyles({
       orientation: ScrollOrientation.HORIZONTAL,
       color: theme.palette.primary.light,
-      size: SCROLL_VISIBLE_SIZE,
       isHover: false,
     }),
   },
@@ -162,14 +158,12 @@ const globalStyles = (theme: Theme) => ({
       "&::-webkit-scrollbar:vertical": getBackgroundStyles({
         orientation: ScrollOrientation.VERTICAL,
         color: theme.palette.primary.main,
-        size: SCROLL_ON_HOVER_SIZE,
         isHover: true,
       }),
 
       "&::-webkit-scrollbar-thumb:vertical": getBackgroundStyles({
         orientation: ScrollOrientation.VERTICAL,
         color: theme.palette.primary.light,
-        size: SCROLL_ON_HOVER_SIZE,
         isHover: true,
       }),
     },
@@ -178,14 +172,12 @@ const globalStyles = (theme: Theme) => ({
       "&::-webkit-scrollbar:horizontal": getBackgroundStyles({
         orientation: ScrollOrientation.HORIZONTAL,
         color: theme.palette.primary.main,
-        size: SCROLL_ON_HOVER_SIZE,
         isHover: true,
       }),
 
       "&::-webkit-scrollbar-thumb:horizontal": getBackgroundStyles({
         orientation: ScrollOrientation.HORIZONTAL,
         color: theme.palette.primary.light,
-        size: SCROLL_ON_HOVER_SIZE,
         isHover: true,
       }),
     },
