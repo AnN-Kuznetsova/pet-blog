@@ -1,18 +1,51 @@
 import { Theme } from "@mui/material";
 
-
 const SCROLL_ACTIVE_SIZE = 20; // px
 const SCROLL_VISIBLE_SIZE = 5; // px
 const SCROLL_ON_HOVER_SIZE = 10; // px
 
+const SCROLLBAR_CLASS_VERTICAL = `scrollbar-hover--vertical`;
+const SCROLLBAR_CLASS_HORIZONTAL = `scrollbar-hover--horizontal`;
+
 let currentScrollElement: HTMLElement | null = null;
+
+const getScrollbarParams = (
+  elementParams: {
+    right: number;
+    bottom: number;
+  },
+  pageParams: {
+    pageX: number;
+    pageY: number;
+  }
+): {
+  isVertical: boolean;
+  isHorizontal: boolean;
+} => {
+  const {right, bottom} = elementParams;
+  const {pageX, pageY} = pageParams;
+
+  const scrollbar = {
+    isVertical: false,
+    isHorizontal: false,
+  };
+
+  if (right && pageX < right && pageX > right - SCROLL_ACTIVE_SIZE) {
+    scrollbar.isVertical = true;
+  }
+  if (bottom && pageY < bottom && pageY > bottom - SCROLL_ACTIVE_SIZE) {
+    scrollbar.isHorizontal = true;
+  }
+
+  return scrollbar;
+};
 
 document.body.addEventListener(`mousemove`, (event) => {
   const element = event.target as HTMLElement;
 
   if (element !== currentScrollElement) {
     if (currentScrollElement) {
-      currentScrollElement.classList.remove(`scrollbar-hover`);
+      currentScrollElement.classList.remove(SCROLLBAR_CLASS_VERTICAL, SCROLLBAR_CLASS_HORIZONTAL);
     }
 
     currentScrollElement = element;
@@ -21,12 +54,29 @@ document.body.addEventListener(`mousemove`, (event) => {
   if (currentScrollElement) {
     const params = currentScrollElement.getBoundingClientRect();
 
-    if (params.right && event.pageX < params.right && event.pageX > params.right - SCROLL_ACTIVE_SIZE ||
-      event.pageY < params.bottom && event.pageY > params.bottom - SCROLL_ACTIVE_SIZE
-    ) {
-      currentScrollElement.classList.add(`scrollbar-hover`);
+    const elementParams = {
+      right: params.right,
+      bottom: params.bottom,
+    };
+
+    const pageParams = {
+      pageX: event.pageX,
+      pageY: event.pageY,
+    };
+
+    const scrollbarParams = getScrollbarParams(elementParams, pageParams);
+
+
+    if (scrollbarParams.isVertical) {
+      currentScrollElement.classList.add(SCROLLBAR_CLASS_VERTICAL);
     } else {
-      currentScrollElement.classList.remove(`scrollbar-hover`);
+      currentScrollElement.classList.remove(SCROLLBAR_CLASS_VERTICAL);
+    }
+
+    if (scrollbarParams.isHorizontal) {
+      currentScrollElement.classList.add(SCROLLBAR_CLASS_HORIZONTAL);
+    } else {
+      currentScrollElement.classList.remove(SCROLLBAR_CLASS_HORIZONTAL);
     }
   }
 });
@@ -56,14 +106,23 @@ const globalStyles = (theme: Theme) => ({
   },
 
   ".scrollbar-hover": {
-    "&::-webkit-scrollbar": {
-      ...getBackgroundStyles(theme.palette.primary.main, SCROLL_ON_HOVER_SIZE),
+    "&--vertical": {
+      "&::-webkit-scrollbar:vertical": {
+        ...getBackgroundStyles(theme.palette.primary.main, SCROLL_ON_HOVER_SIZE),
+      },
+      "&::-webkit-scrollbar-thumb:vertical": {
+        ...getBackgroundStyles(theme.palette.primary.light, SCROLL_ON_HOVER_SIZE),
+      },
     },
 
-    "&::-webkit-scrollbar-thumb": {
-      ...getBackgroundStyles(theme.palette.primary.light, SCROLL_ON_HOVER_SIZE),
+    "&--horizontal": {
+      "&::-webkit-scrollbar:horizontal": {
+        ...getBackgroundStyles(theme.palette.primary.main, SCROLL_ON_HOVER_SIZE),
+      },
+      "&::-webkit-scrollbar-thumb:horizontal": {
+        ...getBackgroundStyles(theme.palette.primary.light, SCROLL_ON_HOVER_SIZE),
+      },
     },
-
   },
 
   "::-webkit-scrollbar-corner": {
