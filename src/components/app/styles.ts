@@ -8,6 +8,23 @@ const SCROLLBAR_CLASS_VERTICAL = `scrollbar-hover--vertical`;
 const SCROLLBAR_CLASS_HORIZONTAL = `scrollbar-hover--horizontal`;
 const SCROLLBAR_REST_OPACITY = 0.5;
 
+enum ScrollOrientation {
+  VERTICAL,
+  HORIZONTAL,
+}
+
+const getSvgBG = (color: string, size: number, opacity: number) => (
+  `url('data:image/svg+xml,\
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100% 100%">\
+      <g fill="${color}" opacity="${opacity}">\
+        <rect x="0" y="0"\
+          width="100%" height="100%"\
+          rx="${size / 2}" ry="${size / 2}"/>\
+      </g>\
+    </svg>'
+  )`
+);
+
 let currentScrollElement: HTMLElement | null = null;
 
 const getScrollbarParams = (
@@ -82,21 +99,25 @@ document.body.addEventListener(`mousemove`, (event) => {
   }
 });
 
-const getBackgroundStyles = ({color, size, isHover}: {
+const getBackgroundStyles = ({orientation, color, size, isHover}: {
+  orientation: ScrollOrientation;
   color: string;
   size: number;
   isHover: boolean;
 }) => {
-  const borderWidth = (SCROLL_ACTIVE_SIZE - size) / 2;
-  const borderStyle = `${borderWidth}px solid transparent`;
-  const formattedСolor = color.replace(`rgb(`, ``).replace(`)`, ``);
   const opacity = isHover ? 1 : SCROLLBAR_REST_OPACITY;
+  const borderStyle = `${SCROLL_ACTIVE_SIZE - size}px solid transparent`;
+
+  const borders = orientation === ScrollOrientation.VERTICAL ? {
+    borderLeft: borderStyle,
+  } : {
+    borderTop: borderStyle,
+  };
 
   return {
-    backgroundColor: `rgba(${formattedСolor}, ${opacity})`,
+    background: `${getSvgBG(color, size, opacity)} no-repeat`,
     backgroundClip: `padding-box`,
-    border: borderStyle,
-    borderRadius: `${borderWidth * 2}px`,
+    ...borders,
   };
 };
 
@@ -105,28 +126,48 @@ const globalStyles = (theme: Theme) => ({
     width: SCROLL_ACTIVE_SIZE,
     height: SCROLL_ACTIVE_SIZE,
 
-    ...getBackgroundStyles({
+    "&:vertical": getBackgroundStyles({
+      orientation: ScrollOrientation.VERTICAL,
+      color: theme.palette.primary.main,
+      size: SCROLL_VISIBLE_SIZE,
+      isHover: false,
+    }),
+
+    "&:horizontal": getBackgroundStyles({
+      orientation: ScrollOrientation.HORIZONTAL,
       color: theme.palette.primary.main,
       size: SCROLL_VISIBLE_SIZE,
       isHover: false,
     }),
   },
 
-  "*::-webkit-scrollbar-thumb": getBackgroundStyles({
-    color: theme.palette.primary.light,
-    size: SCROLL_VISIBLE_SIZE,
-    isHover: false,
-  }),
+  "*::-webkit-scrollbar-thumb": {
+    "&:vertical": getBackgroundStyles({
+      orientation: ScrollOrientation.VERTICAL,
+      color: theme.palette.primary.light,
+      size: SCROLL_VISIBLE_SIZE,
+      isHover: false,
+    }),
+
+    "&:horizontal": getBackgroundStyles({
+      orientation: ScrollOrientation.HORIZONTAL,
+      color: theme.palette.primary.light,
+      size: SCROLL_VISIBLE_SIZE,
+      isHover: false,
+    }),
+  },
 
   ".scrollbar-hover": {
     "&--vertical": {
       "&::-webkit-scrollbar:vertical": getBackgroundStyles({
+        orientation: ScrollOrientation.VERTICAL,
         color: theme.palette.primary.main,
         size: SCROLL_ON_HOVER_SIZE,
         isHover: true,
       }),
 
       "&::-webkit-scrollbar-thumb:vertical": getBackgroundStyles({
+        orientation: ScrollOrientation.VERTICAL,
         color: theme.palette.primary.light,
         size: SCROLL_ON_HOVER_SIZE,
         isHover: true,
@@ -135,12 +176,14 @@ const globalStyles = (theme: Theme) => ({
 
     "&--horizontal": {
       "&::-webkit-scrollbar:horizontal": getBackgroundStyles({
+        orientation: ScrollOrientation.HORIZONTAL,
         color: theme.palette.primary.main,
         size: SCROLL_ON_HOVER_SIZE,
         isHover: true,
       }),
 
       "&::-webkit-scrollbar-thumb:horizontal": getBackgroundStyles({
+        orientation: ScrollOrientation.HORIZONTAL,
         color: theme.palette.primary.light,
         size: SCROLL_ON_HOVER_SIZE,
         isHover: true,
