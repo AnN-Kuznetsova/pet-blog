@@ -4,58 +4,25 @@ import { Theme } from "@mui/material";
 const SCROLL_ACTIVE_SIZE = 20; // px
 const SCROLL_VISIBLE_SIZE = 6; // px
 
-const scrollRadius = SCROLL_VISIBLE_SIZE / 2;
-
 enum ScrollOrientation {
   VERTICAL,
   HORIZONTAL,
 }
 
-enum GradientMode {
-  LINEAR,
-  RADIAL,
-}
-
-const GradientPosition = {
-  TO_RIGHT: `to right`,
-  TO_BOTTOM: `to bottom`,
-  TOP: `50% ${scrollRadius}px`,
-  BOTTOM: `50% calc(100% - ${scrollRadius}px)`,
-  LEFT: `${scrollRadius}px 50%`,
-  RIGHT: `calc(100% - ${scrollRadius}px) 50%`,
-};
-
-const getGradients = (mode: GradientMode, positions: string[], color: string) => (
-  positions
-    .map((position) => {
-      if (mode === GradientMode.RADIAL) {
-        return `radial-gradient(
-          circle closest-side at ${position},
-          ${color} ${scrollRadius}px,
-          transparent ${scrollRadius}px)
-        `;
-      }
-
-      return `linear-gradient(
-        ${position},
-        transparent ${scrollRadius}px,
-        ${color} ${scrollRadius}px,
-        ${color} calc(100% - ${scrollRadius}px),
-        transparent calc(100% - ${scrollRadius}px))
-      `;
-    })
-    .join()
+const getSvgBG = (color: string, size: number) => (
+  `url('data:image/svg+xml,\
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100% 100%">\
+      <g fill="${color}">\
+        <rect x="0" y="0"\
+          width="100%" height="100%"\
+          rx="${size / 2}" ry="${size / 2}"/>\
+      </g>\
+    </svg>'
+  )`
 );
 
 const getBackgroundStyles = (orientation: ScrollOrientation, color: string) => {
   const borderStyle = `${SCROLL_ACTIVE_SIZE - SCROLL_VISIBLE_SIZE}px solid transparent`;
-
-  const radialGradientPositions = orientation === ScrollOrientation.VERTICAL ?
-    [GradientPosition.TOP, GradientPosition.BOTTOM]
-    : [GradientPosition.LEFT, GradientPosition.RIGHT];
-
-  const linearGradientPosition = orientation === ScrollOrientation.VERTICAL ?
-    [GradientPosition.TO_BOTTOM] : [GradientPosition.TO_RIGHT];
 
   const borders = orientation === ScrollOrientation.VERTICAL ? {
     borderLeft: borderStyle,
@@ -64,9 +31,7 @@ const getBackgroundStyles = (orientation: ScrollOrientation, color: string) => {
   };
 
   return {
-    background: `
-    ${getGradients(GradientMode.LINEAR, linearGradientPosition, color)},
-    ${getGradients(GradientMode.RADIAL, radialGradientPositions, color)}`,
+    background: `${getSvgBG(color, SCROLL_VISIBLE_SIZE)} no-repeat`,
     backgroundClip: `padding-box`,
     ...borders,
   };
