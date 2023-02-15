@@ -3,16 +3,17 @@ import { Theme } from "@mui/material";
 
 const SCROLL_ACTIVE_SIZE = 20; // px
 const SCROLL_VISIBLE_SIZE = 6; // px
+const SCROLLBAR_REST_OPACITY = 0.5;
 
 enum ScrollOrientation {
   VERTICAL,
   HORIZONTAL,
 }
 
-const getSvgBG = (color: string, size: number) => (
+const getSvgBG = (color: string, size: number, opacity: number) => (
   `url('data:image/svg+xml,\
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100% 100%">\
-      <g fill="${color}">\
+      <g fill="${color}" opacity="${opacity}">\
         <rect x="0" y="0"\
           width="100%" height="100%"\
           rx="${size / 2}" ry="${size / 2}"/>\
@@ -21,7 +22,8 @@ const getSvgBG = (color: string, size: number) => (
   )`
 );
 
-const getBackgroundStyles = (orientation: ScrollOrientation, color: string) => {
+const getBackgroundStyles = (orientation: ScrollOrientation, color: string, isHover: boolean) => {
+  const opacity = isHover ? 1 : SCROLLBAR_REST_OPACITY;
   const borderStyle = `${SCROLL_ACTIVE_SIZE - SCROLL_VISIBLE_SIZE}px solid transparent`;
 
   const borders = orientation === ScrollOrientation.VERTICAL ? {
@@ -31,24 +33,36 @@ const getBackgroundStyles = (orientation: ScrollOrientation, color: string) => {
   };
 
   return {
-    background: `${getSvgBG(color, SCROLL_VISIBLE_SIZE)} no-repeat`,
+    background: `${getSvgBG(color, SCROLL_VISIBLE_SIZE, opacity)} no-repeat`,
     backgroundClip: `padding-box`,
     ...borders,
   };
 };
 
 const globalStyles = (theme: Theme) => ({
-  "::-webkit-scrollbar": {
+  "*::-webkit-scrollbar": {
     width: SCROLL_ACTIVE_SIZE,
     height: SCROLL_ACTIVE_SIZE,
 
-    "&:vertical": getBackgroundStyles(ScrollOrientation.VERTICAL, theme.palette.primary.main),
-    "&:horizontal": getBackgroundStyles(ScrollOrientation.HORIZONTAL, theme.palette.primary.main),
+    "&:vertical": getBackgroundStyles(ScrollOrientation.VERTICAL, theme.palette.primary.main, false),
+    "&:horizontal": getBackgroundStyles(ScrollOrientation.HORIZONTAL, theme.palette.primary.main, false),
   },
 
-  "::-webkit-scrollbar-thumb": {
-    "&:vertical": getBackgroundStyles(ScrollOrientation.VERTICAL, theme.palette.primary.light),
-    "&:horizontal": getBackgroundStyles(ScrollOrientation.HORIZONTAL, theme.palette.primary.light),
+  "*::-webkit-scrollbar-thumb": {
+    "&:vertical": getBackgroundStyles(ScrollOrientation.VERTICAL, theme.palette.primary.light, false),
+    "&:horizontal": getBackgroundStyles(ScrollOrientation.HORIZONTAL, theme.palette.primary.light, false),
+  },
+
+  "*:hover": {
+    "&::-webkit-scrollbar": {
+      "&:vertical": getBackgroundStyles(ScrollOrientation.VERTICAL, theme.palette.primary.main, true),
+      "&:horizontal": getBackgroundStyles(ScrollOrientation.HORIZONTAL, theme.palette.primary.main, true),
+    },
+
+    "&::-webkit-scrollbar-thumb": {
+      "&:vertical": getBackgroundStyles(ScrollOrientation.VERTICAL, theme.palette.primary.light, true),
+      "&:horizontal": getBackgroundStyles(ScrollOrientation.HORIZONTAL, theme.palette.primary.light, true),
+    },
   },
 
   "::-webkit-scrollbar-corner": {
