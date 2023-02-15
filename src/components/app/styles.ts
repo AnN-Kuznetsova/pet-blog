@@ -6,6 +6,7 @@ const SCROLL_ON_HOVER_SIZE = 10; // px
 
 const SCROLLBAR_CLASS_VERTICAL = `scrollbar-hover--vertical`;
 const SCROLLBAR_CLASS_HORIZONTAL = `scrollbar-hover--horizontal`;
+const SCROLLBAR_REST_OPACITY = 0.5;
 
 let currentScrollElement: HTMLElement | null = null;
 
@@ -81,12 +82,18 @@ document.body.addEventListener(`mousemove`, (event) => {
   }
 });
 
-const getBackgroundStyles = (color: string, size: number) => {
+const getBackgroundStyles = ({color, size, isHover}: {
+  color: string;
+  size: number;
+  isHover: boolean;
+}) => {
   const borderWidth = (SCROLL_ACTIVE_SIZE - size) / 2;
   const borderStyle = `${borderWidth}px solid transparent`;
+  const formattedСolor = color.replace(`rgb(`, ``).replace(`)`, ``);
+  const opacity = isHover ? 1 : SCROLLBAR_REST_OPACITY;
 
   return {
-    backgroundColor: `${color}`,
+    backgroundColor: `rgba(${formattedСolor}, ${opacity})`,
     backgroundClip: `padding-box`,
     border: borderStyle,
     borderRadius: `${borderWidth * 2}px`,
@@ -98,30 +105,46 @@ const globalStyles = (theme: Theme) => ({
     width: SCROLL_ACTIVE_SIZE,
     height: SCROLL_ACTIVE_SIZE,
 
-    ...getBackgroundStyles(theme.palette.primary.main, SCROLL_VISIBLE_SIZE),
+    ...getBackgroundStyles({
+      color: theme.palette.primary.main,
+      size: SCROLL_VISIBLE_SIZE,
+      isHover: false,
+    }),
   },
 
-  "*::-webkit-scrollbar-thumb": {
-    ...getBackgroundStyles(theme.palette.primary.light, SCROLL_VISIBLE_SIZE),
-  },
+  "*::-webkit-scrollbar-thumb": getBackgroundStyles({
+    color: theme.palette.primary.light,
+    size: SCROLL_VISIBLE_SIZE,
+    isHover: false,
+  }),
 
   ".scrollbar-hover": {
     "&--vertical": {
-      "&::-webkit-scrollbar:vertical": {
-        ...getBackgroundStyles(theme.palette.primary.main, SCROLL_ON_HOVER_SIZE),
-      },
-      "&::-webkit-scrollbar-thumb:vertical": {
-        ...getBackgroundStyles(theme.palette.primary.light, SCROLL_ON_HOVER_SIZE),
-      },
+      "&::-webkit-scrollbar:vertical": getBackgroundStyles({
+        color: theme.palette.primary.main,
+        size: SCROLL_ON_HOVER_SIZE,
+        isHover: true,
+      }),
+
+      "&::-webkit-scrollbar-thumb:vertical": getBackgroundStyles({
+        color: theme.palette.primary.light,
+        size: SCROLL_ON_HOVER_SIZE,
+        isHover: true,
+      }),
     },
 
     "&--horizontal": {
-      "&::-webkit-scrollbar:horizontal": {
-        ...getBackgroundStyles(theme.palette.primary.main, SCROLL_ON_HOVER_SIZE),
-      },
-      "&::-webkit-scrollbar-thumb:horizontal": {
-        ...getBackgroundStyles(theme.palette.primary.light, SCROLL_ON_HOVER_SIZE),
-      },
+      "&::-webkit-scrollbar:horizontal": getBackgroundStyles({
+        color: theme.palette.primary.main,
+        size: SCROLL_ON_HOVER_SIZE,
+        isHover: true,
+      }),
+
+      "&::-webkit-scrollbar-thumb:horizontal": getBackgroundStyles({
+        color: theme.palette.primary.light,
+        size: SCROLL_ON_HOVER_SIZE,
+        isHover: true,
+      }),
     },
   },
 
