@@ -27,13 +27,7 @@ export const PostsListItem: React.FC<PropsType> = (props): JSX.Element | null =>
   const language = useSelector(getLanguage);
   const date = formatDate(post.date, language);
   const postPageUrl = AppRoute.POST_PAGE.replace(`:id`, `${post.id}`);
-  // const {data: user} = useGetUserQuery(post.userId);
-  const user = {
-    id: `1`,
-    avatar: null,
-    name: "Java Script and Ko",
-  };
-
+  const {data: user} = useGetUserQuery(post.userId);
 
   const handleItemButtonClick = (post: PostType) => {
     // console.log(post);
