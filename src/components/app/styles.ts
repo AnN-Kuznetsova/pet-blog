@@ -27,37 +27,6 @@ const getSvgBG = (color: string, size: number, opacity: number) => (
 
 let currentScrollElement: HTMLElement | null = null;
 
-const getScrollbarParams = (
-  elementParams: {
-    right: number;
-    bottom: number;
-  },
-  pageParams: {
-    pageX: number;
-    pageY: number;
-  }
-): {
-  isVertical: boolean;
-  isHorizontal: boolean;
-} => {
-  const {right, bottom} = elementParams;
-  const {pageX, pageY} = pageParams;
-
-  const scrollbar = {
-    isVertical: false,
-    isHorizontal: false,
-  };
-
-  if (right && pageX < right && pageX > right - SCROLL_ACTIVE_SIZE) {
-    scrollbar.isVertical = true;
-  }
-  if (bottom && pageY < bottom && pageY > bottom - SCROLL_ACTIVE_SIZE) {
-    scrollbar.isHorizontal = true;
-  }
-
-  return scrollbar;
-};
-
 document.body.addEventListener(`mousemove`, (event) => {
   const element = event.target as HTMLElement;
 
@@ -99,6 +68,37 @@ document.body.addEventListener(`mousemove`, (event) => {
   }
 });
 
+const getScrollbarParams = (
+  elementParams: {
+    right: number;
+    bottom: number;
+  },
+  pageParams: {
+    pageX: number;
+    pageY: number;
+  }
+): {
+  isVertical: boolean;
+  isHorizontal: boolean;
+} => {
+  const {right, bottom} = elementParams;
+  const {pageX, pageY} = pageParams;
+
+  const scrollbar = {
+    isVertical: false,
+    isHorizontal: false,
+  };
+
+  if (right && pageX < right && pageX > right - SCROLL_ACTIVE_SIZE) {
+    scrollbar.isVertical = true;
+  }
+  if (bottom && pageY < bottom && pageY > bottom - SCROLL_ACTIVE_SIZE) {
+    scrollbar.isHorizontal = true;
+  }
+
+  return scrollbar;
+};
+
 const getBackgroundStyles = ({orientation, color, isHover}: {
   orientation: ScrollOrientation;
   color: string;
@@ -106,12 +106,14 @@ const getBackgroundStyles = ({orientation, color, isHover}: {
 }) => {
   const size = isHover ? SCROLL_ON_HOVER_SIZE : SCROLL_VISIBLE_SIZE;
   const opacity = isHover ? 1 : SCROLLBAR_REST_OPACITY;
-  const borderStyle = `${SCROLL_ACTIVE_SIZE - size}px solid transparent`;
+  const borderStyle = `${(SCROLL_ACTIVE_SIZE - size) / 2}px solid transparent`;
 
   const borders = orientation === ScrollOrientation.VERTICAL ? {
     borderLeft: borderStyle,
+    borderRight: borderStyle,
   } : {
     borderTop: borderStyle,
+    borderBottom: borderStyle,
   };
 
   return {
