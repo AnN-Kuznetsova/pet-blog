@@ -50,7 +50,7 @@ const getScrollbarParams = (
   return scrollbar;
 };
 
-const manageScrollClass = (isScroll: boolean, className: string) => {
+const controlScrollClass = (isScroll: boolean, className: string) => {
   if (currentScrollElement) {
     if (isScroll) {
       currentScrollElement.classList.add(className);
@@ -87,8 +87,8 @@ document.body.addEventListener(`mousemove`, (event) => {
     };
 
     const {isVerticalScroll, isHorizontalScroll} = getScrollbarParams(elementParams, pageParams);
-    manageScrollClass(isVerticalScroll, ScrollbarHoverClass.VERTICAL);
-    manageScrollClass(isHorizontalScroll, ScrollbarHoverClass.HORIZONTAL);
+    controlScrollClass(isVerticalScroll, ScrollbarHoverClass.VERTICAL);
+    controlScrollClass(isHorizontalScroll, ScrollbarHoverClass.HORIZONTAL);
   }
 });
 
