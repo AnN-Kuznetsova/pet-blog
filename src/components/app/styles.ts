@@ -1,17 +1,23 @@
 import { Theme } from "@mui/material";
 
-const SCROLL_ACTIVE_SIZE = 20; // px
-const SCROLL_VISIBLE_SIZE = 5; // px
-const SCROLL_ON_HOVER_SIZE = 10; // px
 
-const SCROLLBAR_CLASS_VERTICAL = `scrollbar-hover--vertical`;
-const SCROLLBAR_CLASS_HORIZONTAL = `scrollbar-hover--horizontal`;
+const ScrollSize = {
+  ACTIVE: 20, // px
+  VISIBLE: 5, // px
+  HOVER: 10, // px
+};
+
 const SCROLLBAR_REST_OPACITY = 0.5;
 
 enum ScrollOrientation {
   VERTICAL,
   HORIZONTAL,
 }
+
+const ScrollbarHoverClass = {
+  VERTICAL: `scrollbar-hover--vertical`,
+  HORIZONTAL: `scrollbar-hover--horizontal`,
+};
 
 const getSvgBG = (color: string, size: number, opacity: number) => (
   `url('data:image/svg+xml,\
@@ -32,7 +38,7 @@ document.body.addEventListener(`mousemove`, (event) => {
 
   if (element !== currentScrollElement) {
     if (currentScrollElement) {
-      currentScrollElement.classList.remove(SCROLLBAR_CLASS_VERTICAL, SCROLLBAR_CLASS_HORIZONTAL);
+      currentScrollElement.classList.remove(ScrollbarHoverClass.VERTICAL, ScrollbarHoverClass.HORIZONTAL);
     }
 
     currentScrollElement = element;
@@ -55,15 +61,15 @@ document.body.addEventListener(`mousemove`, (event) => {
 
 
     if (scrollbarParams.isVertical) {
-      currentScrollElement.classList.add(SCROLLBAR_CLASS_VERTICAL);
+      currentScrollElement.classList.add(ScrollbarHoverClass.VERTICAL);
     } else {
-      currentScrollElement.classList.remove(SCROLLBAR_CLASS_VERTICAL);
+      currentScrollElement.classList.remove(ScrollbarHoverClass.VERTICAL);
     }
 
     if (scrollbarParams.isHorizontal) {
-      currentScrollElement.classList.add(SCROLLBAR_CLASS_HORIZONTAL);
+      currentScrollElement.classList.add(ScrollbarHoverClass.HORIZONTAL);
     } else {
-      currentScrollElement.classList.remove(SCROLLBAR_CLASS_HORIZONTAL);
+      currentScrollElement.classList.remove(ScrollbarHoverClass.HORIZONTAL);
     }
   }
 });
@@ -89,10 +95,10 @@ const getScrollbarParams = (
     isHorizontal: false,
   };
 
-  if (right && pageX < right && pageX > right - SCROLL_ACTIVE_SIZE) {
+  if (right && pageX < right && pageX > right - ScrollSize.ACTIVE) {
     scrollbar.isVertical = true;
   }
-  if (bottom && pageY < bottom && pageY > bottom - SCROLL_ACTIVE_SIZE) {
+  if (bottom && pageY < bottom && pageY > bottom - ScrollSize.ACTIVE) {
     scrollbar.isHorizontal = true;
   }
 
@@ -104,9 +110,9 @@ const getBackgroundStyles = ({orientation, color, isHover}: {
   color: string;
   isHover: boolean;
 }) => {
-  const size = isHover ? SCROLL_ON_HOVER_SIZE : SCROLL_VISIBLE_SIZE;
+  const size = isHover ? ScrollSize.HOVER : ScrollSize.VISIBLE;
   const opacity = isHover ? 1 : SCROLLBAR_REST_OPACITY;
-  const borderStyle = `${(SCROLL_ACTIVE_SIZE - size) / 2}px solid transparent`;
+  const borderStyle = `${(ScrollSize.ACTIVE - size) / 2}px solid transparent`;
 
   const borders = orientation === ScrollOrientation.VERTICAL ? {
     borderLeft: borderStyle,
@@ -125,8 +131,8 @@ const getBackgroundStyles = ({orientation, color, isHover}: {
 
 const globalStyles = (theme: Theme) => ({
   "*::-webkit-scrollbar": {
-    width: SCROLL_ACTIVE_SIZE,
-    height: SCROLL_ACTIVE_SIZE,
+    width: ScrollSize.ACTIVE,
+    height: ScrollSize.ACTIVE,
 
     "&:vertical": getBackgroundStyles({
       orientation: ScrollOrientation.VERTICAL,
