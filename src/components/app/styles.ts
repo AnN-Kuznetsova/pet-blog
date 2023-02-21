@@ -155,34 +155,32 @@ const globalStyles = (theme: Theme) => ({
     }),
   },
 
-  ".scrollbar-hover": {
-    "&--vertical": {
-      "&::-webkit-scrollbar:vertical": getBackgroundStyles({
-        orientation: ScrollOrientation.VERTICAL,
-        color: theme.palette.primary.main,
-        isHover: true,
-      }),
+  [`.${ScrollbarHoverClass.VERTICAL}`]: {
+    "&::-webkit-scrollbar:vertical": getBackgroundStyles({
+      orientation: ScrollOrientation.VERTICAL,
+      color: theme.palette.primary.main,
+      isHover: true,
+    }),
 
-      "&::-webkit-scrollbar-thumb:vertical": getBackgroundStyles({
-        orientation: ScrollOrientation.VERTICAL,
-        color: theme.palette.primary.light,
-        isHover: true,
-      }),
-    },
+    "&::-webkit-scrollbar-thumb:vertical": getBackgroundStyles({
+      orientation: ScrollOrientation.VERTICAL,
+      color: theme.palette.primary.light,
+      isHover: true,
+    }),
+  },
 
-    "&--horizontal": {
-      "&::-webkit-scrollbar:horizontal": getBackgroundStyles({
-        orientation: ScrollOrientation.HORIZONTAL,
-        color: theme.palette.primary.main,
-        isHover: true,
-      }),
+  [`.${ScrollbarHoverClass.HORIZONTAL}`]: {
+    "&::-webkit-scrollbar:horizontal": getBackgroundStyles({
+      orientation: ScrollOrientation.HORIZONTAL,
+      color: theme.palette.primary.main,
+      isHover: true,
+    }),
 
-      "&::-webkit-scrollbar-thumb:horizontal": getBackgroundStyles({
-        orientation: ScrollOrientation.HORIZONTAL,
-        color: theme.palette.primary.light,
-        isHover: true,
-      }),
-    },
+    "&::-webkit-scrollbar-thumb:horizontal": getBackgroundStyles({
+      orientation: ScrollOrientation.HORIZONTAL,
+      color: theme.palette.primary.light,
+      isHover: true,
+    }),
   },
 
   "::-webkit-scrollbar-corner": {
