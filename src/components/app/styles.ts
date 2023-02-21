@@ -19,18 +19,6 @@ const ScrollbarHoverClass = {
   HORIZONTAL: `scrollbar-hover--horizontal`,
 };
 
-const getSvgBG = (color: string, size: number, opacity: number) => (
-  `url('data:image/svg+xml,\
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100% 100%">\
-      <g fill="${color}" opacity="${opacity}">\
-        <rect x="0" y="0"\
-          width="100%" height="100%"\
-          rx="${size / 2}" ry="${size / 2}"/>\
-      </g>\
-    </svg>'
-  )`
-);
-
 const getScrollbarParams = (
   elementParams: {
     right: number;
@@ -104,6 +92,17 @@ document.body.addEventListener(`mousemove`, (event) => {
   }
 });
 
+const getSvgBG = (color: string, size: number, opacity: number) => (
+  `url('data:image/svg+xml,\
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100% 100%">\
+      <g fill="${color}" opacity="${opacity}">\
+        <rect x="0" y="0"\
+          width="100%" height="100%"\
+          rx="${size / 2}" ry="${size / 2}"/>\
+      </g>\
+    </svg>'
+  )`
+);
 
 const getBackgroundStyles = ({orientation, color, isHover}: {
   orientation: ScrollOrientation;
@@ -112,20 +111,15 @@ const getBackgroundStyles = ({orientation, color, isHover}: {
 }) => {
   const size = isHover ? ScrollSize.HOVER : ScrollSize.VISIBLE;
   const opacity = isHover ? 1 : SCROLLBAR_REST_OPACITY;
-  const borderStyle = `${(ScrollSize.ACTIVE - size) / 2}px solid transparent`;
-
-  const borders = orientation === ScrollOrientation.VERTICAL ? {
-    borderLeft: borderStyle,
-    borderRight: borderStyle,
-  } : {
-    borderTop: borderStyle,
-    borderBottom: borderStyle,
-  };
+  const borderWidth = `${(ScrollSize.ACTIVE - size) / 2}px`;
+  const borderStyle = orientation === ScrollOrientation.VERTICAL ? `none solid` : `solid none`;
 
   return {
     background: `${getSvgBG(color, size, opacity)} no-repeat`,
     backgroundClip: `padding-box`,
-    ...borders,
+    borderWidth,
+    borderColor: `transparent`,
+    borderStyle,
   };
 };
 
