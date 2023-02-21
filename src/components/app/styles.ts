@@ -1,24 +1,190 @@
-import { Theme } from "@mui/material";
+import type { Theme } from "@mui/material";
 
-import { BORDER_RADIUS } from "../../helpers/constants";
 
+const ScrollSize = {
+  ACTIVE: 20, // px
+  VISIBLE: 5, // px
+  HOVER: 10, // px
+};
+
+const SCROLLBAR_REST_OPACITY = 0.5;
+
+enum ScrollOrientation {
+  VERTICAL,
+  HORIZONTAL,
+}
+
+const ScrollbarHoverClass = {
+  VERTICAL: `scrollbar-hover--vertical`,
+  HORIZONTAL: `scrollbar-hover--horizontal`,
+};
+
+const getScrollbarParams = (
+  elementParams: {
+    right: number;
+    bottom: number;
+  },
+  pageParams: {
+    pageX: number;
+    pageY: number;
+  }
+): {
+  isVerticalScroll: boolean;
+  isHorizontalScroll: boolean;
+} => {
+  const {right, bottom} = elementParams;
+  const {pageX, pageY} = pageParams;
+
+  const scrollbar = {
+    isVerticalScroll: false,
+    isHorizontalScroll: false,
+  };
+
+  if (right && pageX < right && pageX > right - ScrollSize.ACTIVE) {
+    scrollbar.isVerticalScroll = true;
+  }
+  if (bottom && pageY < bottom && pageY > bottom - ScrollSize.ACTIVE) {
+    scrollbar.isHorizontalScroll = true;
+  }
+
+  return scrollbar;
+};
+
+const controlScrollClass = (isScroll: boolean, className: string) => {
+  if (currentScrollElement) {
+    if (isScroll) {
+      currentScrollElement.classList.add(className);
+    } else {
+      currentScrollElement.classList.remove(className);
+    }
+  }
+};
+
+let currentScrollElement: HTMLElement | null = null;
+
+document.body.addEventListener(`mousemove`, (event) => {
+  const element = event.target as HTMLElement;
+
+  if (element !== currentScrollElement) {
+    if (currentScrollElement) {
+      currentScrollElement.classList.remove(ScrollbarHoverClass.VERTICAL, ScrollbarHoverClass.HORIZONTAL);
+    }
+
+    currentScrollElement = element;
+  }
+
+  if (currentScrollElement) {
+    const params = currentScrollElement.getBoundingClientRect();
+
+    const elementParams = {
+      right: params.right,
+      bottom: params.bottom,
+    };
+
+    const pageParams = {
+      pageX: event.pageX,
+      pageY: event.pageY,
+    };
+
+    const {isVerticalScroll, isHorizontalScroll} = getScrollbarParams(elementParams, pageParams);
+    controlScrollClass(isVerticalScroll, ScrollbarHoverClass.VERTICAL);
+    controlScrollClass(isHorizontalScroll, ScrollbarHoverClass.HORIZONTAL);
+  }
+});
+
+const getSvgBG = (color: string, size: number, opacity: number) => (
+  `url('data:image/svg+xml,\
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100% 100%">\
+      <g fill="${color}" opacity="${opacity}">\
+        <rect x="0" y="0"\
+          width="100%" height="100%"\
+          rx="${size / 2}" ry="${size / 2}"/>\
+      </g>\
+    </svg>'
+  )`
+);
+
+const getBackgroundStyles = ({orientation, color, isHover}: {
+  orientation: ScrollOrientation;
+  color: string;
+  isHover: boolean;
+}) => {
+  const size = isHover ? ScrollSize.HOVER : ScrollSize.VISIBLE;
+  const opacity = isHover ? 1 : SCROLLBAR_REST_OPACITY;
+  const borderWidth = `${(ScrollSize.ACTIVE - size) / 2}px`;
+  const borderStyle = orientation === ScrollOrientation.VERTICAL ? `none solid` : `solid none`;
+
+  return {
+    background: `${getSvgBG(color, size, opacity)} no-repeat`,
+    backgroundClip: `padding-box`,
+    borderWidth,
+    borderColor: `transparent`,
+    borderStyle,
+  };
+};
 
 const globalStyles = (theme: Theme) => ({
-  "::-webkit-scrollbar": {
-    width: `5px`,
-    height: `5px`,
-    backgroundColor: theme.palette.primary.main,
-    borderRadius: BORDER_RADIUS,
+  "*::-webkit-scrollbar": {
+    width: ScrollSize.ACTIVE,
+    height: ScrollSize.ACTIVE,
+
+    "&:vertical": getBackgroundStyles({
+      orientation: ScrollOrientation.VERTICAL,
+      color: theme.palette.primary.main,
+      isHover: false,
+    }),
+
+    "&:horizontal": getBackgroundStyles({
+      orientation: ScrollOrientation.HORIZONTAL,
+      color: theme.palette.primary.main,
+      isHover: false,
+    }),
   },
 
-  "::-webkit-scrollbar-track": {
-    backgroundColor: theme.palette.primary.main,
-    borderRadius: BORDER_RADIUS,
+  "*::-webkit-scrollbar-thumb": {
+    "&:vertical": getBackgroundStyles({
+      orientation: ScrollOrientation.VERTICAL,
+      color: theme.palette.primary.light,
+      isHover: false,
+    }),
+
+    "&:horizontal": getBackgroundStyles({
+      orientation: ScrollOrientation.HORIZONTAL,
+      color: theme.palette.primary.light,
+      isHover: false,
+    }),
   },
 
-  "::-webkit-scrollbar-thumb": {
-    backgroundColor: theme.palette.primary.light,
-    borderRadius: BORDER_RADIUS,
+  [`.${ScrollbarHoverClass.VERTICAL}`]: {
+    "&::-webkit-scrollbar:vertical": getBackgroundStyles({
+      orientation: ScrollOrientation.VERTICAL,
+      color: theme.palette.primary.main,
+      isHover: true,
+    }),
+
+    "&::-webkit-scrollbar-thumb:vertical": getBackgroundStyles({
+      orientation: ScrollOrientation.VERTICAL,
+      color: theme.palette.primary.light,
+      isHover: true,
+    }),
+  },
+
+  [`.${ScrollbarHoverClass.HORIZONTAL}`]: {
+    "&::-webkit-scrollbar:horizontal": getBackgroundStyles({
+      orientation: ScrollOrientation.HORIZONTAL,
+      color: theme.palette.primary.main,
+      isHover: true,
+    }),
+
+    "&::-webkit-scrollbar-thumb:horizontal": getBackgroundStyles({
+      orientation: ScrollOrientation.HORIZONTAL,
+      color: theme.palette.primary.light,
+      isHover: true,
+    }),
+  },
+
+  "::-webkit-scrollbar-corner": {
+    backgroundColor: `transparent`,
   },
 
   "a": {
@@ -29,6 +195,10 @@ const globalStyles = (theme: Theme) => ({
     "&:has(button.Mui-disabled)": {
       pointerEvents: `none` as const,
     },
+  },
+
+  ".ReactVirtualized__Grid__innerScrollContainer": {
+    width: `5000px !important`,
   },
 });
 

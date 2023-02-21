@@ -1,6 +1,6 @@
 const container = () => ({
   display: `flex`,
-  marginBottom: 7,
+  marginBottom: 5,
 
   "& >:not(:last-child)": {
     marginRight: 1,
