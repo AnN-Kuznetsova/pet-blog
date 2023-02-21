@@ -31,6 +31,47 @@ const getSvgBG = (color: string, size: number, opacity: number) => (
   )`
 );
 
+const getScrollbarParams = (
+  elementParams: {
+    right: number;
+    bottom: number;
+  },
+  pageParams: {
+    pageX: number;
+    pageY: number;
+  }
+): {
+  isVerticalScroll: boolean;
+  isHorizontalScroll: boolean;
+} => {
+  const {right, bottom} = elementParams;
+  const {pageX, pageY} = pageParams;
+
+  const scrollbar = {
+    isVerticalScroll: false,
+    isHorizontalScroll: false,
+  };
+
+  if (right && pageX < right && pageX > right - ScrollSize.ACTIVE) {
+    scrollbar.isVerticalScroll = true;
+  }
+  if (bottom && pageY < bottom && pageY > bottom - ScrollSize.ACTIVE) {
+    scrollbar.isHorizontalScroll = true;
+  }
+
+  return scrollbar;
+};
+
+const manageScrollClass = (isScroll: boolean, className: string) => {
+  if (currentScrollElement) {
+    if (isScroll) {
+      currentScrollElement.classList.add(className);
+    } else {
+      currentScrollElement.classList.remove(className);
+    }
+  }
+};
+
 let currentScrollElement: HTMLElement | null = null;
 
 document.body.addEventListener(`mousemove`, (event) => {
@@ -57,53 +98,12 @@ document.body.addEventListener(`mousemove`, (event) => {
       pageY: event.pageY,
     };
 
-    const scrollbarParams = getScrollbarParams(elementParams, pageParams);
-
-
-    if (scrollbarParams.isVertical) {
-      currentScrollElement.classList.add(ScrollbarHoverClass.VERTICAL);
-    } else {
-      currentScrollElement.classList.remove(ScrollbarHoverClass.VERTICAL);
-    }
-
-    if (scrollbarParams.isHorizontal) {
-      currentScrollElement.classList.add(ScrollbarHoverClass.HORIZONTAL);
-    } else {
-      currentScrollElement.classList.remove(ScrollbarHoverClass.HORIZONTAL);
-    }
+    const {isVerticalScroll, isHorizontalScroll} = getScrollbarParams(elementParams, pageParams);
+    manageScrollClass(isVerticalScroll, ScrollbarHoverClass.VERTICAL);
+    manageScrollClass(isHorizontalScroll, ScrollbarHoverClass.HORIZONTAL);
   }
 });
 
-const getScrollbarParams = (
-  elementParams: {
-    right: number;
-    bottom: number;
-  },
-  pageParams: {
-    pageX: number;
-    pageY: number;
-  }
-): {
-  isVertical: boolean;
-  isHorizontal: boolean;
-} => {
-  const {right, bottom} = elementParams;
-  const {pageX, pageY} = pageParams;
-
-  const scrollbar = {
-    isVertical: false,
-    isHorizontal: false,
-  };
-
-  if (right && pageX < right && pageX > right - ScrollSize.ACTIVE) {
-    scrollbar.isVertical = true;
-  }
-  if (bottom && pageY < bottom && pageY > bottom - ScrollSize.ACTIVE) {
-    scrollbar.isHorizontal = true;
-  }
-
-  return scrollbar;
-};
 
 const getBackgroundStyles = ({orientation, color, isHover}: {
   orientation: ScrollOrientation;
