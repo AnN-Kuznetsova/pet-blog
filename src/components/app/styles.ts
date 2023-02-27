@@ -61,6 +61,11 @@ const controlScrollClass = (scrollElement: HTMLElement, isScroll: boolean, class
   }
 };
 
+enum AnimationDirection {
+  IN,
+  OUT,
+}
+
 let currentScrollElement: HTMLElement | null = null;
 
 /* document.body.addEventListener(`mousemove`, (event) => {
@@ -103,9 +108,8 @@ document.body.addEventListener(`mousemove`, (event) => {
 
   if (element !== currentScrollElement) {
     if (currentScrollElement) {
-      // currentScrollElement.classList.remove(ScrollbarHoverClass.VERTICAL, ScrollbarHoverClass.HORIZONTAL);
       currentScrollElement.setAttribute(`data-is-scroll-hover`, `false`);
-      animateScrollOut(currentScrollElement);
+      animateScroll(currentScrollElement);
     }
 
     currentScrollElement = element;
@@ -130,97 +134,35 @@ document.body.addEventListener(`mousemove`, (event) => {
 
     if (isVerticalScroll && currentScrollElement.dataset.isScrollHover !== `true`) {
       currentScrollElement.setAttribute(`data-is-scroll-hover`, `true`);
-      animateScrollIn(currentScrollElement);
+      animateScroll(currentScrollElement);
     }
     if (!isVerticalScroll && currentScrollElement.dataset.isScrollHover === `true`) {
       currentScrollElement.setAttribute(`data-is-scroll-hover`, `false`);
-      animateScrollOut(currentScrollElement);
+      animateScroll(currentScrollElement);
     }
   }
 });
 
-const animateScrollIn = (scrollElement: HTMLElement) => {
-  let index = 0;
-  // scrollElement.classList.add(scrollClassNames[index]);
-  // index++;
+const animateScroll = (scrollElement: HTMLElement) => {
+  const classIndex = scrollElement.dataset.classIndex ? +scrollElement.dataset.classIndex : 0;
+  let index = typeof classIndex === `number` ? classIndex : 0;
 
   const intervalID = setInterval(() => {
-    if (index < scrollClassNames.length) {
+    if (scrollElement.dataset.isScrollHover === `true` && index < scrollClassNames.length) {
       scrollElement.classList.remove(scrollClassNames[index - 1]);
       scrollElement.classList.add(scrollClassNames[index]);
+      scrollElement.setAttribute(`data-class-index`, `${index}`);
       index++;
-    } else {
-      clearInterval(intervalID);
-    }
-  }, SCROLLBAR_ANIMATION_TIME);
-};
-
-
-const animateScrollOut = (scrollElement: HTMLElement) => {
-  let index = scrollClassNames.length - 1;
-
-  // const main = document.querySelector(`main`);
-  // if (scrollElement === main) {
-  //   console.log(index);
-  // }
-
-  // scrollElement.classList.remove(scrollClassNames[index]);
-  // index--;
-
-  const intervalID = setInterval(() => {
-    // if (scrollElement === main) {
-    //   console.log(index);
-    // }
-
-    if (index > 0) {
+    } else if (scrollElement.dataset.isScrollHover === `false` && index > 0) {
       scrollElement.classList.remove(scrollClassNames[index]);
-      scrollElement.classList.add(scrollClassNames[index - 1]);
       index--;
-    } else {
-      scrollElement.classList.remove(scrollClassNames[0]);
-      clearInterval(intervalID);
-    }
-  }, SCROLLBAR_ANIMATION_TIME);
-};
-
-/* const animateScroll = (scrollElement: HTMLElement, isScroll: boolean) => {
-  if (isScroll) {
-    if (scrollElement.dataset.isScroll !== `true`) {
-      scrollElement.setAttribute(`data-is-scroll`, `true`);
-      let index = 0;
       scrollElement.classList.add(scrollClassNames[index]);
-      index++;
-
-      const intervalID = setInterval(() => {
-        if (index < scrollClassNames.length) {
-          scrollElement.classList.remove(scrollClassNames[index - 1]);
-          scrollElement.classList.add(scrollClassNames[index]);
-          index++;
-        } else {
-          clearInterval(intervalID);
-        }
-      }, 30);
+      scrollElement.setAttribute(`data-class-index`, `${index}`);
+    } else {
+      clearInterval(intervalID);
     }
-  } else {
-    if (scrollElement.dataset.isScroll !== `false`) {
-      scrollElement.setAttribute(`data-is-scroll`, `false`);
-      let index = scrollClassNames.length - 1;
-      scrollElement.classList.remove(scrollClassNames[index]);
-      index--;
-
-      const intervalID = setInterval(() => {
-        if (index > 0) {
-          scrollElement.classList.remove(scrollClassNames[index]);
-          scrollElement.classList.add(scrollClassNames[index - 1]);
-          index--;
-        } else {
-          clearInterval(intervalID);
-          scrollElement.classList.remove(scrollClassNames[0]);
-        }
-      }, 30);
-    }
-  }
-}; */
+  }, SCROLLBAR_ANIMATION_TIME);
+};
 
 const getSvgBG = (color: string, size: number, opacity: number) => (
   `url('data:image/svg+xml,\
@@ -257,26 +199,29 @@ const getBackgroundStyles = ({orientation, color, isHover, size}: {
 // /////////////////////////////
 
 const steps = [1,2,3,4,5,6,7,8,9,10];// new Array(10);
+const scrollSizeStep = (ScrollSize.HOVER - ScrollSize.VISIBLE) / (steps.length - 1);
 
 const scrollClassNames = steps.map((step, index) => {
   return `scrollbar-hover--${index}`;
 });
 
 const scrollHoverStyles = scrollClassNames.map((className, index) => {
+  const size = ScrollSize.VISIBLE + scrollSizeStep * index;
+
   return {
     [`.${className}`]: {
       "&::-webkit-scrollbar:vertical": getBackgroundStyles({
         orientation: ScrollOrientation.VERTICAL,
         color: `yellow`, // theme.palette.primary.main,
         isHover: true,
-        size: ScrollSize.VISIBLE + 2 * index,
+        size,
       }),
 
       "&::-webkit-scrollbar-thumb:vertical": getBackgroundStyles({
         orientation: ScrollOrientation.VERTICAL,
         color: `white`, // theme.palette.primary.light,
         isHover: true,
-        size: ScrollSize.VISIBLE + 2 * index,
+        size,
       }),
     },
   };
