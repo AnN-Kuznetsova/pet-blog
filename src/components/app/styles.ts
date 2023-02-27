@@ -16,8 +16,8 @@ enum ScrollOrientation {
 }
 
 const ScrollbarHoverClass = {
-  VERTICAL: `scrollbar-hover--vertical`,
-  HORIZONTAL: `scrollbar-hover--horizontal`,
+  VERTICAL: `scrollbar--vertical`,
+  HORIZONTAL: `scrollbar--horizontal`,
 };
 
 const getScrollbarParams = (
@@ -68,41 +68,6 @@ enum AnimationDirection {
 
 let currentScrollElement: HTMLElement | null = null;
 
-/* document.body.addEventListener(`mousemove`, (event) => {
-  const element = event.target as HTMLElement;
-
-  if (element !== currentScrollElement) {
-    if (currentScrollElement) {
-      currentScrollElement.classList.remove(ScrollbarHoverClass.VERTICAL, ScrollbarHoverClass.HORIZONTAL);
-    }
-
-    currentScrollElement = element;
-  }
-
-  const params = element.getBoundingClientRect();
-
-  const elementParams = {
-    right: params.right,
-    bottom: params.bottom,
-  };
-
-  const pageParams = {
-    pageX: event.pageX,
-    pageY: event.pageY,
-  };
-
-  const {isVerticalScroll, isHorizontalScroll} = getScrollbarParams(elementParams, pageParams);
-  // controlScrollClass(isVerticalScroll, ScrollbarHoverClass.VERTICAL);
-  // controlScrollClass(isHorizontalScroll, ScrollbarHoverClass.HORIZONTAL);
-
-  if (isVerticalScroll) {
-    element.setAttribute(`data-is-scroll-hover`, `true`);
-    animateScrollIn(element);
-  } else {
-    element.setAttribute(`data-is-scroll-hover`, `false`);
-    animateScrollOut(element);
-  }
-}); */
 document.body.addEventListener(`mousemove`, (event) => {
   const element = event.target as HTMLElement;
 
@@ -144,20 +109,21 @@ document.body.addEventListener(`mousemove`, (event) => {
 });
 
 const animateScroll = (scrollElement: HTMLElement) => {
-  const classIndex = scrollElement.dataset.classIndex ? +scrollElement.dataset.classIndex : 0;
-  let index = typeof classIndex === `number` ? classIndex : 0;
-
   const intervalID = setInterval(() => {
-    if (scrollElement.dataset.isScrollHover === `true` && index < scrollClassNames.length) {
-      scrollElement.classList.remove(scrollClassNames[index - 1]);
-      scrollElement.classList.add(scrollClassNames[index]);
-      scrollElement.setAttribute(`data-class-index`, `${index}`);
-      index++;
+    const classIndex = scrollElement.dataset.classIndex ? +scrollElement.dataset.classIndex : 0;
+    const index = typeof classIndex === `number` ? classIndex : 0;
+    let nextIndex = 0;
+
+    if (scrollElement.dataset.isScrollHover === `true` && index < scrollClassNames.length - 1) {
+      nextIndex = index + 1;
     } else if (scrollElement.dataset.isScrollHover === `false` && index > 0) {
+      nextIndex = index - 1;
+    }
+
+    if (nextIndex !== 0) {
       scrollElement.classList.remove(scrollClassNames[index]);
-      index--;
-      scrollElement.classList.add(scrollClassNames[index]);
-      scrollElement.setAttribute(`data-class-index`, `${index}`);
+      scrollElement.classList.add(scrollClassNames[nextIndex]);
+      scrollElement.setAttribute(`data-class-index`, `${nextIndex}`);
     } else {
       clearInterval(intervalID);
     }
@@ -182,7 +148,6 @@ const getBackgroundStyles = ({orientation, color, isHover, size}: {
   isHover: boolean;
   size: number;
 }) => {
-  // const size = isHover ? ScrollSize.HOVER : ScrollSize.VISIBLE;
   const opacity = isHover ? 1 : SCROLLBAR_REST_OPACITY;
   const borderWidth = `${(ScrollSize.ACTIVE - size) / 2}px`;
   const borderStyle = orientation === ScrollOrientation.VERTICAL ? `none solid` : `solid none`;
@@ -202,27 +167,45 @@ const steps = [1,2,3,4,5,6,7,8,9,10];// new Array(10);
 const scrollSizeStep = (ScrollSize.HOVER - ScrollSize.VISIBLE) / (steps.length - 1);
 
 const scrollClassNames = steps.map((step, index) => {
-  return `scrollbar-hover--${index}`;
+  return `scrollbar--${index}`;
 });
 
-const scrollHoverStyles = scrollClassNames.map((className, index) => {
-  const size = ScrollSize.VISIBLE + scrollSizeStep * index;
+const scrollStyles = scrollClassNames.map((className, index) => {
+  const size: number = ScrollSize.VISIBLE + scrollSizeStep * index;
 
   return {
     [`.${className}`]: {
-      "&::-webkit-scrollbar:vertical": getBackgroundStyles({
-        orientation: ScrollOrientation.VERTICAL,
-        color: `yellow`, // theme.palette.primary.main,
-        isHover: true,
-        size,
-      }),
+      "&::-webkit-scrollbar": {
+        "&:vertical": getBackgroundStyles({
+          orientation: ScrollOrientation.VERTICAL,
+          color: `yellow`, // theme.palette.primary.main,
+          isHover: true,
+          size,
+        }),
 
-      "&::-webkit-scrollbar-thumb:vertical": getBackgroundStyles({
-        orientation: ScrollOrientation.VERTICAL,
-        color: `white`, // theme.palette.primary.light,
-        isHover: true,
-        size,
-      }),
+        "&:horizontal": getBackgroundStyles({
+          orientation: ScrollOrientation.HORIZONTAL,
+          color: `yellow`, // theme.palette.primary.main,
+          isHover: true,
+          size,
+        }),
+      },
+
+      "&::-webkit-scrollbar-thumb": {
+        "&:vertical": getBackgroundStyles({
+          orientation: ScrollOrientation.VERTICAL,
+          color: `white`, // theme.palette.primary.light,
+          isHover: true,
+          size,
+        }),
+
+        "&:horizontal": getBackgroundStyles({
+          orientation: ScrollOrientation.HORIZONTAL,
+          color: `white`, // theme.palette.primary.light,
+          isHover: true,
+          size,
+        }),
+      },
     },
   };
 }).reduce((accum, styles) => {
@@ -234,73 +217,21 @@ const scrollHoverStyles = scrollClassNames.map((className, index) => {
   };
 }, {});
 
-// ////////////////////////////
+console.log(scrollStyles[`.scrollbar--0`]);
 
 const globalStyles = (theme: Theme) => ({
   "*::-webkit-scrollbar": {
     width: ScrollSize.ACTIVE,
     height: ScrollSize.ACTIVE,
 
-    "&:vertical": getBackgroundStyles({
-      orientation: ScrollOrientation.VERTICAL,
-      color: theme.palette.primary.main,
-      isHover: false,
-      size: ScrollSize.VISIBLE,
-    }),
-
-    "&:horizontal": getBackgroundStyles({
-      orientation: ScrollOrientation.HORIZONTAL,
-      color: theme.palette.primary.main,
-      isHover: false,
-      size: ScrollSize.VISIBLE,
-    }),
+    ...scrollStyles[`.scrollbar--0`][`&::-webkit-scrollbar`],
   },
 
   "*::-webkit-scrollbar-thumb": {
-    "&:vertical": getBackgroundStyles({
-      orientation: ScrollOrientation.VERTICAL,
-      color: theme.palette.primary.light,
-      isHover: false,
-      size: ScrollSize.VISIBLE,
-    }),
-
-    "&:horizontal": getBackgroundStyles({
-      orientation: ScrollOrientation.HORIZONTAL,
-      color: theme.palette.primary.light,
-      isHover: false,
-      size: ScrollSize.VISIBLE,
-    }),
+    ...scrollStyles[`.scrollbar--0`][`&::-webkit-scrollbar-thumb`],
   },
 
-  ...scrollHoverStyles,
-
-  /* [`.${ScrollbarHoverClass.VERTICAL}`]: {
-    "&::-webkit-scrollbar:vertical": getBackgroundStyles({
-      orientation: ScrollOrientation.VERTICAL,
-      color: theme.palette.primary.main,
-      isHover: true,
-    }),
-
-    "&::-webkit-scrollbar-thumb:vertical": getBackgroundStyles({
-      orientation: ScrollOrientation.VERTICAL,
-      color: theme.palette.primary.light,
-      isHover: true,
-    }),
-  },
-
-  [`.${ScrollbarHoverClass.HORIZONTAL}`]: {
-    "&::-webkit-scrollbar:horizontal": getBackgroundStyles({
-      orientation: ScrollOrientation.HORIZONTAL,
-      color: theme.palette.primary.main,
-      isHover: true,
-    }),
-
-    "&::-webkit-scrollbar-thumb:horizontal": getBackgroundStyles({
-      orientation: ScrollOrientation.HORIZONTAL,
-      color: theme.palette.primary.light,
-      isHover: true,
-    }),
-  }, */
+  ...scrollStyles,
 
   "::-webkit-scrollbar-corner": {
     backgroundColor: `transparent`,
