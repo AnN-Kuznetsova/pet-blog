@@ -1,4 +1,5 @@
 import type { Theme } from "@mui/material";
+import { THEME } from "../../helpers/theme";
 
 
 const ScrollSize = {
@@ -111,22 +112,32 @@ document.body.addEventListener(`mousemove`, (event) => {
 const animateScroll = (scrollElement: HTMLElement) => {
   const intervalID = setInterval(() => {
     const classIndex = scrollElement.dataset.classIndex ? +scrollElement.dataset.classIndex : 0;
-    const index = typeof classIndex === `number` ? classIndex : 0;
-    let nextIndex = 0;
+    let index = typeof classIndex === `number` ? classIndex : 0;
+    // let nextIndex: number | null = 0;
 
     if (scrollElement.dataset.isScrollHover === `true` && index < scrollClassNames.length - 1) {
-      nextIndex = index + 1;
+      // nextIndex = index + 1;
+      scrollElement.classList.remove(scrollClassNames[index]);
+      index++;
+      scrollElement.classList.add(scrollClassNames[index]);
+      scrollElement.setAttribute(`data-class-index`, `${index}`);
     } else if (scrollElement.dataset.isScrollHover === `false` && index > 0) {
-      nextIndex = index - 1;
+      // nextIndex = index - 1;
+      scrollElement.classList.remove(scrollClassNames[index]);
+      index--;
+      scrollElement.classList.add(scrollClassNames[index]);
+      scrollElement.setAttribute(`data-class-index`, `${index}`);
+    } else {
+      clearInterval(intervalID);
     }
 
-    if (nextIndex !== 0) {
+    /* if (nextIndex !== null) {
       scrollElement.classList.remove(scrollClassNames[index]);
       scrollElement.classList.add(scrollClassNames[nextIndex]);
       scrollElement.setAttribute(`data-class-index`, `${nextIndex}`);
     } else {
       clearInterval(intervalID);
-    }
+    } */
   }, SCROLLBAR_ANIMATION_TIME);
 };
 
@@ -178,14 +189,14 @@ const scrollStyles = scrollClassNames.map((className, index) => {
       "&::-webkit-scrollbar": {
         "&:vertical": getBackgroundStyles({
           orientation: ScrollOrientation.VERTICAL,
-          color: `yellow`, // theme.palette.primary.main,
+          color: THEME.palette.primary.main, //`yellow`, // theme.palette.primary.main,
           isHover: true,
           size,
         }),
 
         "&:horizontal": getBackgroundStyles({
           orientation: ScrollOrientation.HORIZONTAL,
-          color: `yellow`, // theme.palette.primary.main,
+          color: THEME.palette.primary.main, //`yellow`, // theme.palette.primary.main,
           isHover: true,
           size,
         }),
@@ -194,14 +205,14 @@ const scrollStyles = scrollClassNames.map((className, index) => {
       "&::-webkit-scrollbar-thumb": {
         "&:vertical": getBackgroundStyles({
           orientation: ScrollOrientation.VERTICAL,
-          color: `white`, // theme.palette.primary.light,
+          color: THEME.palette.primary.light, //`white`, // theme.palette.primary.light,
           isHover: true,
           size,
         }),
 
         "&:horizontal": getBackgroundStyles({
           orientation: ScrollOrientation.HORIZONTAL,
-          color: `white`, // theme.palette.primary.light,
+          color: THEME.palette.primary.light, //`white`, // theme.palette.primary.light,
           isHover: true,
           size,
         }),
