@@ -1,15 +1,19 @@
-import type { Theme } from "@mui/material";
 import { THEME } from "../../helpers/theme";
+import type { Theme } from "@mui/material";
 
 
 const ScrollSize = {
   ACTIVE: 30, // px
-  VISIBLE: 7, // px
+  VISIBLE: 6, // px
   HOVER: 20, // px
 };
 
-const SCROLLBAR_ANIMATION_TIME = 30; // ms
 const SCROLLBAR_REST_OPACITY = 0.5;
+
+const ScrollbarAnimationParams = {
+  DURATION: 300, // ms
+  FPS: 24,
+};
 
 enum ScrollOrientation {
   VERTICAL,
@@ -66,6 +70,14 @@ enum AnimationDirection {
   IN,
   OUT,
 }
+
+const scrollAnimationFramesCount = Math.ceil(ScrollbarAnimationParams.FPS * ScrollbarAnimationParams.DURATION / 1000);
+const animationInterval = ScrollbarAnimationParams.DURATION / scrollAnimationFramesCount;
+const scrollSizeStep = (ScrollSize.HOVER - ScrollSize.VISIBLE) / (scrollAnimationFramesCount - 1);
+const scrollOpacityStep = (1 - SCROLLBAR_REST_OPACITY) / (scrollAnimationFramesCount - 1);
+const scrollClassNames = Array(scrollAnimationFramesCount).fill(null).map((step, index) => {
+  return `scrollbar--${index}`;
+});
 
 let currentScrollElement: HTMLElement | null = null;
 
@@ -138,7 +150,7 @@ const animateScroll = (scrollElement: HTMLElement) => {
     } else {
       clearInterval(intervalID);
     } */
-  }, SCROLLBAR_ANIMATION_TIME);
+  }, animationInterval);
 };
 
 const getSvgBG = (color: string, size: number, opacity: number) => (
@@ -171,16 +183,6 @@ const getBackgroundStyles = ({orientation, color, index}: {
     borderStyle,
   };
 };
-
-// /////////////////////////////
-
-const steps = [1,2,3,4,5,6,7,8,9,10];// new Array(10);
-const scrollSizeStep = (ScrollSize.HOVER - ScrollSize.VISIBLE) / (steps.length - 1);
-const scrollOpacityStep = (1 - SCROLLBAR_REST_OPACITY) / (steps.length - 1);
-
-const scrollClassNames = steps.map((step, index) => {
-  return `scrollbar--${index}`;
-});
 
 const scrollStyles = scrollClassNames.map((className, index) => {
   return {
