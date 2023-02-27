@@ -2,18 +2,25 @@ import { THEME } from "../../helpers/theme";
 import type { Theme } from "@mui/material";
 
 
-const ScrollSize = {
-  ACTIVE: 30, // px
-  VISIBLE: 6, // px
-  HOVER: 20, // px
+const ScrollParams = {
+  Size: {
+    ACTIVE: 30, // px
+    VISIBLE: 6, // px
+    HOVER: 20, // px
+  },
+  Color: {
+    SCROLLBAR: THEME.palette.primary.main,
+    THUMB: THEME.palette.primary.light,
+  },
+  OPACITY_IN_REST: 0.5,
 };
 
-const SCROLLBAR_REST_OPACITY = 0.5;
-
-const ScrollbarAnimationParams = {
+const ScrollAnimationParams = {
   DURATION: 300, // ms
   FPS: 24,
 };
+
+// ///////////////////////////////////////////////////////
 
 enum ScrollOrientation {
   VERTICAL,
@@ -46,10 +53,10 @@ const getScrollbarParams = (
     isHorizontalScroll: false,
   };
 
-  if (right && pageX < right && pageX > right - ScrollSize.ACTIVE) {
+  if (right && pageX < right && pageX > right - ScrollParams.Size.ACTIVE) {
     scrollbar.isVerticalScroll = true;
   }
-  if (bottom && pageY < bottom && pageY > bottom - ScrollSize.ACTIVE) {
+  if (bottom && pageY < bottom && pageY > bottom - ScrollParams.Size.ACTIVE) {
     scrollbar.isHorizontalScroll = true;
   }
 
@@ -71,10 +78,10 @@ enum AnimationDirection {
   OUT,
 }
 
-const scrollAnimationFramesCount = Math.ceil(ScrollbarAnimationParams.FPS * ScrollbarAnimationParams.DURATION / 1000);
-const animationInterval = ScrollbarAnimationParams.DURATION / scrollAnimationFramesCount;
-const scrollSizeStep = (ScrollSize.HOVER - ScrollSize.VISIBLE) / (scrollAnimationFramesCount - 1);
-const scrollOpacityStep = (1 - SCROLLBAR_REST_OPACITY) / (scrollAnimationFramesCount - 1);
+const scrollAnimationFramesCount = Math.ceil(ScrollAnimationParams.FPS * ScrollAnimationParams.DURATION / 1000);
+const animationInterval = ScrollAnimationParams.DURATION / scrollAnimationFramesCount;
+const scrollSizeStep = (ScrollParams.Size.HOVER - ScrollParams.Size.VISIBLE) / (scrollAnimationFramesCount - 1);
+const scrollOpacityStep = (1 - ScrollParams.OPACITY_IN_REST) / (scrollAnimationFramesCount - 1);
 const scrollClassNames = Array(scrollAnimationFramesCount).fill(null).map((step, index) => {
   return `scrollbar--${index}`;
 });
@@ -170,9 +177,9 @@ const getBackgroundStyles = ({orientation, color, index}: {
   color: string;
   index: number;
 }) => {
-  const size = ScrollSize.VISIBLE + scrollSizeStep * index;
-  const opacity = SCROLLBAR_REST_OPACITY + scrollOpacityStep * index;
-  const borderWidth = `${(ScrollSize.ACTIVE - size) / 2}px`;
+  const size = ScrollParams.Size.VISIBLE + scrollSizeStep * index;
+  const opacity = ScrollParams.OPACITY_IN_REST + scrollOpacityStep * index;
+  const borderWidth = `${(ScrollParams.Size.ACTIVE - size) / 2}px`;
   const borderStyle = orientation === ScrollOrientation.VERTICAL ? `none solid` : `solid none`;
 
   return {
@@ -190,13 +197,13 @@ const scrollStyles = scrollClassNames.map((className, index) => {
       "&::-webkit-scrollbar": {
         "&:vertical": getBackgroundStyles({
           orientation: ScrollOrientation.VERTICAL,
-          color: THEME.palette.primary.main,
+          color: ScrollParams.Color.SCROLLBAR,
           index,
         }),
 
         "&:horizontal": getBackgroundStyles({
           orientation: ScrollOrientation.HORIZONTAL,
-          color: THEME.palette.primary.main,
+          color: ScrollParams.Color.SCROLLBAR,
           index,
         }),
       },
@@ -204,13 +211,13 @@ const scrollStyles = scrollClassNames.map((className, index) => {
       "&::-webkit-scrollbar-thumb": {
         "&:vertical": getBackgroundStyles({
           orientation: ScrollOrientation.VERTICAL,
-          color: THEME.palette.primary.light,
+          color: ScrollParams.Color.THUMB,
           index,
         }),
 
         "&:horizontal": getBackgroundStyles({
           orientation: ScrollOrientation.HORIZONTAL,
-          color: THEME.palette.primary.light,
+          color: ScrollParams.Color.THUMB,
           index,
         }),
       },
@@ -227,8 +234,8 @@ const scrollStyles = scrollClassNames.map((className, index) => {
 
 const globalStyles = (theme: Theme) => ({
   "*::-webkit-scrollbar": {
-    width: ScrollSize.ACTIVE,
-    height: ScrollSize.ACTIVE,
+    width: ScrollParams.Size.ACTIVE,
+    height: ScrollParams.Size.ACTIVE,
 
     ...scrollStyles[`.scrollbar--0`][`&::-webkit-scrollbar`],
   },
