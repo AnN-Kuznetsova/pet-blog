@@ -2,11 +2,12 @@ import type { Theme } from "@mui/material";
 
 
 const ScrollSize = {
-  ACTIVE: 20, // px
-  VISIBLE: 5, // px
-  HOVER: 10, // px
+  ACTIVE: 30, // px
+  VISIBLE: 7, // px
+  HOVER: 20, // px
 };
 
+const SCROLLBAR_ANIMATION_TIME = 30; // ms
 const SCROLLBAR_REST_OPACITY = 0.5;
 
 enum ScrollOrientation {
@@ -50,24 +51,61 @@ const getScrollbarParams = (
   return scrollbar;
 };
 
-const controlScrollClass = (isScroll: boolean, className: string) => {
-  if (currentScrollElement) {
+const controlScrollClass = (scrollElement: HTMLElement, isScroll: boolean, className: string) => {
+  if (scrollElement) {
     if (isScroll) {
-      currentScrollElement.classList.add(className);
+      scrollElement.classList.add(className);
     } else {
-      currentScrollElement.classList.remove(className);
+      scrollElement.classList.remove(className);
     }
   }
 };
 
 let currentScrollElement: HTMLElement | null = null;
 
-document.body.addEventListener(`mousemove`, (event) => {
+/* document.body.addEventListener(`mousemove`, (event) => {
   const element = event.target as HTMLElement;
 
   if (element !== currentScrollElement) {
     if (currentScrollElement) {
       currentScrollElement.classList.remove(ScrollbarHoverClass.VERTICAL, ScrollbarHoverClass.HORIZONTAL);
+    }
+
+    currentScrollElement = element;
+  }
+
+  const params = element.getBoundingClientRect();
+
+  const elementParams = {
+    right: params.right,
+    bottom: params.bottom,
+  };
+
+  const pageParams = {
+    pageX: event.pageX,
+    pageY: event.pageY,
+  };
+
+  const {isVerticalScroll, isHorizontalScroll} = getScrollbarParams(elementParams, pageParams);
+  // controlScrollClass(isVerticalScroll, ScrollbarHoverClass.VERTICAL);
+  // controlScrollClass(isHorizontalScroll, ScrollbarHoverClass.HORIZONTAL);
+
+  if (isVerticalScroll) {
+    element.setAttribute(`data-is-scroll-hover`, `true`);
+    animateScrollIn(element);
+  } else {
+    element.setAttribute(`data-is-scroll-hover`, `false`);
+    animateScrollOut(element);
+  }
+}); */
+document.body.addEventListener(`mousemove`, (event) => {
+  const element = event.target as HTMLElement;
+
+  if (element !== currentScrollElement) {
+    if (currentScrollElement) {
+      // currentScrollElement.classList.remove(ScrollbarHoverClass.VERTICAL, ScrollbarHoverClass.HORIZONTAL);
+      currentScrollElement.setAttribute(`data-is-scroll-hover`, `false`);
+      animateScrollOut(currentScrollElement);
     }
 
     currentScrollElement = element;
@@ -87,10 +125,102 @@ document.body.addEventListener(`mousemove`, (event) => {
     };
 
     const {isVerticalScroll, isHorizontalScroll} = getScrollbarParams(elementParams, pageParams);
-    controlScrollClass(isVerticalScroll, ScrollbarHoverClass.VERTICAL);
-    controlScrollClass(isHorizontalScroll, ScrollbarHoverClass.HORIZONTAL);
+    // controlScrollClass(isVerticalScroll, ScrollbarHoverClass.VERTICAL);
+    // controlScrollClass(isHorizontalScroll, ScrollbarHoverClass.HORIZONTAL);
+
+    if (isVerticalScroll && currentScrollElement.dataset.isScrollHover !== `true`) {
+      currentScrollElement.setAttribute(`data-is-scroll-hover`, `true`);
+      animateScrollIn(currentScrollElement);
+    }
+    if (!isVerticalScroll && currentScrollElement.dataset.isScrollHover === `true`) {
+      currentScrollElement.setAttribute(`data-is-scroll-hover`, `false`);
+      animateScrollOut(currentScrollElement);
+    }
   }
 });
+
+const animateScrollIn = (scrollElement: HTMLElement) => {
+  let index = 0;
+  // scrollElement.classList.add(scrollClassNames[index]);
+  // index++;
+
+  const intervalID = setInterval(() => {
+    if (index < scrollClassNames.length) {
+      scrollElement.classList.remove(scrollClassNames[index - 1]);
+      scrollElement.classList.add(scrollClassNames[index]);
+      index++;
+    } else {
+      clearInterval(intervalID);
+    }
+  }, SCROLLBAR_ANIMATION_TIME);
+};
+
+
+const animateScrollOut = (scrollElement: HTMLElement) => {
+  let index = scrollClassNames.length - 1;
+
+  // const main = document.querySelector(`main`);
+  // if (scrollElement === main) {
+  //   console.log(index);
+  // }
+
+  // scrollElement.classList.remove(scrollClassNames[index]);
+  // index--;
+
+  const intervalID = setInterval(() => {
+    // if (scrollElement === main) {
+    //   console.log(index);
+    // }
+
+    if (index > 0) {
+      scrollElement.classList.remove(scrollClassNames[index]);
+      scrollElement.classList.add(scrollClassNames[index - 1]);
+      index--;
+    } else {
+      scrollElement.classList.remove(scrollClassNames[0]);
+      clearInterval(intervalID);
+    }
+  }, SCROLLBAR_ANIMATION_TIME);
+};
+
+/* const animateScroll = (scrollElement: HTMLElement, isScroll: boolean) => {
+  if (isScroll) {
+    if (scrollElement.dataset.isScroll !== `true`) {
+      scrollElement.setAttribute(`data-is-scroll`, `true`);
+      let index = 0;
+      scrollElement.classList.add(scrollClassNames[index]);
+      index++;
+
+      const intervalID = setInterval(() => {
+        if (index < scrollClassNames.length) {
+          scrollElement.classList.remove(scrollClassNames[index - 1]);
+          scrollElement.classList.add(scrollClassNames[index]);
+          index++;
+        } else {
+          clearInterval(intervalID);
+        }
+      }, 30);
+    }
+  } else {
+    if (scrollElement.dataset.isScroll !== `false`) {
+      scrollElement.setAttribute(`data-is-scroll`, `false`);
+      let index = scrollClassNames.length - 1;
+      scrollElement.classList.remove(scrollClassNames[index]);
+      index--;
+
+      const intervalID = setInterval(() => {
+        if (index > 0) {
+          scrollElement.classList.remove(scrollClassNames[index]);
+          scrollElement.classList.add(scrollClassNames[index - 1]);
+          index--;
+        } else {
+          clearInterval(intervalID);
+          scrollElement.classList.remove(scrollClassNames[0]);
+        }
+      }, 30);
+    }
+  }
+}; */
 
 const getSvgBG = (color: string, size: number, opacity: number) => (
   `url('data:image/svg+xml,\
@@ -104,12 +234,13 @@ const getSvgBG = (color: string, size: number, opacity: number) => (
   )`
 );
 
-const getBackgroundStyles = ({orientation, color, isHover}: {
+const getBackgroundStyles = ({orientation, color, isHover, size}: {
   orientation: ScrollOrientation;
   color: string;
   isHover: boolean;
+  size: number;
 }) => {
-  const size = isHover ? ScrollSize.HOVER : ScrollSize.VISIBLE;
+  // const size = isHover ? ScrollSize.HOVER : ScrollSize.VISIBLE;
   const opacity = isHover ? 1 : SCROLLBAR_REST_OPACITY;
   const borderWidth = `${(ScrollSize.ACTIVE - size) / 2}px`;
   const borderStyle = orientation === ScrollOrientation.VERTICAL ? `none solid` : `solid none`;
@@ -123,6 +254,43 @@ const getBackgroundStyles = ({orientation, color, isHover}: {
   };
 };
 
+// /////////////////////////////
+
+const steps = [1,2,3,4,5,6,7,8,9,10];// new Array(10);
+
+const scrollClassNames = steps.map((step, index) => {
+  return `scrollbar-hover--${index}`;
+});
+
+const scrollHoverStyles = scrollClassNames.map((className, index) => {
+  return {
+    [`.${className}`]: {
+      "&::-webkit-scrollbar:vertical": getBackgroundStyles({
+        orientation: ScrollOrientation.VERTICAL,
+        color: `yellow`, // theme.palette.primary.main,
+        isHover: true,
+        size: ScrollSize.VISIBLE + 2 * index,
+      }),
+
+      "&::-webkit-scrollbar-thumb:vertical": getBackgroundStyles({
+        orientation: ScrollOrientation.VERTICAL,
+        color: `white`, // theme.palette.primary.light,
+        isHover: true,
+        size: ScrollSize.VISIBLE + 2 * index,
+      }),
+    },
+  };
+}).reduce((accum, styles) => {
+  const style = Object.entries(styles);
+
+  return {
+    ...accum,
+    ...Object.fromEntries(style),
+  };
+}, {});
+
+// ////////////////////////////
+
 const globalStyles = (theme: Theme) => ({
   "*::-webkit-scrollbar": {
     width: ScrollSize.ACTIVE,
@@ -132,12 +300,14 @@ const globalStyles = (theme: Theme) => ({
       orientation: ScrollOrientation.VERTICAL,
       color: theme.palette.primary.main,
       isHover: false,
+      size: ScrollSize.VISIBLE,
     }),
 
     "&:horizontal": getBackgroundStyles({
       orientation: ScrollOrientation.HORIZONTAL,
       color: theme.palette.primary.main,
       isHover: false,
+      size: ScrollSize.VISIBLE,
     }),
   },
 
@@ -146,16 +316,20 @@ const globalStyles = (theme: Theme) => ({
       orientation: ScrollOrientation.VERTICAL,
       color: theme.palette.primary.light,
       isHover: false,
+      size: ScrollSize.VISIBLE,
     }),
 
     "&:horizontal": getBackgroundStyles({
       orientation: ScrollOrientation.HORIZONTAL,
       color: theme.palette.primary.light,
       isHover: false,
+      size: ScrollSize.VISIBLE,
     }),
   },
 
-  [`.${ScrollbarHoverClass.VERTICAL}`]: {
+  ...scrollHoverStyles,
+
+  /* [`.${ScrollbarHoverClass.VERTICAL}`]: {
     "&::-webkit-scrollbar:vertical": getBackgroundStyles({
       orientation: ScrollOrientation.VERTICAL,
       color: theme.palette.primary.main,
@@ -181,7 +355,7 @@ const globalStyles = (theme: Theme) => ({
       color: theme.palette.primary.light,
       isHover: true,
     }),
-  },
+  }, */
 
   "::-webkit-scrollbar-corner": {
     backgroundColor: `transparent`,

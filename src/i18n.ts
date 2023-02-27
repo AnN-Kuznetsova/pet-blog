@@ -16,7 +16,7 @@ export default i18n
   .use(Backend)
   .use(initReactI18next)
   .init({
-    debug: true,
+    // debug: true,
     // lng: Languages.RU,
     fallbackLng: Languages.EN,
     detection: {
