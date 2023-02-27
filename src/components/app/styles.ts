@@ -131,32 +131,22 @@ document.body.addEventListener(`mousemove`, (event) => {
 const animateScroll = (scrollElement: HTMLElement) => {
   const intervalID = setInterval(() => {
     const classIndex = scrollElement.dataset.classIndex ? +scrollElement.dataset.classIndex : 0;
-    let index = typeof classIndex === `number` ? classIndex : 0;
-    // let nextIndex: number | null = 0;
+    const index = typeof classIndex === `number` ? classIndex : 0;
+    let nextIndex: number | null = null;
 
     if (scrollElement.dataset.isScrollHover === `true` && index < scrollClassNames.length - 1) {
-      // nextIndex = index + 1;
-      scrollElement.classList.remove(scrollClassNames[index]);
-      index++;
-      scrollElement.classList.add(scrollClassNames[index]);
-      scrollElement.setAttribute(`data-class-index`, `${index}`);
+      nextIndex = index + 1;
     } else if (scrollElement.dataset.isScrollHover === `false` && index > 0) {
-      // nextIndex = index - 1;
-      scrollElement.classList.remove(scrollClassNames[index]);
-      index--;
-      scrollElement.classList.add(scrollClassNames[index]);
-      scrollElement.setAttribute(`data-class-index`, `${index}`);
-    } else {
-      clearInterval(intervalID);
+      nextIndex = index - 1;
     }
 
-    /* if (nextIndex !== null) {
+    if (nextIndex !== null) {
       scrollElement.classList.remove(scrollClassNames[index]);
       scrollElement.classList.add(scrollClassNames[nextIndex]);
       scrollElement.setAttribute(`data-class-index`, `${nextIndex}`);
     } else {
       clearInterval(intervalID);
-    } */
+    }
   }, animationInterval);
 };
 
