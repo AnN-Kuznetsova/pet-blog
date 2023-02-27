@@ -153,13 +153,13 @@ const getSvgBG = (color: string, size: number, opacity: number) => (
   )`
 );
 
-const getBackgroundStyles = ({orientation, color, isHover, size}: {
+const getBackgroundStyles = ({orientation, color, index}: {
   orientation: ScrollOrientation;
   color: string;
-  isHover: boolean;
-  size: number;
+  index: number;
 }) => {
-  const opacity = isHover ? 1 : SCROLLBAR_REST_OPACITY;
+  const size = ScrollSize.VISIBLE + scrollSizeStep * index;
+  const opacity = SCROLLBAR_REST_OPACITY + scrollOpacityStep * index;
   const borderWidth = `${(ScrollSize.ACTIVE - size) / 2}px`;
   const borderStyle = orientation === ScrollOrientation.VERTICAL ? `none solid` : `solid none`;
 
@@ -176,45 +176,40 @@ const getBackgroundStyles = ({orientation, color, isHover, size}: {
 
 const steps = [1,2,3,4,5,6,7,8,9,10];// new Array(10);
 const scrollSizeStep = (ScrollSize.HOVER - ScrollSize.VISIBLE) / (steps.length - 1);
+const scrollOpacityStep = (1 - SCROLLBAR_REST_OPACITY) / (steps.length - 1);
 
 const scrollClassNames = steps.map((step, index) => {
   return `scrollbar--${index}`;
 });
 
 const scrollStyles = scrollClassNames.map((className, index) => {
-  const size: number = ScrollSize.VISIBLE + scrollSizeStep * index;
-
   return {
     [`.${className}`]: {
       "&::-webkit-scrollbar": {
         "&:vertical": getBackgroundStyles({
           orientation: ScrollOrientation.VERTICAL,
-          color: THEME.palette.primary.main, //`yellow`, // theme.palette.primary.main,
-          isHover: true,
-          size,
+          color: THEME.palette.primary.main,
+          index,
         }),
 
         "&:horizontal": getBackgroundStyles({
           orientation: ScrollOrientation.HORIZONTAL,
-          color: THEME.palette.primary.main, //`yellow`, // theme.palette.primary.main,
-          isHover: true,
-          size,
+          color: THEME.palette.primary.main,
+          index,
         }),
       },
 
       "&::-webkit-scrollbar-thumb": {
         "&:vertical": getBackgroundStyles({
           orientation: ScrollOrientation.VERTICAL,
-          color: THEME.palette.primary.light, //`white`, // theme.palette.primary.light,
-          isHover: true,
-          size,
+          color: THEME.palette.primary.light,
+          index,
         }),
 
         "&:horizontal": getBackgroundStyles({
           orientation: ScrollOrientation.HORIZONTAL,
-          color: THEME.palette.primary.light, //`white`, // theme.palette.primary.light,
-          isHover: true,
-          size,
+          color: THEME.palette.primary.light,
+          index,
         }),
       },
     },
@@ -227,8 +222,6 @@ const scrollStyles = scrollClassNames.map((className, index) => {
     ...Object.fromEntries(style),
   };
 }, {});
-
-console.log(scrollStyles[`.scrollbar--0`]);
 
 const globalStyles = (theme: Theme) => ({
   "*::-webkit-scrollbar": {
