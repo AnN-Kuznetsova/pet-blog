@@ -27,10 +27,26 @@ enum ScrollOrientation {
   HORIZONTAL,
 }
 
+const ScrollDataAtribute = {
+  IS_SCROLL_HOVER: `data-is-scroll-hover`,
+  CLASS_INDEX: `data-class-index`,
+  ANIMATION_INTERVAL: `data-animation-interval`,
+};
+
 const ScrollbarHoverClass = {
   VERTICAL: `scrollbar--vertical`,
   HORIZONTAL: `scrollbar--horizontal`,
 };
+
+const scrollAnimationFramesCount = Math.ceil(ScrollAnimationParams.FPS * ScrollAnimationParams.DURATION / 1000);
+const animationInterval = ScrollAnimationParams.DURATION / scrollAnimationFramesCount;
+const scrollSizeStep = (ScrollParams.Size.HOVER - ScrollParams.Size.VISIBLE) / (scrollAnimationFramesCount - 1);
+const scrollOpacityStep = (1 - ScrollParams.OPACITY_IN_REST) / (scrollAnimationFramesCount - 1);
+const scrollClassNames = Array(scrollAnimationFramesCount).fill(null).map((step, index) => {
+  return `scrollbar--${index}`;
+});
+
+let currentScrollElement: HTMLElement | null = null;
 
 const getScrollbarParams = (
   elementParams: {
@@ -63,37 +79,12 @@ const getScrollbarParams = (
   return scrollbar;
 };
 
-const controlScrollClass = (scrollElement: HTMLElement, isScroll: boolean, className: string) => {
-  if (scrollElement) {
-    if (isScroll) {
-      scrollElement.classList.add(className);
-    } else {
-      scrollElement.classList.remove(className);
-    }
-  }
-};
-
-enum AnimationDirection {
-  IN,
-  OUT,
-}
-
-const scrollAnimationFramesCount = Math.ceil(ScrollAnimationParams.FPS * ScrollAnimationParams.DURATION / 1000);
-const animationInterval = ScrollAnimationParams.DURATION / scrollAnimationFramesCount;
-const scrollSizeStep = (ScrollParams.Size.HOVER - ScrollParams.Size.VISIBLE) / (scrollAnimationFramesCount - 1);
-const scrollOpacityStep = (1 - ScrollParams.OPACITY_IN_REST) / (scrollAnimationFramesCount - 1);
-const scrollClassNames = Array(scrollAnimationFramesCount).fill(null).map((step, index) => {
-  return `scrollbar--${index}`;
-});
-
-let currentScrollElement: HTMLElement | null = null;
-
 document.body.addEventListener(`mousemove`, (event) => {
   const element = event.target as HTMLElement;
 
   if (element !== currentScrollElement) {
     if (currentScrollElement) {
-      currentScrollElement.setAttribute(`data-is-scroll-hover`, `false`);
+      currentScrollElement.setAttribute(ScrollDataAtribute.IS_SCROLL_HOVER, `false`);
       animateScroll(currentScrollElement);
     }
 
@@ -118,17 +109,23 @@ document.body.addEventListener(`mousemove`, (event) => {
     // controlScrollClass(isHorizontalScroll, ScrollbarHoverClass.HORIZONTAL);
 
     if (isVerticalScroll && currentScrollElement.dataset.isScrollHover !== `true`) {
-      currentScrollElement.setAttribute(`data-is-scroll-hover`, `true`);
+      currentScrollElement.setAttribute(ScrollDataAtribute.IS_SCROLL_HOVER, `true`);
       animateScroll(currentScrollElement);
     }
     if (!isVerticalScroll && currentScrollElement.dataset.isScrollHover === `true`) {
-      currentScrollElement.setAttribute(`data-is-scroll-hover`, `false`);
+      currentScrollElement.setAttribute(ScrollDataAtribute.IS_SCROLL_HOVER, `false`);
       animateScroll(currentScrollElement);
     }
   }
 });
 
 const animateScroll = (scrollElement: HTMLElement) => {
+  const currentAnimationInterval = scrollElement.dataset.animationInterval;
+
+  if (currentAnimationInterval) {
+    clearInterval(scrollElement.dataset.animationInterval);
+  }
+
   const intervalID = setInterval(() => {
     const classIndex = scrollElement.dataset.classIndex ? +scrollElement.dataset.classIndex : 0;
     const index = typeof classIndex === `number` ? classIndex : 0;
@@ -143,11 +140,13 @@ const animateScroll = (scrollElement: HTMLElement) => {
     if (nextIndex !== null) {
       scrollElement.classList.remove(scrollClassNames[index]);
       scrollElement.classList.add(scrollClassNames[nextIndex]);
-      scrollElement.setAttribute(`data-class-index`, `${nextIndex}`);
+      scrollElement.setAttribute(ScrollDataAtribute.CLASS_INDEX, `${nextIndex}`);
     } else {
       clearInterval(intervalID);
     }
   }, animationInterval);
+
+  scrollElement.setAttribute(ScrollDataAtribute.ANIMATION_INTERVAL, `${intervalID}`);
 };
 
 const getSvgBG = (color: string, size: number, opacity: number) => (
