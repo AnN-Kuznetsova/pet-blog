@@ -46,6 +46,7 @@ const scrollAnimationFramesCount = Math.ceil(ScrollAnimationParams.FPS * ScrollA
 const animationTimeInterval = ScrollAnimationParams.DURATION / scrollAnimationFramesCount;
 const scrollSizeStep = (ScrollParams.Size.HOVER - ScrollParams.Size.VISIBLE) / (scrollAnimationFramesCount - 1);
 const scrollOpacityStep = (1 - ScrollParams.OPACITY_IN_REST) / (scrollAnimationFramesCount - 1);
+let currentScrollElement: HTMLElement | null = null;
 
 const getScrollClassNames = (orientation: ScrollOrientation) => {
   return Array(scrollAnimationFramesCount).fill(null).map((step, index) => {
@@ -57,8 +58,6 @@ const scrollClassNames = {
   [ScrollOrientation.VERTICAL]: getScrollClassNames(ScrollOrientation.VERTICAL),
   [ScrollOrientation.HORIZONTAL]: getScrollClassNames(ScrollOrientation.HORIZONTAL),
 };
-
-let currentScrollElement: HTMLElement | null = null;
 
 const getDataAtributeName = (dataAtribute: string) => (
   dataAtribute.replace(`data-`, ``)
@@ -239,8 +238,11 @@ const getScrollStyles = (orientation: ScrollOrientation) => {
   }, {});
 };
 
-const scrollVerticalStyles = getScrollStyles(ScrollOrientation.VERTICAL);
-const scrollHorizontalStyles = getScrollStyles(ScrollOrientation.HORIZONTAL);
+const scrollStyles = {
+  ...getScrollStyles(ScrollOrientation.VERTICAL),
+  ...getScrollStyles(ScrollOrientation.HORIZONTAL),
+};
+
 
 const globalStyles = (theme: Theme) => ({
   "*::-webkit-scrollbar": {
@@ -248,11 +250,9 @@ const globalStyles = (theme: Theme) => ({
     height: ScrollParams.Size.ACTIVE,
   },
 
-  ...scrollVerticalStyles[`.${SCROLLBAR_CLASS}-${ScrollOrientation.VERTICAL}--0`],
-  ...scrollHorizontalStyles[`.${SCROLLBAR_CLASS}-${ScrollOrientation.HORIZONTAL}--0`],
-
-  ...scrollVerticalStyles,
-  ...scrollHorizontalStyles,
+  ...scrollStyles[`.${SCROLLBAR_CLASS}-${ScrollOrientation.VERTICAL}--0`],
+  ...scrollStyles[`.${SCROLLBAR_CLASS}-${ScrollOrientation.HORIZONTAL}--0`],
+  ...scrollStyles,
 
   "::-webkit-scrollbar-corner": {
     backgroundColor: `transparent`,
