@@ -129,6 +129,7 @@ document.body.addEventListener(`mousemove`, (event) => {
   if (element !== currentScrollElement) {
     if (currentScrollElement) {
       controlAnimation(currentScrollElement, ScrollOrientation.VERTICAL, false);
+      controlAnimation(currentScrollElement, ScrollOrientation.HORIZONTAL, false);
     }
 
     currentScrollElement = element;
@@ -152,6 +153,7 @@ document.body.addEventListener(`mousemove`, (event) => {
     // controlScrollClass(isHorizontalScroll, ScrollbarHoverClass.HORIZONTAL);
 
     controlScroll(currentScrollElement, ScrollOrientation.VERTICAL, isVerticalScroll);
+    controlScroll(currentScrollElement, ScrollOrientation.HORIZONTAL, isHorizontalScroll);
   }
 });
 
