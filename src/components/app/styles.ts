@@ -33,12 +33,10 @@ const ScrollDataAtribute = {
   [ScrollOrientation.VERTICAL]: {
     IS_SCROLL_HOVER: `data-is-vertical-scroll-hover`,
     CLASS_INDEX: `data-vertical-class-index`,
-    ANIMATION_INTERVAL: `data-vertical-animation-interval`,
   },
   [ScrollOrientation.HORIZONTAL]: {
     IS_SCROLL_HOVER: `data-is-horizontal-scroll-hover`,
     CLASS_INDEX: `data-horizontal-class-index`,
-    ANIMATION_INTERVAL: `data-horizontal-animation-interval`,
   },
 };
 
@@ -150,34 +148,27 @@ document.body.addEventListener(`mousemove`, (event) => {
 });
 
 const animateScroll = (scrollElement: HTMLElement, orientation: ScrollOrientation) => {
-  const currentAnimationInterval = scrollElement.dataset[getDataAtributeName(ScrollDataAtribute[orientation].ANIMATION_INTERVAL)];
+  const isScrollHover = scrollElement.dataset[getDataAtributeName(ScrollDataAtribute[orientation].IS_SCROLL_HOVER)];
+  const curentClassIndex = scrollElement.dataset[getDataAtributeName(ScrollDataAtribute[orientation].CLASS_INDEX)];
+  const index = curentClassIndex && typeof +curentClassIndex === `number` ? +curentClassIndex : 0;
+  let nextIndex: number | null = null;
 
-  if (currentAnimationInterval) {
-    clearInterval(currentAnimationInterval);
+  if (isScrollHover === `true` && index < scrollClassNames[orientation].length - 1) {
+    nextIndex = index + 1;
+  } else if (isScrollHover === `false` && index > 0) {
+    nextIndex = index - 1;
   }
 
-  const intervalID = setInterval(() => {
-    const isScrollHover = scrollElement.dataset[getDataAtributeName(ScrollDataAtribute[orientation].IS_SCROLL_HOVER)];
-    const curentClassIndex = scrollElement.dataset[getDataAtributeName(ScrollDataAtribute[orientation].CLASS_INDEX)];
-    const index = curentClassIndex && typeof +curentClassIndex === `number` ? +curentClassIndex : 0;
-    let nextIndex: number | null = null;
-
-    if (isScrollHover === `true` && index < scrollClassNames[orientation].length - 1) {
-      nextIndex = index + 1;
-    } else if (isScrollHover === `false` && index > 0) {
-      nextIndex = index - 1;
-    }
-
-    if (nextIndex !== null) {
-      scrollElement.classList.remove(scrollClassNames[orientation][index]);
-      scrollElement.classList.add(scrollClassNames[orientation][nextIndex]);
-      scrollElement.setAttribute(ScrollDataAtribute[orientation].CLASS_INDEX, `${nextIndex}`);
-    } else {
-      clearInterval(intervalID);
-    }
-  }, animationTimeInterval);
-
-  scrollElement.setAttribute(ScrollDataAtribute[orientation].ANIMATION_INTERVAL, `${intervalID}`);
+  if (nextIndex !== null) {
+    setTimeout(() => {
+      if (nextIndex !== null) {
+        scrollElement.classList.remove(scrollClassNames[orientation][index]);
+        scrollElement.classList.add(scrollClassNames[orientation][nextIndex]);
+        scrollElement.setAttribute(ScrollDataAtribute[orientation].CLASS_INDEX, `${nextIndex}`);
+        animateScroll(scrollElement, orientation);
+      }
+    }, animationTimeInterval);
+  }
 };
 
 const getSvgBG = (color: string, size: number, opacity: number) => (
