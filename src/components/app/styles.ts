@@ -23,30 +23,58 @@ const ScrollAnimationParams = {
 // ///////////////////////////////////////////////////////
 
 enum ScrollOrientation {
-  VERTICAL,
-  HORIZONTAL,
+  VERTICAL = `vertical`,
+  HORIZONTAL = `horizontal`,
 }
 
 const ScrollDataAtribute = {
-  IS_SCROLL_HOVER: `data-is-scroll-hover`,
-  CLASS_INDEX: `data-class-index`,
-  ANIMATION_INTERVAL: `data-animation-interval`,
+  [ScrollOrientation.VERTICAL]: {
+    IS_SCROLL_HOVER: `data-is-vertical-scroll-hover`,
+    CLASS_INDEX: `data-vertical-class-index`,
+    ANIMATION_INTERVAL: `data-vertical-animation-interval`,
+  },
+  [ScrollOrientation.HORIZONTAL]: {
+    IS_SCROLL_HOVER: `data-is-horizontal-scroll-hover`,
+    CLASS_INDEX: `data-horizontal-class-index`,
+    ANIMATION_INTERVAL: `data-horizontal-animation-interval`,
+  },
 };
 
-const ScrollbarHoverClass = {
-  VERTICAL: `scrollbar--vertical`,
-  HORIZONTAL: `scrollbar--horizontal`,
-};
+const SCROLLBAR_CLASS = `scrollbar`;
+// {
+//   VERTICAL: `scrollbar--vertical`,
+//   HORIZONTAL: `scrollbar--horizontal`,
+// };
 
 const scrollAnimationFramesCount = Math.ceil(ScrollAnimationParams.FPS * ScrollAnimationParams.DURATION / 1000);
-const animationInterval = ScrollAnimationParams.DURATION / scrollAnimationFramesCount;
+const animationTimeInterval = ScrollAnimationParams.DURATION / scrollAnimationFramesCount;
 const scrollSizeStep = (ScrollParams.Size.HOVER - ScrollParams.Size.VISIBLE) / (scrollAnimationFramesCount - 1);
 const scrollOpacityStep = (1 - ScrollParams.OPACITY_IN_REST) / (scrollAnimationFramesCount - 1);
-const scrollClassNames = Array(scrollAnimationFramesCount).fill(null).map((step, index) => {
-  return `scrollbar--${index}`;
-});
+
+const getScrollClassNames = (orientation: ScrollOrientation) => {
+  return Array(scrollAnimationFramesCount).fill(null).map((step, index) => {
+    return `${SCROLLBAR_CLASS}-${orientation}--${index}`;
+  });
+};
+
+const scrollClassNames = {
+  [ScrollOrientation.VERTICAL]: getScrollClassNames(ScrollOrientation.VERTICAL),
+  [ScrollOrientation.HORIZONTAL]: getScrollClassNames(ScrollOrientation.HORIZONTAL),
+};
 
 let currentScrollElement: HTMLElement | null = null;
+
+const getDataAtributeName = (dataAtribute: string) => (
+  dataAtribute.replace(`data-`, ``)
+    .split(`-`)
+    .map((item, index) => {
+      if (index === 0) {
+        return item;
+      }
+      return `${item.charAt(0).toUpperCase()}${item.slice(1)}`;
+    })
+    .join(``)
+);
 
 const getScrollbarParams = (
   elementParams: {
@@ -79,13 +107,28 @@ const getScrollbarParams = (
   return scrollbar;
 };
 
+const controlAnimation = (element: HTMLElement, orientation: ScrollOrientation, isScrollHover: boolean) => {
+  element.setAttribute(ScrollDataAtribute[orientation].IS_SCROLL_HOVER, `${isScrollHover}`);
+  animateScroll(element, orientation);
+};
+
+const controlScroll = (element: HTMLElement, orientation: ScrollOrientation, isScrollHover: boolean) => {
+  const isAtributeScrollHover = element.dataset[getDataAtributeName(ScrollDataAtribute[orientation].IS_SCROLL_HOVER)];
+
+  if (isScrollHover && isAtributeScrollHover !== `true`) {
+    controlAnimation(element, orientation, true);
+  }
+  if (!isScrollHover && isAtributeScrollHover === `true`) {
+    controlAnimation(element, orientation, false);
+  }
+};
+
 document.body.addEventListener(`mousemove`, (event) => {
   const element = event.target as HTMLElement;
 
   if (element !== currentScrollElement) {
     if (currentScrollElement) {
-      currentScrollElement.setAttribute(ScrollDataAtribute.IS_SCROLL_HOVER, `false`);
-      animateScroll(currentScrollElement);
+      controlAnimation(currentScrollElement, ScrollOrientation.VERTICAL, false);
     }
 
     currentScrollElement = element;
@@ -108,45 +151,39 @@ document.body.addEventListener(`mousemove`, (event) => {
     // controlScrollClass(isVerticalScroll, ScrollbarHoverClass.VERTICAL);
     // controlScrollClass(isHorizontalScroll, ScrollbarHoverClass.HORIZONTAL);
 
-    if (isVerticalScroll && currentScrollElement.dataset.isScrollHover !== `true`) {
-      currentScrollElement.setAttribute(ScrollDataAtribute.IS_SCROLL_HOVER, `true`);
-      animateScroll(currentScrollElement);
-    }
-    if (!isVerticalScroll && currentScrollElement.dataset.isScrollHover === `true`) {
-      currentScrollElement.setAttribute(ScrollDataAtribute.IS_SCROLL_HOVER, `false`);
-      animateScroll(currentScrollElement);
-    }
+    controlScroll(currentScrollElement, ScrollOrientation.VERTICAL, isVerticalScroll);
   }
 });
 
-const animateScroll = (scrollElement: HTMLElement) => {
-  const currentAnimationInterval = scrollElement.dataset.animationInterval;
+const animateScroll = (scrollElement: HTMLElement, orientation: ScrollOrientation) => {
+  const currentAnimationInterval = scrollElement.dataset[getDataAtributeName(ScrollDataAtribute[orientation].ANIMATION_INTERVAL)];
 
   if (currentAnimationInterval) {
-    clearInterval(scrollElement.dataset.animationInterval);
+    clearInterval(currentAnimationInterval);
   }
 
   const intervalID = setInterval(() => {
-    const classIndex = scrollElement.dataset.classIndex ? +scrollElement.dataset.classIndex : 0;
-    const index = typeof classIndex === `number` ? classIndex : 0;
+    const isScrollHover = scrollElement.dataset[getDataAtributeName(ScrollDataAtribute[orientation].IS_SCROLL_HOVER)];
+    const curentClassIndex = scrollElement.dataset[getDataAtributeName(ScrollDataAtribute[orientation].CLASS_INDEX)];
+    const index = curentClassIndex && typeof +curentClassIndex === `number` ? +curentClassIndex : 0;
     let nextIndex: number | null = null;
 
-    if (scrollElement.dataset.isScrollHover === `true` && index < scrollClassNames.length - 1) {
+    if (isScrollHover === `true` && index < scrollClassNames[orientation].length - 1) {
       nextIndex = index + 1;
-    } else if (scrollElement.dataset.isScrollHover === `false` && index > 0) {
+    } else if (isScrollHover === `false` && index > 0) {
       nextIndex = index - 1;
     }
 
     if (nextIndex !== null) {
-      scrollElement.classList.remove(scrollClassNames[index]);
-      scrollElement.classList.add(scrollClassNames[nextIndex]);
-      scrollElement.setAttribute(ScrollDataAtribute.CLASS_INDEX, `${nextIndex}`);
+      scrollElement.classList.remove(scrollClassNames[orientation][index]);
+      scrollElement.classList.add(scrollClassNames[orientation][nextIndex]);
+      scrollElement.setAttribute(ScrollDataAtribute[orientation].CLASS_INDEX, `${nextIndex}`);
     } else {
       clearInterval(intervalID);
     }
-  }, animationInterval);
+  }, animationTimeInterval);
 
-  scrollElement.setAttribute(ScrollDataAtribute.ANIMATION_INTERVAL, `${intervalID}`);
+  scrollElement.setAttribute(ScrollDataAtribute[orientation].ANIMATION_INTERVAL, `${intervalID}`);
 };
 
 const getSvgBG = (color: string, size: number, opacity: number) => (
@@ -180,60 +217,47 @@ const getBackgroundStyles = ({orientation, color, index}: {
   };
 };
 
-const scrollStyles = scrollClassNames.map((className, index) => {
-  return {
-    [`.${className}`]: {
-      "&::-webkit-scrollbar": {
-        "&:vertical": getBackgroundStyles({
-          orientation: ScrollOrientation.VERTICAL,
+const getScrollStyles = (orientation: ScrollOrientation) => {
+  return scrollClassNames[orientation].map((className, index) => {
+    return {
+      [`.${className}`]: {
+        [`&::-webkit-scrollbar:${orientation}`]: getBackgroundStyles({
+          orientation,
           color: ScrollParams.Color.SCROLLBAR,
           index,
         }),
 
-        "&:horizontal": getBackgroundStyles({
-          orientation: ScrollOrientation.HORIZONTAL,
-          color: ScrollParams.Color.SCROLLBAR,
-          index,
-        }),
-      },
-
-      "&::-webkit-scrollbar-thumb": {
-        "&:vertical": getBackgroundStyles({
-          orientation: ScrollOrientation.VERTICAL,
-          color: ScrollParams.Color.THUMB,
-          index,
-        }),
-
-        "&:horizontal": getBackgroundStyles({
-          orientation: ScrollOrientation.HORIZONTAL,
+        [`&::-webkit-scrollbar-thumb:${orientation}`]: getBackgroundStyles({
+          orientation,
           color: ScrollParams.Color.THUMB,
           index,
         }),
       },
-    },
-  };
-}).reduce((accum, styles) => {
-  const style = Object.entries(styles);
+    };
+  }).reduce((accum, styles) => {
+    const style = Object.entries(styles);
 
-  return {
-    ...accum,
-    ...Object.fromEntries(style),
-  };
-}, {});
+    return {
+      ...accum,
+      ...Object.fromEntries(style),
+    };
+  }, {});
+};
+
+const scrollVerticalStyles = getScrollStyles(ScrollOrientation.VERTICAL);
+const scrollHorizontalStyles = getScrollStyles(ScrollOrientation.HORIZONTAL);
 
 const globalStyles = (theme: Theme) => ({
   "*::-webkit-scrollbar": {
     width: ScrollParams.Size.ACTIVE,
     height: ScrollParams.Size.ACTIVE,
-
-    ...scrollStyles[`.scrollbar--0`][`&::-webkit-scrollbar`],
   },
 
-  "*::-webkit-scrollbar-thumb": {
-    ...scrollStyles[`.scrollbar--0`][`&::-webkit-scrollbar-thumb`],
-  },
+  ...scrollVerticalStyles[`.${SCROLLBAR_CLASS}-${ScrollOrientation.VERTICAL}--0`],
+  ...scrollHorizontalStyles[`.${SCROLLBAR_CLASS}-${ScrollOrientation.HORIZONTAL}--0`],
 
-  ...scrollStyles,
+  ...scrollVerticalStyles,
+  ...scrollHorizontalStyles,
 
   "::-webkit-scrollbar-corner": {
     backgroundColor: `transparent`,
