@@ -16,7 +16,7 @@ const ScrollParams = {
 };
 
 const ScrollAnimationParams = {
-  DURATION: 300, // ms
+  DURATION: 700, // ms
   FPS: 24,
 };
 
@@ -32,11 +32,9 @@ enum ScrollOrientation {
 const ScrollDataAtribute = {
   [ScrollOrientation.VERTICAL]: {
     IS_SCROLL_HOVER: `data-is-vertical-scroll-hover`,
-    CLASS_INDEX: `data-vertical-class-index`,
   },
   [ScrollOrientation.HORIZONTAL]: {
     IS_SCROLL_HOVER: `data-is-horizontal-scroll-hover`,
-    CLASS_INDEX: `data-horizontal-class-index`,
   },
 };
 
@@ -102,17 +100,24 @@ const getScrollbarParams = (
 
 const controlAnimation = (element: HTMLElement, orientation: ScrollOrientation, isScrollHover: boolean) => {
   element.setAttribute(ScrollDataAtribute[orientation].IS_SCROLL_HOVER, `${isScrollHover}`);
-  animateScroll(element, orientation);
+  animateScroll(element, orientation, 0);
 };
 
 const controlScroll = (element: HTMLElement, orientation: ScrollOrientation, isScrollHover: boolean) => {
   const isAtributeScrollHover = element.dataset[getDataAtributeName(ScrollDataAtribute[orientation].IS_SCROLL_HOVER)];
 
+  if (element === document.querySelector(`main`) && orientation === ScrollOrientation.VERTICAL) {
+    console.log(isScrollHover);
+  }
+
   if (isScrollHover && isAtributeScrollHover !== `true`) {
-    controlAnimation(element, orientation, true);
+    // controlAnimation(element, orientation, true);
+    element.setAttribute(ScrollDataAtribute[orientation].IS_SCROLL_HOVER, `${isScrollHover}`);
+    animateScroll(element, orientation, 0);
   }
   if (!isScrollHover && isAtributeScrollHover === `true`) {
-    controlAnimation(element, orientation, false);
+    // controlAnimation(element, orientation, false);
+    element.setAttribute(ScrollDataAtribute[orientation].IS_SCROLL_HOVER, `${isScrollHover}`);
   }
 };
 
@@ -147,11 +152,9 @@ document.body.addEventListener(`mousemove`, (event) => {
   }
 });
 
-const animateScroll = (scrollElement: HTMLElement, orientation: ScrollOrientation) => {
+const animateScroll = (scrollElement: HTMLElement, orientation: ScrollOrientation, index: number) => {
   const isScrollHover = scrollElement.dataset[getDataAtributeName(ScrollDataAtribute[orientation].IS_SCROLL_HOVER)];
-  const curentClassIndex = scrollElement.dataset[getDataAtributeName(ScrollDataAtribute[orientation].CLASS_INDEX)];
-  const index = curentClassIndex && typeof +curentClassIndex === `number` ? +curentClassIndex : 0;
-  let nextIndex: number | null = null;
+  let nextIndex = index;
 
   if (isScrollHover === `true` && index < scrollClassNames[orientation].length - 1) {
     nextIndex = index + 1;
@@ -159,14 +162,14 @@ const animateScroll = (scrollElement: HTMLElement, orientation: ScrollOrientatio
     nextIndex = index - 1;
   }
 
-  if (nextIndex !== null) {
+  if (nextIndex !== index) {
+    scrollElement.classList.remove(scrollClassNames[orientation][index]);
+    scrollElement.classList.add(scrollClassNames[orientation][nextIndex]);
+  }
+
+  if (isScrollHover === `true` || (isScrollHover === `false` && nextIndex !== 0)) {
     setTimeout(() => {
-      if (nextIndex !== null) {
-        scrollElement.classList.remove(scrollClassNames[orientation][index]);
-        scrollElement.classList.add(scrollClassNames[orientation][nextIndex]);
-        scrollElement.setAttribute(ScrollDataAtribute[orientation].CLASS_INDEX, `${nextIndex}`);
-        animateScroll(scrollElement, orientation);
-      }
+      animateScroll(scrollElement, orientation, nextIndex);
     }, animationTimeInterval);
   }
 };
