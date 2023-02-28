@@ -22,6 +22,8 @@ const ScrollAnimationParams = {
 
 // ///////////////////////////////////////////////////////
 
+const SCROLLBAR_CLASS = `scrollbar`;
+
 enum ScrollOrientation {
   VERTICAL = `vertical`,
   HORIZONTAL = `horizontal`,
@@ -39,12 +41,6 @@ const ScrollDataAtribute = {
     ANIMATION_INTERVAL: `data-horizontal-animation-interval`,
   },
 };
-
-const SCROLLBAR_CLASS = `scrollbar`;
-// {
-//   VERTICAL: `scrollbar--vertical`,
-//   HORIZONTAL: `scrollbar--horizontal`,
-// };
 
 const scrollAnimationFramesCount = Math.ceil(ScrollAnimationParams.FPS * ScrollAnimationParams.DURATION / 1000);
 const animationTimeInterval = ScrollAnimationParams.DURATION / scrollAnimationFramesCount;
@@ -149,9 +145,6 @@ document.body.addEventListener(`mousemove`, (event) => {
     };
 
     const {isVerticalScroll, isHorizontalScroll} = getScrollbarParams(elementParams, pageParams);
-    // controlScrollClass(isVerticalScroll, ScrollbarHoverClass.VERTICAL);
-    // controlScrollClass(isHorizontalScroll, ScrollbarHoverClass.HORIZONTAL);
-
     controlScroll(currentScrollElement, ScrollOrientation.VERTICAL, isVerticalScroll);
     controlScroll(currentScrollElement, ScrollOrientation.HORIZONTAL, isHorizontalScroll);
   }
