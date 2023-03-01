@@ -145,7 +145,10 @@ document.body.addEventListener(`mousemove`, (event) => {
     currentScrollElement = element;
   }
 
-  if (currentScrollElement) {
+  if (currentScrollElement && (
+    currentScrollElement.clientHeight < currentScrollElement.scrollHeight ||
+    currentScrollElement.clientWidth < currentScrollElement.scrollWidth
+  )) {
     const params = currentScrollElement.getBoundingClientRect();
 
     const elementParams = {
