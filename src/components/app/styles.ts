@@ -4,9 +4,9 @@ import type { Theme } from "@mui/material";
 
 const ScrollParams = {
   Size: {
-    ACTIVE: 30, // px
+    ACTIVE: 20, // px
     VISIBLE: 6, // px
-    HOVER: 20, // px
+    HOVER: 11, // px
   },
   Color: {
     SCROLLBAR: THEME.palette.primary.main,
@@ -16,8 +16,9 @@ const ScrollParams = {
 };
 
 const ScrollAnimationParams = {
-  DURATION: 1000, // ms
+  DURATION: 300, // ms
   FPS: 24,
+  FRAMES_COUNT_SIZE_RELATION: 0.3, // подобрано опытным путём - компромися медлу плавностью и количеством кадров
 };
 
 // ///////////////////////////////////////////////////////
@@ -34,7 +35,10 @@ enum ScrollAnimationDirection {
   OUT,
 }
 
-const scrollAnimationFramesCount = Math.ceil(ScrollAnimationParams.FPS * ScrollAnimationParams.DURATION / 1000);
+const scrollAnimationFramesCount = Math.ceil(
+  ScrollAnimationParams.FPS * ScrollAnimationParams.DURATION / 1000 *
+  (ScrollParams.Size.HOVER - ScrollParams.Size.VISIBLE) * ScrollAnimationParams.FRAMES_COUNT_SIZE_RELATION
+);
 const animationTimeInterval = ScrollAnimationParams.DURATION / scrollAnimationFramesCount;
 const scrollSizeStep = (ScrollParams.Size.HOVER - ScrollParams.Size.VISIBLE) / (scrollAnimationFramesCount - 1);
 const scrollOpacityStep = (1 - ScrollParams.OPACITY_IN_REST) / (scrollAnimationFramesCount - 1);
