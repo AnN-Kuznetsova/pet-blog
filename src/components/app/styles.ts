@@ -16,7 +16,7 @@ const ScrollParams = {
 };
 
 const ScrollAnimationParams = {
-  DURATION: 700, // ms
+  DURATION: 1000, // ms
   FPS: 24,
 };
 
@@ -29,19 +29,19 @@ enum ScrollOrientation {
   HORIZONTAL = `horizontal`,
 }
 
-const ScrollDataAtribute = {
-  [ScrollOrientation.VERTICAL]: {
-    IS_SCROLL_HOVER: `data-is-vertical-scroll-hover`,
-  },
-  [ScrollOrientation.HORIZONTAL]: {
-    IS_SCROLL_HOVER: `data-is-horizontal-scroll-hover`,
-  },
-};
-
 const scrollAnimationFramesCount = Math.ceil(ScrollAnimationParams.FPS * ScrollAnimationParams.DURATION / 1000);
 const animationTimeInterval = ScrollAnimationParams.DURATION / scrollAnimationFramesCount;
 const scrollSizeStep = (ScrollParams.Size.HOVER - ScrollParams.Size.VISIBLE) / (scrollAnimationFramesCount - 1);
 const scrollOpacityStep = (1 - ScrollParams.OPACITY_IN_REST) / (scrollAnimationFramesCount - 1);
+
+const scrollAnimatedElements: {
+  [ScrollOrientation.VERTICAL]: Map<HTMLElement, boolean>;
+  [ScrollOrientation.HORIZONTAL]: Map<HTMLElement, boolean>;
+} = {
+  [ScrollOrientation.VERTICAL]: new Map(),
+  [ScrollOrientation.HORIZONTAL]: new Map(),
+};
+
 let currentScrollElement: HTMLElement | null = null;
 
 const getScrollClassNames = (orientation: ScrollOrientation) => {
@@ -55,18 +55,6 @@ const scrollClassNames = {
   [ScrollOrientation.HORIZONTAL]: getScrollClassNames(ScrollOrientation.HORIZONTAL),
 };
 
-const getDataAtributeName = (dataAtribute: string) => (
-  dataAtribute.replace(`data-`, ``)
-    .split(`-`)
-    .map((item, index) => {
-      if (index === 0) {
-        return item;
-      }
-      return `${item.charAt(0).toUpperCase()}${item.slice(1)}`;
-    })
-    .join(``)
-);
-
 const getScrollbarParams = (
   elementParams: {
     right: number;
@@ -77,47 +65,65 @@ const getScrollbarParams = (
     pageY: number;
   }
 ): {
-  isVerticalScroll: boolean;
-  isHorizontalScroll: boolean;
+  [ScrollOrientation.VERTICAL]: boolean;
+  [ScrollOrientation.HORIZONTAL]: boolean;
 } => {
   const {right, bottom} = elementParams;
   const {pageX, pageY} = pageParams;
 
-  const scrollbar = {
-    isVerticalScroll: false,
-    isHorizontalScroll: false,
+  const scrollHover = {
+    [ScrollOrientation.VERTICAL]: false,
+    [ScrollOrientation.HORIZONTAL]: false,
   };
 
   if (right && pageX < right && pageX > right - ScrollParams.Size.ACTIVE) {
-    scrollbar.isVerticalScroll = true;
+    scrollHover[ScrollOrientation.VERTICAL] = true;
   }
   if (bottom && pageY < bottom && pageY > bottom - ScrollParams.Size.ACTIVE) {
-    scrollbar.isHorizontalScroll = true;
+    scrollHover[ScrollOrientation.HORIZONTAL] = true;
   }
 
-  return scrollbar;
+  return scrollHover;
 };
 
-const controlAnimation = (element: HTMLElement, orientation: ScrollOrientation, isScrollHover: boolean) => {
-  element.setAttribute(ScrollDataAtribute[orientation].IS_SCROLL_HOVER, `${isScrollHover}`);
-  animateScroll(element, orientation, 0);
+const controlScrollAnimation = (element: HTMLElement, orientation: ScrollOrientation, isScrollHover: boolean) => {
+  const isElementAnimated = scrollAnimatedElements[orientation].has(element);
+  const currentScrollHover = isElementAnimated ? scrollAnimatedElements[orientation].get(element) : false;
+
+  if (isScrollHover && !currentScrollHover) {
+    scrollAnimatedElements[orientation].set(element, true);
+
+    if (!isElementAnimated) {
+      animateScroll(element, orientation, 0);
+    }
+  }
+
+  if (!isScrollHover && currentScrollHover) {
+    scrollAnimatedElements[orientation].set(element, false);
+  }
 };
 
-const controlScroll = (element: HTMLElement, orientation: ScrollOrientation, isScrollHover: boolean) => {
-  const isAtributeScrollHover = element.dataset[getDataAtributeName(ScrollDataAtribute[orientation].IS_SCROLL_HOVER)];
+const animateScroll = (scrollElement: HTMLElement, orientation: ScrollOrientation, index: number) => {
+  const isScrollHover = scrollAnimatedElements[orientation].get(scrollElement);
+  let nextIndex = index;
 
-  if (element === document.querySelector(`main`) && orientation === ScrollOrientation.VERTICAL) {
-    console.log(isScrollHover);
+  if (isScrollHover === true && index < scrollClassNames[orientation].length - 1) {
+    nextIndex = index + 1;
+  } else if (isScrollHover === false && index > 0) {
+    nextIndex = index - 1;
   }
 
-  if (isScrollHover && isAtributeScrollHover !== `true`) {
-    // controlAnimation(element, orientation, true);
-    element.setAttribute(ScrollDataAtribute[orientation].IS_SCROLL_HOVER, `${isScrollHover}`);
-    animateScroll(element, orientation, 0);
+  if (nextIndex !== index) {
+    scrollElement.classList.remove(scrollClassNames[orientation][index]);
+    scrollElement.classList.add(scrollClassNames[orientation][nextIndex]);
   }
-  if (!isScrollHover && isAtributeScrollHover === `true`) {
-    // controlAnimation(element, orientation, false);
-    element.setAttribute(ScrollDataAtribute[orientation].IS_SCROLL_HOVER, `${isScrollHover}`);
+
+  if (isScrollHover === true || (isScrollHover === false && nextIndex !== 0)) {
+    setTimeout(() => {
+      animateScroll(scrollElement, orientation, nextIndex);
+    }, animationTimeInterval);
+  } else {
+    scrollAnimatedElements[orientation].delete(scrollElement);
   }
 };
 
@@ -126,8 +132,8 @@ document.body.addEventListener(`mousemove`, (event) => {
 
   if (element !== currentScrollElement) {
     if (currentScrollElement) {
-      controlAnimation(currentScrollElement, ScrollOrientation.VERTICAL, false);
-      controlAnimation(currentScrollElement, ScrollOrientation.HORIZONTAL, false);
+      controlScrollAnimation(currentScrollElement, ScrollOrientation.VERTICAL, false);
+      controlScrollAnimation(currentScrollElement, ScrollOrientation.HORIZONTAL, false);
     }
 
     currentScrollElement = element;
@@ -146,33 +152,15 @@ document.body.addEventListener(`mousemove`, (event) => {
       pageY: event.pageY,
     };
 
-    const {isVerticalScroll, isHorizontalScroll} = getScrollbarParams(elementParams, pageParams);
-    controlScroll(currentScrollElement, ScrollOrientation.VERTICAL, isVerticalScroll);
-    controlScroll(currentScrollElement, ScrollOrientation.HORIZONTAL, isHorizontalScroll);
+    const {
+      [ScrollOrientation.VERTICAL]: isVerticalScroll,
+      [ScrollOrientation.HORIZONTAL]: isHorizontalScroll,
+    } = getScrollbarParams(elementParams, pageParams);
+
+    controlScrollAnimation(currentScrollElement, ScrollOrientation.VERTICAL, isVerticalScroll);
+    controlScrollAnimation(currentScrollElement, ScrollOrientation.HORIZONTAL, isHorizontalScroll);
   }
 });
-
-const animateScroll = (scrollElement: HTMLElement, orientation: ScrollOrientation, index: number) => {
-  const isScrollHover = scrollElement.dataset[getDataAtributeName(ScrollDataAtribute[orientation].IS_SCROLL_HOVER)];
-  let nextIndex = index;
-
-  if (isScrollHover === `true` && index < scrollClassNames[orientation].length - 1) {
-    nextIndex = index + 1;
-  } else if (isScrollHover === `false` && index > 0) {
-    nextIndex = index - 1;
-  }
-
-  if (nextIndex !== index) {
-    scrollElement.classList.remove(scrollClassNames[orientation][index]);
-    scrollElement.classList.add(scrollClassNames[orientation][nextIndex]);
-  }
-
-  if (isScrollHover === `true` || (isScrollHover === `false` && nextIndex !== 0)) {
-    setTimeout(() => {
-      animateScroll(scrollElement, orientation, nextIndex);
-    }, animationTimeInterval);
-  }
-};
 
 const getSvgBG = (color: string, size: number, opacity: number) => (
   `url('data:image/svg+xml,\
