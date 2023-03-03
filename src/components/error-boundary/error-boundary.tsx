@@ -37,9 +37,9 @@ export class ErrorBoundary extends React.Component<PropsType, StateType> {
     const { hasError, error } = this.state;
     const { children } = this.props;
 
-    if (hasError && error) {
+    /* if (hasError && error) {
       return <ErrorPage error={error} />;
-    }
+    } */
 
     return children;
   }
