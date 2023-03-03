@@ -7,7 +7,7 @@ export const apiSlice = createApi({
     // baseUrl: `https://jsonplaceholder.typicode.com/`,
     // 8080 - для поднятия nginx в системе
     // 3000 - для работы из Докера
-    baseUrl: `http://localhost:3000`, // 8080`,
+    baseUrl: `/`, // `http://localhost:3000` // 8080`,
   }),
   tagTypes: [`Post`, `User`],
   endpoints: () => ({}),
