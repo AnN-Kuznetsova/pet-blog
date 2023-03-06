@@ -16,7 +16,7 @@ const ScrollParams = {
 };
 
 const ScrollAnimationParams = {
-  DURATION: 250, // ms
+  DURATION: 200, // ms
   FPS: 24,
   FRAMES_COUNT_SIZE_RELATION: 0.3, // подобрано опытным путём - компромисс между плавностью и количеством кадров
 };
