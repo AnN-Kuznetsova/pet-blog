@@ -25,25 +25,25 @@ const getScrollbarParams = (
     bottom: number;
   },
   pageParams: {
-    pageX: number;
-    pageY: number;
+    clientX: number;
+    clientY: number;
   }
 ): {
   isVerticalScroll: boolean;
   isHorizontalScroll: boolean;
 } => {
   const {right, bottom} = elementParams;
-  const {pageX, pageY} = pageParams;
+  const {clientX, clientY} = pageParams;
 
   const scrollbar = {
     isVerticalScroll: false,
     isHorizontalScroll: false,
   };
 
-  if (right && pageX < right && pageX > right - ScrollSize.ACTIVE) {
+  if (right && clientX < right && clientX > right - ScrollSize.ACTIVE) {
     scrollbar.isVerticalScroll = true;
   }
-  if (bottom && pageY < bottom && pageY > bottom - ScrollSize.ACTIVE) {
+  if (bottom && clientY < bottom && clientY > bottom - ScrollSize.ACTIVE) {
     scrollbar.isHorizontalScroll = true;
   }
 
@@ -62,7 +62,7 @@ const controlScrollClass = (isScroll: boolean, className: string) => {
 
 let currentScrollElement: HTMLElement | null = null;
 
-document.body.addEventListener(`mousemove`, (event) => {
+document.documentElement.addEventListener(`mousemove`, (event) => {
   const element = event.target as HTMLElement;
 
   if (element !== currentScrollElement) {
@@ -82,8 +82,8 @@ document.body.addEventListener(`mousemove`, (event) => {
     };
 
     const pageParams = {
-      pageX: event.pageX,
-      pageY: event.pageY,
+      clientX: event.clientX,
+      clientY: event.clientY,
     };
 
     const {isVerticalScroll, isHorizontalScroll} = getScrollbarParams(elementParams, pageParams);
