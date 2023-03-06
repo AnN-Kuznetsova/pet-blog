@@ -70,25 +70,25 @@ const getScrollbarParams = (
     bottom: number;
   },
   pageParams: {
-    pageX: number;
-    pageY: number;
+    clientX: number;
+    clientY: number;
   }
 ): {
   [ScrollOrientation.VERTICAL]: boolean;
   [ScrollOrientation.HORIZONTAL]: boolean;
 } => {
   const {right, bottom} = elementParams;
-  const {pageX, pageY} = pageParams;
+  const {clientX, clientY} = pageParams;
 
   const scrollIsHover = {
     [ScrollOrientation.VERTICAL]: false,
     [ScrollOrientation.HORIZONTAL]: false,
   };
 
-  if (right && pageX < right && pageX > right - ScrollParams.Size.ACTIVE) {
+  if (right && clientX < right && clientX > right - ScrollParams.Size.ACTIVE) {
     scrollIsHover[ScrollOrientation.VERTICAL] = true;
   }
-  if (bottom && pageY < bottom && pageY > bottom - ScrollParams.Size.ACTIVE) {
+  if (bottom && clientY < bottom && clientY > bottom - ScrollParams.Size.ACTIVE) {
     scrollIsHover[ScrollOrientation.HORIZONTAL] = true;
   }
 
@@ -161,8 +161,8 @@ document.body.addEventListener(`mousemove`, (event) => {
     };
 
     const pageParams = {
-      pageX: event.pageX,
-      pageY: event.pageY,
+      clientX: event.clientX,
+      clientY: event.clientY,
     };
 
     const {

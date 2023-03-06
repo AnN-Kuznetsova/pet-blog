@@ -106,7 +106,7 @@ export const PostsList: React.FC = (): JSX.Element => {
   // const posts = useSelector(selectAllPosts);
   const posts = responseDataRaw;
 
-  console.log(posts);
+  // console.log(posts);
 
   const rowRenderer = ({
     key,
