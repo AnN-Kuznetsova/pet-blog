@@ -80,26 +80,26 @@ const getScrollbarParams = (
   const {right, bottom} = elementParams;
   const {pageX, pageY} = pageParams;
 
-  const scrollHover = {
+  const scrollIsHover = {
     [ScrollOrientation.VERTICAL]: false,
     [ScrollOrientation.HORIZONTAL]: false,
   };
 
   if (right && pageX < right && pageX > right - ScrollParams.Size.ACTIVE) {
-    scrollHover[ScrollOrientation.VERTICAL] = true;
+    scrollIsHover[ScrollOrientation.VERTICAL] = true;
   }
   if (bottom && pageY < bottom && pageY > bottom - ScrollParams.Size.ACTIVE) {
-    scrollHover[ScrollOrientation.HORIZONTAL] = true;
+    scrollIsHover[ScrollOrientation.HORIZONTAL] = true;
   }
 
-  return scrollHover;
+  return scrollIsHover;
 };
 
 const controlScrollAnimation = (element: HTMLElement, orientation: ScrollOrientation, isScrollHover: boolean) => {
   const isElementAnimated = scrollAnimatedElements[orientation].has(element);
-  const currentAnimation = isElementAnimated ? scrollAnimatedElements[orientation].get(element) : ScrollAnimationDirection.OUT;
+  const currentAnimationDirection = isElementAnimated ? scrollAnimatedElements[orientation].get(element) : ScrollAnimationDirection.OUT;
 
-  if (isScrollHover && currentAnimation === ScrollAnimationDirection.OUT) {
+  if (isScrollHover && currentAnimationDirection === ScrollAnimationDirection.OUT) {
     scrollAnimatedElements[orientation].set(element, ScrollAnimationDirection.IN);
 
     if (!isElementAnimated) {
@@ -107,18 +107,18 @@ const controlScrollAnimation = (element: HTMLElement, orientation: ScrollOrienta
     }
   }
 
-  if (!isScrollHover && currentAnimation === ScrollAnimationDirection.IN) {
+  if (!isScrollHover && currentAnimationDirection === ScrollAnimationDirection.IN) {
     scrollAnimatedElements[orientation].set(element, ScrollAnimationDirection.OUT);
   }
 };
 
 const animateScroll = (scrollElement: HTMLElement, orientation: ScrollOrientation, index: number) => {
-  const currentAnimation = scrollAnimatedElements[orientation].get(scrollElement);
+  const currentAnimationDirection = scrollAnimatedElements[orientation].get(scrollElement);
   let nextIndex = index;
 
-  if (currentAnimation === ScrollAnimationDirection.IN && index < scrollClassNames[orientation].length - 1) {
+  if (currentAnimationDirection === ScrollAnimationDirection.IN && index < scrollClassNames[orientation].length - 1) {
     nextIndex = index + 1;
-  } else if (currentAnimation === ScrollAnimationDirection.OUT && index > 0) {
+  } else if (currentAnimationDirection === ScrollAnimationDirection.OUT && index > 0) {
     nextIndex = index - 1;
   }
 
@@ -127,8 +127,8 @@ const animateScroll = (scrollElement: HTMLElement, orientation: ScrollOrientatio
     scrollElement.classList.add(scrollClassNames[orientation][nextIndex]);
   }
 
-  if (currentAnimation === ScrollAnimationDirection.IN ||
-    (currentAnimation === ScrollAnimationDirection.OUT && nextIndex !== 0)) {
+  if (currentAnimationDirection === ScrollAnimationDirection.IN ||
+    (currentAnimationDirection === ScrollAnimationDirection.OUT && nextIndex !== 0)) {
     setTimeout(() => {
       animateScroll(scrollElement, orientation, nextIndex);
     }, animationTimeInterval);
