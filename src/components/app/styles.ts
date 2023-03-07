@@ -77,7 +77,8 @@ document.body.addEventListener(`mousemove`, (event) => {
 
   if (element !== currentScrollElement) {
     if (currentScrollElement) {
-      currentScrollElement.classList.remove(scrollClassNames[ScrollOrientation.VERTICAL], scrollClassNames[ScrollOrientation.HORIZONTAL]);
+      controlScrollClass(false, scrollClassNames[ScrollOrientation.VERTICAL]);
+      controlScrollClass(false, scrollClassNames[ScrollOrientation.HORIZONTAL]);
     }
 
     currentScrollElement = element;
