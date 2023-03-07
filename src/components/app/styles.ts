@@ -1,23 +1,35 @@
+import { THEME } from "../../helpers/theme";
 import type { Theme } from "@mui/material";
 
 
-const ScrollSize = {
-  ACTIVE: 20, // px
-  VISIBLE: 5, // px
-  HOVER: 10, // px
+const ScrollParams = {
+  Size: {
+    ACTIVE: 20, // px
+    VISIBLE: 6, // px
+    HOVER: 11, // px
+  },
+  Color: {
+    SCROLLBAR: THEME.palette.primary.main,
+    THUMB: THEME.palette.primary.light,
+  },
+  OPACITY_IN_REST: 0.5,
 };
 
-const SCROLLBAR_REST_OPACITY = 0.5;
+// *************************************************
+
+const SCROLLBAR_CLASS = `scrollbar`;
 
 enum ScrollOrientation {
-  VERTICAL,
-  HORIZONTAL,
+  VERTICAL = `vertical`,
+  HORIZONTAL = `horizontal`,
 }
 
-const ScrollbarHoverClass = {
-  VERTICAL: `scrollbar-hover--vertical`,
-  HORIZONTAL: `scrollbar-hover--horizontal`,
+const scrollClassNames = {
+  [ScrollOrientation.VERTICAL]: `${SCROLLBAR_CLASS}-${ScrollOrientation.VERTICAL}`,
+  [ScrollOrientation.HORIZONTAL]: `${SCROLLBAR_CLASS}-${ScrollOrientation.HORIZONTAL}`,
 };
+
+let currentScrollElement: HTMLElement | null = null;
 
 const getScrollbarParams = (
   elementParams: {
@@ -35,19 +47,19 @@ const getScrollbarParams = (
   const {right, bottom} = elementParams;
   const {clientX, clientY} = pageParams;
 
-  const scrollbar = {
+  const scrollIsHover = {
     isVerticalScroll: false,
     isHorizontalScroll: false,
   };
 
-  if (right && clientX < right && clientX > right - ScrollSize.ACTIVE) {
-    scrollbar.isVerticalScroll = true;
+  if (right && clientX < right && clientX > right - ScrollParams.Size.ACTIVE) {
+    scrollIsHover.isVerticalScroll = true;
   }
-  if (bottom && clientY < bottom && clientY > bottom - ScrollSize.ACTIVE) {
-    scrollbar.isHorizontalScroll = true;
+  if (bottom && clientY < bottom && clientY > bottom - ScrollParams.Size.ACTIVE) {
+    scrollIsHover.isHorizontalScroll = true;
   }
 
-  return scrollbar;
+  return scrollIsHover;
 };
 
 const controlScrollClass = (isScroll: boolean, className: string) => {
@@ -60,14 +72,12 @@ const controlScrollClass = (isScroll: boolean, className: string) => {
   }
 };
 
-let currentScrollElement: HTMLElement | null = null;
-
-document.documentElement.addEventListener(`mousemove`, (event) => {
+document.body.addEventListener(`mousemove`, (event) => {
   const element = event.target as HTMLElement;
 
   if (element !== currentScrollElement) {
     if (currentScrollElement) {
-      currentScrollElement.classList.remove(ScrollbarHoverClass.VERTICAL, ScrollbarHoverClass.HORIZONTAL);
+      currentScrollElement.classList.remove(scrollClassNames[ScrollOrientation.VERTICAL], scrollClassNames[ScrollOrientation.HORIZONTAL]);
     }
 
     currentScrollElement = element;
@@ -90,8 +100,9 @@ document.documentElement.addEventListener(`mousemove`, (event) => {
     };
 
     const {isVerticalScroll, isHorizontalScroll} = getScrollbarParams(elementParams, pageParams);
-    controlScrollClass(isVerticalScroll, ScrollbarHoverClass.VERTICAL);
-    controlScrollClass(isHorizontalScroll, ScrollbarHoverClass.HORIZONTAL);
+
+    controlScrollClass(isVerticalScroll, scrollClassNames[ScrollOrientation.VERTICAL]);
+    controlScrollClass(isHorizontalScroll, scrollClassNames[ScrollOrientation.HORIZONTAL]);
   }
 });
 
@@ -112,9 +123,9 @@ const getBackgroundStyles = ({orientation, color, isHover}: {
   color: string;
   isHover: boolean;
 }) => {
-  const size = isHover ? ScrollSize.HOVER : ScrollSize.VISIBLE;
-  const opacity = isHover ? 1 : SCROLLBAR_REST_OPACITY;
-  const borderWidth = `${(ScrollSize.ACTIVE - size) / 2}px`;
+  const size = isHover ? ScrollParams.Size.HOVER : ScrollParams.Size.VISIBLE;
+  const opacity = isHover ? 1 : ScrollParams.OPACITY_IN_REST;
+  const borderWidth = `${(ScrollParams.Size.ACTIVE - size) / 2}px`;
   const borderStyle = orientation === ScrollOrientation.VERTICAL ? `none solid` : `solid none`;
 
   return {
@@ -126,65 +137,43 @@ const getBackgroundStyles = ({orientation, color, isHover}: {
   };
 };
 
+const getScrollStyles = (orientation: ScrollOrientation) => {
+  const getStyles = (className: string, isHover: boolean) => {
+    const classN = className ? `.${className}` : `*`;
+
+    return {
+      [`${classN}::-webkit-scrollbar:${orientation}`]: getBackgroundStyles({
+        orientation,
+        color: ScrollParams.Color.SCROLLBAR,
+        isHover,
+      }),
+
+      [`${classN}::-webkit-scrollbar-thumb:${orientation}`]: getBackgroundStyles({
+        orientation,
+        color: ScrollParams.Color.THUMB,
+        isHover,
+      }),
+    };
+  };
+
+  return {
+    ...getStyles(``, false),
+    ...getStyles(scrollClassNames[orientation], true),
+  };
+};
+
+const scrollStyles = {
+  ...getScrollStyles(ScrollOrientation.VERTICAL),
+  ...getScrollStyles(ScrollOrientation.HORIZONTAL),
+};
+
 const globalStyles = (theme: Theme) => ({
   "*::-webkit-scrollbar": {
-    width: ScrollSize.ACTIVE,
-    height: ScrollSize.ACTIVE,
-
-    "&:vertical": getBackgroundStyles({
-      orientation: ScrollOrientation.VERTICAL,
-      color: theme.palette.primary.main,
-      isHover: false,
-    }),
-
-    "&:horizontal": getBackgroundStyles({
-      orientation: ScrollOrientation.HORIZONTAL,
-      color: theme.palette.primary.main,
-      isHover: false,
-    }),
+    width: ScrollParams.Size.ACTIVE,
+    height: ScrollParams.Size.ACTIVE,
   },
 
-  "*::-webkit-scrollbar-thumb": {
-    "&:vertical": getBackgroundStyles({
-      orientation: ScrollOrientation.VERTICAL,
-      color: theme.palette.primary.light,
-      isHover: false,
-    }),
-
-    "&:horizontal": getBackgroundStyles({
-      orientation: ScrollOrientation.HORIZONTAL,
-      color: theme.palette.primary.light,
-      isHover: false,
-    }),
-  },
-
-  [`.${ScrollbarHoverClass.VERTICAL}`]: {
-    "&::-webkit-scrollbar:vertical": getBackgroundStyles({
-      orientation: ScrollOrientation.VERTICAL,
-      color: theme.palette.primary.main,
-      isHover: true,
-    }),
-
-    "&::-webkit-scrollbar-thumb:vertical": getBackgroundStyles({
-      orientation: ScrollOrientation.VERTICAL,
-      color: theme.palette.primary.light,
-      isHover: true,
-    }),
-  },
-
-  [`.${ScrollbarHoverClass.HORIZONTAL}`]: {
-    "&::-webkit-scrollbar:horizontal": getBackgroundStyles({
-      orientation: ScrollOrientation.HORIZONTAL,
-      color: theme.palette.primary.main,
-      isHover: true,
-    }),
-
-    "&::-webkit-scrollbar-thumb:horizontal": getBackgroundStyles({
-      orientation: ScrollOrientation.HORIZONTAL,
-      color: theme.palette.primary.light,
-      isHover: true,
-    }),
-  },
+  ...scrollStyles,
 
   "::-webkit-scrollbar-corner": {
     backgroundColor: `transparent`,
