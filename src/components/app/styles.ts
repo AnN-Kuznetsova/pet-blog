@@ -29,6 +29,8 @@ const scrollClassNames = {
   [ScrollOrientation.HORIZONTAL]: `${SCROLLBAR_CLASS}-${ScrollOrientation.HORIZONTAL}`,
 };
 
+const scrollClassNameFoFF = `${SCROLLBAR_CLASS}-FF`;
+
 let currentScrollElement: HTMLElement | null = null;
 
 const getScrollbarParams = (
@@ -72,13 +74,24 @@ const controlScrollClass = (isScroll: boolean, className: string) => {
   }
 };
 
+const controlScroll = ({isVerticalScroll, isHorizontalScroll}: {
+  isVerticalScroll: boolean;
+  isHorizontalScroll: boolean;
+}) => {
+  controlScrollClass(isVerticalScroll, scrollClassNames[ScrollOrientation.VERTICAL]);
+  controlScrollClass(isHorizontalScroll, scrollClassNames[ScrollOrientation.HORIZONTAL]);
+  controlScrollClass(isVerticalScroll || isHorizontalScroll, scrollClassNameFoFF);
+};
+
 document.body.addEventListener(`mousemove`, (event) => {
   const element = event.target as HTMLElement;
 
   if (element !== currentScrollElement) {
     if (currentScrollElement) {
-      controlScrollClass(false, scrollClassNames[ScrollOrientation.VERTICAL]);
-      controlScrollClass(false, scrollClassNames[ScrollOrientation.HORIZONTAL]);
+      controlScroll({
+        isVerticalScroll: false,
+        isHorizontalScroll: false,
+      });
     }
 
     currentScrollElement = element;
@@ -101,9 +114,7 @@ document.body.addEventListener(`mousemove`, (event) => {
     };
 
     const {isVerticalScroll, isHorizontalScroll} = getScrollbarParams(elementParams, pageParams);
-
-    controlScrollClass(isVerticalScroll, scrollClassNames[ScrollOrientation.VERTICAL]);
-    controlScrollClass(isHorizontalScroll, scrollClassNames[ScrollOrientation.HORIZONTAL]);
+    controlScroll({isVerticalScroll, isHorizontalScroll});
   }
 });
 
@@ -138,6 +149,7 @@ const getBackgroundStyles = ({orientation, color, isHover}: {
   };
 };
 
+// -webkit
 const getScrollStyles = (orientation: ScrollOrientation) => {
   const getStyles = (className: string, isHover: boolean) => {
     const classN = className ? `.${className}` : `*`;
@@ -163,9 +175,34 @@ const getScrollStyles = (orientation: ScrollOrientation) => {
   };
 };
 
+// -moz
+const getScrollStylesFoFF = () => {
+  const scrollWidth: `thin` | `auto` = navigator.userAgent.includes(`Windows`) ? `thin` : `auto`;
+
+  const getStyles = (className: string, isHover: boolean) => {
+    const classN = className ? `.${className}` : `*`;
+    const opacity = isHover ? 1 : ScrollParams.OPACITY_IN_REST;
+    const trackColor = `rgba(${ScrollParams.Color.SCROLLBAR.replace(`rgb(`, ``).replace(`)`, ``)}, ${opacity})`;
+    const thumbColor = `rgba(${ScrollParams.Color.THUMB.replace(`rgb(`, ``).replace(`)`, ``)}, ${opacity})`;
+
+    return {
+      [`${classN}`]: {
+        scrollbarColor: `${thumbColor} ${trackColor}`,
+        scrollbarWidth: scrollWidth,
+      },
+    };
+  };
+
+  return {
+    ...getStyles(``, false),
+    ...getStyles(scrollClassNameFoFF, true),
+  };
+};
+
 const scrollStyles = {
   ...getScrollStyles(ScrollOrientation.VERTICAL),
   ...getScrollStyles(ScrollOrientation.HORIZONTAL),
+  ...getScrollStylesFoFF(),
 };
 
 const globalStyles = (theme: Theme) => ({
