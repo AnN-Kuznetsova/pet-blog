@@ -123,8 +123,8 @@ const animateScroll = (scrollElement: HTMLElement, orientation: ScrollOrientatio
   }
 
   if (nextIndex !== index) {
-    scrollElement.classList.remove(scrollClassNames[orientation][index]);
-    scrollElement.classList.add(scrollClassNames[orientation][nextIndex]);
+    scrollElement.classList.remove(scrollClassNames[orientation][index], `${SCROLLBAR_CLASS}--${index}`);
+    scrollElement.classList.add(scrollClassNames[orientation][nextIndex], `${SCROLLBAR_CLASS}--${nextIndex}`);
   }
 
   if (currentAnimationDirection === ScrollAnimationDirection.IN ||
@@ -208,7 +208,19 @@ const getBackgroundStyles = ({orientation, color, index}: {
 
 const getScrollStyles = (orientation: ScrollOrientation) => {
   return scrollClassNames[orientation].map((className, index) => {
+    const opacity = ScrollParams.OPACITY_IN_REST + scrollOpacityStep * index;
+    const trackColor = `rgba(${ScrollParams.Color.SCROLLBAR.replace(`rgb(`, ``).replace(`)`, ``)}, ${opacity})`;
+    const thumbColor = `rgba(${ScrollParams.Color.THUMB.replace(`rgb(`, ``).replace(`)`, ``)}, ${opacity})`;
+    const scrollWidth: `thin` | `auto` = navigator.userAgent.includes(`Windows`) ? `thin` : `auto`;
+
     return {
+      // -moz
+      [`.${SCROLLBAR_CLASS}--${index}`]: {
+        scrollbarColor: `${thumbColor} ${trackColor}`,
+        scrollbarWidth: scrollWidth,
+      },
+
+      // -webkit
       [`.${className}`]: {
         [`&::-webkit-scrollbar:${orientation}`]: getBackgroundStyles({
           orientation,
@@ -238,13 +250,13 @@ const scrollStyles = {
   ...getScrollStyles(ScrollOrientation.HORIZONTAL),
 };
 
-
 const globalStyles = (theme: Theme) => ({
   "*::-webkit-scrollbar": {
     width: ScrollParams.Size.ACTIVE,
     height: ScrollParams.Size.ACTIVE,
   },
 
+  "*": scrollStyles[`.${SCROLLBAR_CLASS}--0`],
   ...scrollStyles[`.${SCROLLBAR_CLASS}-${ScrollOrientation.VERTICAL}--0`],
   ...scrollStyles[`.${SCROLLBAR_CLASS}-${ScrollOrientation.HORIZONTAL}--0`],
   ...scrollStyles,
