@@ -230,6 +230,77 @@ const globalStyles = (theme: Theme) => ({
   ".ReactVirtualized__Grid__innerScrollContainer": {
     width: `5000px !important`,
   },
+
+  ".input-type-number": {
+    "--input-height": `16px`,
+    "--input-padding": `10px`,
+    "--button-width": `35px`,
+    "--border-radius": `5px`,
+
+    position: `relative` as const,
+    width: 200,
+
+    "input[type=number]": {
+      display: `block`,
+      width: `100%`,
+      padding: `var(--input-padding) var(--button-width)`,
+      lineHeight: `var(--input-height)`,
+      fontSize: `var(--input-height)`,
+      color: THEME.palette.primary.contrastText,
+      textAlign: `center` as const,
+      backgroundColor: THEME.palette.primary.light,
+      boxShadow: `none`,
+      border: `none`,
+      borderRadius: `var(--border-radius)`,
+      outline: `none`,
+      MozAppearance: `textfield` as const,
+      WebkitAppearance: `textfield` as const,
+      appearance: `textfield` as const,
+
+      "&::-webkit-outer-spin-button": {
+        display: `none`,
+      },
+
+      "&::-webkit-inner-spin-button": {
+        display: `none`,
+      },
+    },
+
+    ".input-number-button": {
+      position: `absolute` as const,
+      top: 0,
+      bottom: 0,
+      width: `var(--button-width)`,
+      height: `calc(var(--input-height) + var(--input-padding) * 2 + 2)`,
+      margin: 0,
+      padding: 0,
+      fontSize: `20px`,
+      fontWeight: 600,
+      color: THEME.palette.primary.contrastText,
+      textAlign: `center` as const,
+      backgroundColor: THEME.palette.primary.main,
+      border: `none`,
+      cursor: `pointer`,
+
+      "&:hover": {
+        opacity: 0.6,
+      },
+
+      "&:active": {
+        opacity: 0.3,
+      },
+
+      "&--decrement": {
+        left: 0,
+        borderRadius: `var(--border-radius) 0 0 var(--border-radius)`,
+      },
+
+      "&--increment": {
+        right: 0,
+        borderRadius: `0 var(--border-radius) var(--border-radius) 0`,
+      },
+    },
+  },
 });
 
 const appStyles = () => ({
