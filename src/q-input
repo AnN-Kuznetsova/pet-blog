@@ -1,0 +1,130 @@
+// HTML
+<div id="q-app" style="min-height: 100vh;">
+  <div class="q-pa-md"> 
+    <q-input
+      v-model.number="model"
+      type="number"
+      filled
+    ></q-input>
+    
+    <button
+      type="button"
+      class="input-number-button  input-number-button--decrement"
+      @click="handleDecrementButtonClick"
+    >-</button>
+    
+    <button
+      type="button"
+      class="input-number-button  input-number-button--increment"
+      @click="handleIncrementButtonClick"
+    >+</button>
+  </div>
+</div>
+
+
+
+// CSS
+.q-pa-md {
+  --input-height: 16px;
+  --input-padding: 10px;
+  --button-width: 35px;
+  --border-radius: 5px;
+
+    position: relative;
+    width: 200px;
+    padding: 0;
+}
+
+.q-pa-md .q-field__control {
+  height: calc(var(--input-height) + var(--input-padding) * 2);
+}
+
+.q-pa-md .q-field--filled .q-field__control {
+  width: 100%;
+  padding: 0;
+}
+
+.q-pa-md input[type=number] {
+      display: block;
+      width: 100%;
+      padding: var(--input-padding) var(--button-width);
+      line-height: var(--input-height);
+      font-size: var(--input-height);
+      color: #fff;
+      text-align: center;
+      background-color: dodgerblue;
+      box-shadow: none;
+      border: none;
+      border-radius: var(--border-radius);
+      outline: none;
+      -moz-appearance: textfield;
+      -webkit-appearance: textfield;
+      appearance: textfield;
+}
+
+.q-pa-md input[type=number]::-webkit-outer-spin-button {
+      display: none;
+ }
+
+.q-pa-md input[type=number]::-webkit-inner-spin-button {
+      display: none;
+}
+
+.q-pa-md .input-number-button {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: var(--button-width);
+      height: calc(var(--input-height) + var(--input-padding) * 2 + 2);
+      margin: 0;
+      padding: 0;
+      font-size: 20px;
+      font-weight: 600;
+      color: #fff;
+      text-align: center;
+      background-color: mediumblue;
+      border: none;
+      cursor: pointer;
+}
+
+.q-pa-md .input-number-button:hover {
+      opacity: 0.6;
+}
+
+.q-pa-md .input-number-button:active {
+      opacity: 0.3;
+}
+
+.q-pa-md .input-number-button--decrement {
+      left: 0;
+      border-radius: var(--border-radius) 0 0 var(--border-radius);
+}
+
+.q-pa-md .input-number-button--increment {
+      right: 0;
+      border-radius: 0 var(--border-radius) var(--border-radius) 0;
+}
+
+  
+
+// JS
+const { ref } = Vue
+
+const app = Vue.createApp({
+  setup () {
+    const model = ref(0);
+    
+    return {
+      model,
+      handleDecrementButtonClick: () => {
+        model.value--;
+      },
+      handleIncrementButtonClick: () => {
+        model.value++;
+      },
+    }
+  }
+})
+
+app.use(Quasar, { config: {} })
+app.mount('#q-app')
