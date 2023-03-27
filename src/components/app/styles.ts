@@ -166,6 +166,11 @@ const getScrollStyles = (orientation: ScrollOrientation) => {
         color: ScrollParams.Color.THUMB,
         isHover,
       }),
+
+      // нужно чтобы работало в Safari
+      [`${classN}`]: className ? {
+        backgroundColor: `transparent`,
+      } : null,
     };
   };
 
