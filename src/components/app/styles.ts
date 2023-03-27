@@ -216,7 +216,7 @@ const getScrollStyles = (orientation: ScrollOrientation) => {
     return {
       [`.${className}`]: {
         // нужно чтобы работало в Safari - любое свойство на контейнер
-        backgroundColor: `transparent`,
+        cursor: `default`,
 
         [`&::-webkit-scrollbar:${orientation}`]: getBackgroundStyles({
           orientation,
