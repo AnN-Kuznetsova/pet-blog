@@ -169,7 +169,7 @@ const getScrollStyles = (orientation: ScrollOrientation) => {
 
       // нужно чтобы работало в Safari
       [`${classN}`]: className ? {
-        backgroundColor: `transparent`,
+        cursor: `default`,
       } : null,
     };
   };
