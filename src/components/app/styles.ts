@@ -215,6 +215,9 @@ const getScrollStyles = (orientation: ScrollOrientation) => {
   return scrollClassNames[orientation].map((className, index) => {
     return {
       [`.${className}`]: {
+        // нужно чтобы работало в Safari - любое свойство на контейнер
+        backgroundColor: `transparent`,
+
         [`&::-webkit-scrollbar:${orientation}`]: getBackgroundStyles({
           orientation,
           color: ScrollParams.Color.SCROLLBAR,
