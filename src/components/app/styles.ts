@@ -2,27 +2,41 @@ import { THEME } from "../../helpers/theme";
 import type { Theme } from "@mui/material";
 
 
-/* const CARD_HEIGHT = 50; // px
+const CARD_HEIGHT = 50; // px
 
 const rerender = () => {
-  const list: HTMLElement | null = document.querySelector(`main`);
-  const listItems: NodeListOf<HTMLElement> | [] = list?.querySelectorAll(`.list-item-container`) || [];
+  const list: HTMLElement | null = document.querySelector(`.list`);
+  const cards: NodeListOf<HTMLElement> | [] = list?.querySelectorAll(`.card`) || [];
 
-  console.log(list);
-
-  listItems?.forEach((item: HTMLElement) => {
-    const itemHeight = item.offsetWidth;
+  cards.forEach((card: HTMLElement) => {
+    const cardWrapper: HTMLElement | null = card.querySelector(`.card-wrapper`);
+    const cardHeight = cardWrapper?.offsetHeight || 0;
 
     if (
-      CARD_HEIGHT < itemHeight &&
-      itemHeight < CARD_HEIGHT * 2
+      CARD_HEIGHT < cardHeight &&
+      cardHeight < CARD_HEIGHT * 2
     ) {
-      item.style.height = `${CARD_HEIGHT * 2}px`;
+      card.classList.add(`card--high`);
+    } else {
+      card.classList.remove(`card--high`);
     }
   });
 };
 
-document.addEventListener(`DOMContentLoaded`, rerender); */
+// document.addEventListener(`DOMContentLoaded`, rerender);
+window.addEventListener(`resize`, rerender);
+
+const observer = new MutationObserver((mutations) => {
+  if (mutations.length) {
+    rerender();
+  }
+});
+
+observer.observe(document, {
+  childList: true,
+  subtree: true,
+});
+
 
 // *************************************************
 
@@ -257,89 +271,39 @@ const globalStyles = (theme: Theme) => ({
 
   // *************************
 
-  /* ".list": {
+  ".list": {
     columnCount: `2`,
-    // columnGap: `5px`,
-
-    // display: `grid`,
-    // gap: 10,
-    // gridAutoFlow: `dense`,
-    // gridTemplateColumns: `repeat(2, 1fr)`,
-    // gridAutoRows: `minmax(50px, 1fr)`,
-    // gridAutoRows: `50px`,
-
     margin: 0,
     padding: 0,
   },
 
-  ".list-item-container": {
+  ".card": {
     display: `grid`,
-    gridTemplateRows: `48px 1fr`,// `1fr 1fr`,
-    // gridTemplateRows: 50,
-    // gridTemplateRows: `repeat(auto-fit, 50px)`,
-    // gridTemplateRows: `repeat(2, 1fr)`,// `repeat(2, 1fr)`,
-
-    // gridTemplateRows: `repeat(2, 25px)`,
-
-    // gridTemplateRows: `repeat(auto-fit, minmax(25px, 50px))`,//clamp(25px, 1fr, 50px))`,
-    // gridTemplateRows: `clamp(25px, minmax(, 50px), 50px`,
-    gridAutoRows: 50,
-    alignItems: `stretch`,
-    "break-inside": `avoid`,
-
-    // gridRow: `span `,//`span 2`,
-
-    // display: `block`,
-    "overflow-y": `auto`,
-
+    gridTemplateRows: `50px 1fr`,
     minHeight: 50,
     maxHeight: 100,
-    // height: `max-content`,
-    // height: 200,
-    // height: `minmax(50px, 100px)`,
-    // height: `max(100%, 100px)`, //`max("auto", 100px)`,
-    // height: `clamp(50px, calc(100%), 100px)`,
-    // height: `min()`,
-
-    // border: `1px solid white`,
+    "break-inside": `avoid`,
+    "overflow-y": `auto`,
     outline: `1px solid white`,
+
+    "&--high": {
+      height: CARD_HEIGHT * 2,
+    },
   },
 
-  ".list-item-wrapper": {
-    // gridRow: `span 2`,
+  ".card-container": {
     gridRow: `1 / -1`,
-
-    display: `grid`,
-
-    // gridTemplateRows: `max(1fr, 50px)`,
-    // height: `max(100%, 100px)`,
-    // height: 100,
-
-    // height: `max-content`,
   },
 
-  ".list-item-inner-wrapper": {
-    height: `max(auto, 100px)`,
-  },
-
-  ".list-item": {
-    // height: `max(100%, 100px)`,
-    height: `max-content`,
-  },
-
-  ".inner-content": {
+  ".content": {
     display: `block`,
-    minHeight: 25,
-
-    // gridRow: `1 / -1`,
-    // gridColumn: `1`,
-  }, */
+  },
 });
 
 const appStyles = () => ({
   padding: "30px 50px",
   height: "100vh",
-  //overflowY: "hidden",
+  // overflowY: "hidden",
 });
 
 

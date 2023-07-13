@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
 
@@ -63,68 +63,24 @@ const listContent = [
 ];
 
 
-const CARD_HEIGHT = 50; // px
-
-const listStyles = {
-  list: {
-    columnCount: `2`,
-    margin: 0,
-    padding: 0,
-  },
-  card: (newHeight: number) => ({
-    display: `grid`,
-    gridTemplateRows: `${CARD_HEIGHT}px 1fr`,
-    height: newHeight ? newHeight : `auto`,
-    minHeight: CARD_HEIGHT,
-    maxHeight: CARD_HEIGHT * 2,
-    "break-inside": `avoid`,
-    "overflow-y": `auto`,
-    outline: `1px solid white`,
-  }),
-  cardContainer: {
-    gridRow: `1 / -1`,
-  },
-  content: {
-    display: `block`,
-  },
-};
-
-
 const Card = ({
   content,
 }: {
   content: string[];
 }): JSX.Element => {
-  const card: React.LegacyRef<HTMLLIElement> | undefined = useRef(null);
-  const [height, setHeight] = useState(0);
-
-  useEffect(() => {
-    if (card.current) {
-      const currentHeight = card.current.offsetHeight || 0;
-
-      if (
-        CARD_HEIGHT < currentHeight &&
-        currentHeight < CARD_HEIGHT * 2
-      ) {
-        setHeight(CARD_HEIGHT * 2);
-      }
-    }
-  }, [card]);
-
   return (
-    <li
-      ref={card}
-      style={listStyles.card(height)}
-    >
-      <div style={listStyles.cardContainer}>
-        {content.map((contentItem, itemIndex) => (
-          <span
-            key={contentItem + itemIndex}
-            style={listStyles.content}
-          >
-            {contentItem}
-          </span>
-        ))}
+    <li className="card">
+      <div className="card-container">
+        <div className="card-wrapper">
+          {content.map((contentItem, itemIndex) => (
+            <span
+              key={contentItem + itemIndex}
+              className="content"
+            >
+              {contentItem}
+            </span>
+          ))}
+        </div>
       </div>
     </li>
   );
@@ -138,7 +94,7 @@ export const Layout: React.FC = (): JSX.Element => {
 
       <main style={styles.main}>
         <div style={{marginBottom: 100}}>
-          <ul style={listStyles.list}>
+          <ul className="list">
             {listContent.map((content, index) => (
               <Card
                 key={index}
