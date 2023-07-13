@@ -2,12 +2,12 @@ import React from "react";
 
 const container = () => ({
   height: "100%",
-  overflowY: "hidden",
+  //overflowY: "hidden",
 });
 
 const main = {
   height: "calc(100vh - 2 * 30px - 92.5px)",
-  overflowY: "auto",
+  //overflowY: "auto",
 } as React.CSSProperties;
 
 

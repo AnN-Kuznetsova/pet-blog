@@ -2,6 +2,30 @@ import { THEME } from "../../helpers/theme";
 import type { Theme } from "@mui/material";
 
 
+/* const CARD_HEIGHT = 50; // px
+
+const rerender = () => {
+  const list: HTMLElement | null = document.querySelector(`main`);
+  const listItems: NodeListOf<HTMLElement> | [] = list?.querySelectorAll(`.list-item-container`) || [];
+
+  console.log(list);
+
+  listItems?.forEach((item: HTMLElement) => {
+    const itemHeight = item.offsetWidth;
+
+    if (
+      CARD_HEIGHT < itemHeight &&
+      itemHeight < CARD_HEIGHT * 2
+    ) {
+      item.style.height = `${CARD_HEIGHT * 2}px`;
+    }
+  });
+};
+
+document.addEventListener(`DOMContentLoaded`, rerender); */
+
+// *************************************************
+
 const ScrollParams = {
   Size: {
     ACTIVE: 20, // px
@@ -230,12 +254,92 @@ const globalStyles = (theme: Theme) => ({
   ".ReactVirtualized__Grid__innerScrollContainer": {
     width: `5000px !important`,
   },
+
+  // *************************
+
+  /* ".list": {
+    columnCount: `2`,
+    // columnGap: `5px`,
+
+    // display: `grid`,
+    // gap: 10,
+    // gridAutoFlow: `dense`,
+    // gridTemplateColumns: `repeat(2, 1fr)`,
+    // gridAutoRows: `minmax(50px, 1fr)`,
+    // gridAutoRows: `50px`,
+
+    margin: 0,
+    padding: 0,
+  },
+
+  ".list-item-container": {
+    display: `grid`,
+    gridTemplateRows: `48px 1fr`,// `1fr 1fr`,
+    // gridTemplateRows: 50,
+    // gridTemplateRows: `repeat(auto-fit, 50px)`,
+    // gridTemplateRows: `repeat(2, 1fr)`,// `repeat(2, 1fr)`,
+
+    // gridTemplateRows: `repeat(2, 25px)`,
+
+    // gridTemplateRows: `repeat(auto-fit, minmax(25px, 50px))`,//clamp(25px, 1fr, 50px))`,
+    // gridTemplateRows: `clamp(25px, minmax(, 50px), 50px`,
+    gridAutoRows: 50,
+    alignItems: `stretch`,
+    "break-inside": `avoid`,
+
+    // gridRow: `span `,//`span 2`,
+
+    // display: `block`,
+    "overflow-y": `auto`,
+
+    minHeight: 50,
+    maxHeight: 100,
+    // height: `max-content`,
+    // height: 200,
+    // height: `minmax(50px, 100px)`,
+    // height: `max(100%, 100px)`, //`max("auto", 100px)`,
+    // height: `clamp(50px, calc(100%), 100px)`,
+    // height: `min()`,
+
+    // border: `1px solid white`,
+    outline: `1px solid white`,
+  },
+
+  ".list-item-wrapper": {
+    // gridRow: `span 2`,
+    gridRow: `1 / -1`,
+
+    display: `grid`,
+
+    // gridTemplateRows: `max(1fr, 50px)`,
+    // height: `max(100%, 100px)`,
+    // height: 100,
+
+    // height: `max-content`,
+  },
+
+  ".list-item-inner-wrapper": {
+    height: `max(auto, 100px)`,
+  },
+
+  ".list-item": {
+    // height: `max(100%, 100px)`,
+    height: `max-content`,
+  },
+
+  ".inner-content": {
+    display: `block`,
+    minHeight: 25,
+
+    // gridRow: `1 / -1`,
+    // gridColumn: `1`,
+  }, */
 });
 
 const appStyles = () => ({
   padding: "30px 50px",
   height: "100vh",
-  overflowY: "hidden",
+  //overflowY: "hidden",
 });
 
 
