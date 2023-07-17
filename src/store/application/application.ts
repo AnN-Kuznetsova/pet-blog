@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { number, string } from "yup";
 
 import { ModalType } from "../../helpers/constants";
 import { Languages } from "../../i18n";

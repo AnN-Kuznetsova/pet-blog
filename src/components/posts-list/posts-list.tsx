@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Box } from "@mui/material";
 import {
   AutoSizer as _AutoSizer,
   AutoSizerProps,
+  CellMeasurer as _CellMeasurer,
+  CellMeasurerProps,
+  CellMeasurerCache,
   List as _List,
   ListProps,
+  ListRowRenderer,
 } from "react-virtualized";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -20,6 +24,7 @@ import { setScrollPosition } from "../../store/application/application";
 
 const List = _List as unknown as React.FC<ListProps>;
 const AutoSizer = _AutoSizer as unknown as React.FC<AutoSizerProps>;
+const CellMeasurer = _CellMeasurer as unknown as React.FC<CellMeasurerProps>;
 
 
 export const PostsList: React.FC = (): JSX.Element => {
@@ -35,6 +40,13 @@ export const PostsList: React.FC = (): JSX.Element => {
   const scrollPosition = useSelector(getScrollPosition);
   const [scrollCurrentPosition, setScrollCurrentPosition] = useState(scrollPosition);
 
+  const cache = useRef(
+    new CellMeasurerCache({
+      fixedWidth: true,
+      defaultHeight: POST_LIST_ROW_HEIGHT,
+    })
+  );
+
   const handleScroll = ({scrollTop}: {scrollTop: number}) => {
     setScrollCurrentPosition(scrollTop);
   };
@@ -43,27 +55,29 @@ export const PostsList: React.FC = (): JSX.Element => {
     dispatch(setScrollPosition(scrollCurrentPosition));
   };
 
-  const rowRenderer = ({
+  const rowRenderer: ListRowRenderer = ({
     key,
     index,
+    parent,
     style,
-  }: {
-    key: string;
-    index: number;
-    style: object;
   }): JSX.Element => {
     const post = posts[index];
 
     return (
-      <div
+      <CellMeasurer
         key={key}
-        style={style}
+        cache={cache.current}
+        columnIndex={0}
+        rowIndex={index}
+        parent={parent}
       >
-        <PostsListItem
-          post={post}
-          setListScrollPosition={setListScrollPosition}
-        />
-      </div>
+        <div style={style}>
+          <PostsListItem
+            post={post}
+            setListScrollPosition={setListScrollPosition}
+          />
+        </div>
+      </CellMeasurer>
     );
   };
 
@@ -78,7 +92,7 @@ export const PostsList: React.FC = (): JSX.Element => {
               width={width}
               height={height - 1}
               rowCount={posts.length}
-              rowHeight={POST_LIST_ROW_HEIGHT}
+              rowHeight={cache.current.rowHeight}
               rowRenderer={rowRenderer}
               scrollTop={scrollCurrentPosition}
               onScroll={handleScroll}
