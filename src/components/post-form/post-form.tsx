@@ -19,7 +19,6 @@ import type { TFunction } from "i18next";
 import { CustomTextField as CustomTextFieldRaw } from "../../helpers/CustomTextField";
 import { calcPostDate, DateFormatMode, formatDate } from "../../helpers/utils";
 import { ModalType } from "../../helpers/constants";
-
 import { getLanguage, getModalType } from "../../store/application/selectors";
 import { setModalType, addSnack } from "../../store/application/application";
 import { styles } from "./styles";
@@ -157,6 +156,7 @@ export const PostForm: React.FC<PropsType> = (props) => {
     duration: +formik.values.addDate,
     measure: formik.values.measure,
   });
+
   const formattedPostDate = formatDate(postDate, language, DateFormatMode.LONG);
 
   usePostFormButtonControls(onModalClose, formik.isValid);

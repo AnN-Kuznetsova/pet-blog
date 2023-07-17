@@ -10,9 +10,12 @@ const getSnackbar = (state: RootStateType): Array<SnackType> => state.applicatio
 
 const getLanguage = (state: RootStateType): Languages => state.application.language;
 
+const getScrollPosition = (state: RootStateType): number => state.application.scrollPosition;
+
 
 export {
   getLanguage,
   getModalType,
   getSnackbar,
+  getScrollPosition,
 };

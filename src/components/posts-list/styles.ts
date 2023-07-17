@@ -1,5 +1,5 @@
 const containerStyles = () => ({
-  height: `100%`, // "calc(100% - 50px)",
+  height: `100%`,
   overflowY: `auto`,
 });
 

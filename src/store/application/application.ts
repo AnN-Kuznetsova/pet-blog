@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { number, string } from "yup";
 
 import { ModalType } from "../../helpers/constants";
 import { Languages } from "../../i18n";
@@ -11,12 +12,14 @@ const initialState: {
     type: ModalType;
   },
   snackbar: Array<SnackType>,
+  scrollPosition: number,
 } = {
   language: Languages.EN,
   modal: {
     type: ModalType.NO_MODAL,
   },
   snackbar: [],
+  scrollPosition: 0,
 };
 
 
@@ -73,6 +76,10 @@ const applicationSlice = createSlice({
       const removableSnack = action.payload;
       state.snackbar = state.snackbar.filter((snack) => snack.id !== removableSnack.id);
     },
+
+    setScrollPosition: (state, action: {type: string; payload: number}) => {
+      state.scrollPosition = action.payload;
+    },
   },
 });
 
@@ -86,6 +93,7 @@ export const {
   changeSnack,
   hideSnack,
   removeSnack,
+  setScrollPosition,
 } = actions;
 
 export {

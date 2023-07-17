@@ -19,17 +19,20 @@ import type { PostType } from "../../types/types";
 
 export interface PropsType {
   post: PostType;
+  setListScrollPosition: ()=>void;
 }
 
 
 export const PostsListItem: React.FC<PropsType> = (props): JSX.Element | null => {
-  const {post} = props;
+  const {post, setListScrollPosition} = props;
   const language = useSelector(getLanguage);
   const date = formatDate(post.date, language);
   const postPageUrl = AppRoute.POST_PAGE.replace(`:id`, `${post.id}`);
   const {data: user} = useGetUserQuery(post.userId);
 
   const handleItemButtonClick = (post: PostType) => {
+    setListScrollPosition();
+
     // console.log(post);
   };
 
