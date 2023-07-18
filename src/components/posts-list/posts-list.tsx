@@ -71,12 +71,21 @@ export const PostsList: React.FC = (): JSX.Element => {
         rowIndex={index}
         parent={parent}
       >
-        <div style={style}>
-          <PostsListItem
-            post={post}
-            setListScrollPosition={setListScrollPosition}
-          />
-        </div>
+        {({ registerChild }) => (
+          <div
+            ref={(element): void => {
+              if (element && registerChild) {
+                registerChild(element);
+              }
+            }}
+            style={style}
+          >
+            <PostsListItem
+              post={post}
+              setListScrollPosition={setListScrollPosition}
+            />
+          </div>
+        )}
       </CellMeasurer>
     );
   };
@@ -94,9 +103,9 @@ export const PostsList: React.FC = (): JSX.Element => {
               rowCount={posts.length}
               rowHeight={cache.current.rowHeight}
               rowRenderer={rowRenderer}
+              deferredMeasurementCache={cache.current}
               scrollTop={scrollCurrentPosition}
               onScroll={handleScroll}
-              on
             />
           )}
         </AutoSizer>
