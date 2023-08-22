@@ -9,6 +9,7 @@ import { LanguageComponent } from "../language-component/language-component";
 import { setModalType } from "../../store/application/application";
 import { styles } from "./styles";
 import { useGetPostsQueryState } from "../api/postsSlice";
+import { RootAppLink } from "../root-app-link/root-app-link";
 
 
 export const TopMenu: React.FC = (): JSX.Element => {
@@ -63,6 +64,7 @@ export const TopMenu: React.FC = (): JSX.Element => {
 
       <Box sx={styles.rightMenu}>
         <LanguageComponent />
+        <RootAppLink />
       </Box>
     </Box>
   );

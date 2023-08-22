@@ -1,6 +1,6 @@
 const container = () => ({
   display: `flex`,
-  marginBottom: 5,
+  marginBottom: 3,
 
   "& >:not(:last-child)": {
     marginRight: 1,
@@ -12,7 +12,12 @@ const container = () => ({
 });
 
 const rightMenu = () => ({
+  display: `flex`,
   marginLeft: `auto`,
+
+  "& >:not(:last-child)": {
+    marginRight: 1,
+  },
 });
 
 

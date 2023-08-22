@@ -1,5 +1,6 @@
 import i18n from "i18next";
 import Backend from "i18next-http-backend";
+import resourcesToBackend from "i18next-resources-to-backend";
 import { initReactI18next } from "react-i18next";
 
 // import { translation as translationEn } from "./translation/en";
@@ -14,6 +15,7 @@ export enum Languages {
 
 export default i18n
   .use(Backend)
+  .use(resourcesToBackend((language: any, namespace: any) => import(`./locales/${language}/${namespace}.json`)))
   .use(initReactI18next)
   .init({
     // debug: true,

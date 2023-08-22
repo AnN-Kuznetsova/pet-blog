@@ -17,9 +17,11 @@ export const THEME = createTheme({
       styleOverrides: {
         root: {
           color: Color.WHITE,
+          boxShadow: "none",
 
           "&:hover": {
             backgroundColor: Color.LIGHT_BLUE,
+            boxShadow: "none",
           },
         },
       },
