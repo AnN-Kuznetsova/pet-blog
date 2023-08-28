@@ -8,7 +8,7 @@ import { styles } from "./styles";
 export const RootAppLink: React.FC = (): JSX.Element => {
   return (
     <Link
-      href="/"
+      href="http://localhost"
       underline="none"
       variant="button"
       sx={styles.rootAppLink}
